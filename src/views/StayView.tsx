@@ -1,13 +1,16 @@
+import { getTranslator } from '../i18n/translations';
 import React, { useState } from 'react';
-import { ScreenType } from '../types';
+import { ScreenType, Language } from '../types';
 import { ROOMS_DATA, RELATED_ROOMS, ROOM_SHOWCASE_IMAGES, FAQ_DATA } from '../data/mockData';
 
 interface StayViewProps {
+  language: Language;
   onNavigate: (screen: ScreenType) => void;
   onOpenConcierge: () => void;
 }
 
-export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge }) => {
+export const StayView: React.FC<StayViewProps> = ({ language, onNavigate, onOpenConcierge }) => {
+  const t = getTranslator(language);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<number>(0);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
@@ -63,10 +66,10 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
           <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/90 dark:bg-[#0b1d29]/90 backdrop-blur-md shadow-sm mb-6 text-[#0b1d29] dark:text-white">
             <span className="w-2.5 h-2.5 rounded-full bg-[#006194] animate-pulse"></span>
             <span className="text-[11px] uppercase font-bold text-[#006194] dark:text-[#93ccff] tracking-widest">
-              Swell Status
+              {t("Swell Status")}
             </span>
             <span className="text-xs md:text-sm font-medium text-[#3f4850] dark:text-[#d2e5f6]">
-              Imi Ouaddar Point: 1.8m @ 13s • Glassy Offshore • 21°C Sea Temp
+              {t("Imi Ouaddar Point: 1.8m @ 13s • Glassy Offshore • 21°C Sea Temp")}
             </span>
           </div>
 
@@ -74,16 +77,14 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
             <div className="lg:col-span-8 flex flex-col gap-4">
               <div className="flex items-center gap-2 text-[#d3c4b1]">
                 <span className="text-xs tracking-widest uppercase font-semibold">
-                  The Sanctuary • Taghazout Bay
+                  {t("The Sanctuary • Taghazout Bay")}
                 </span>
               </div>
               <h1 className="font-serif-display text-4xl sm:text-6xl md:text-7xl text-white leading-none tracking-tight">
-                Stay Your Way.
+                {t("Stay Your Way.")}
               </h1>
               <p className="text-base sm:text-lg text-white/90 max-w-2xl leading-relaxed">
-                Where sculpted Moroccan tadelakt meets the rhythmic cadence of the Atlantic. From
-                panoramic cliff-top suites overlooking point breaks to secluded courtyard retreats,
-                find your personal sanctuary.
+                {t("Where sculpted Moroccan tadelakt meets the rhythmic cadence of the Atlantic. From panoramic cliff-top suites overlooking point breaks to secluded courtyard retreats, find your personal sanctuary.")}
               </p>
             </div>
 
@@ -91,10 +92,10 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
               <div className="bg-white/90 dark:bg-[#0b1d29]/90 backdrop-blur-md p-5 rounded-xl shadow-lg w-full max-w-sm border border-white/20 text-[#0b1d29] dark:text-white">
                 <div className="flex items-center justify-between pb-3">
                   <span className="text-[11px] font-bold text-[#675d4d] dark:text-[#d3c4b1] uppercase">
-                    Availability Rate
+                    {t("Availability Rate")}
                   </span>
                   <span className="text-xs font-bold text-[#006194] dark:text-[#93ccff]">
-                    94% Booked This Week
+                    {t("94% Booked This Week")}
                   </span>
                 </div>
                 {/* Live Progress Bar */}
@@ -102,7 +103,7 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                   <div className="bg-[#006194] dark:bg-[#93ccff] h-full rounded-full w-[94%] transition-all duration-700"></div>
                 </div>
                 <p className="text-xs text-[#3f4850] dark:text-[#cadced] mt-2">
-                  Autumn swells active. Early reservations advised for sea-facing balconies.
+                  {t("Autumn swells active. Early reservations advised for sea-facing balconies.")}
                 </p>
               </div>
             </div>
@@ -133,7 +134,7 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                       : 'bg-[#ebf5ff] dark:bg-white/10 text-[#3f4850] dark:text-[#cadced] hover:bg-[#e0f0ff] hover:text-[#0b1d29]'
                   }`}
                 >
-                  {tab.label}
+                  {t(tab.label)}
                 </button>
               ))}
             </div>
@@ -141,7 +142,7 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
               <span className="material-symbols-outlined text-[18px] text-[#00628d] dark:text-[#89ceff]">
                 tune
               </span>
-              <span>Currency: <strong>EUR (€)</strong> • Free Board Storage Included</span>
+              <span>{t("Currency:")} <strong>{t("EUR (€)")}</strong> {t("• Free Board Storage Included")}</span>
             </div>
           </div>
         </div>
@@ -152,15 +153,14 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
           <div>
             <span className="text-xs uppercase tracking-[0.2em] font-bold text-[#675d4d] dark:text-[#d3c4b1]">
-              Architectural Living
+              {t("Architectural Living")}
             </span>
             <h2 className="font-serif-display text-3xl sm:text-5xl text-[#0b1d29] dark:text-white mt-1">
-              Curated Sanctuaries
+              {t("Curated Sanctuaries")}
             </h2>
           </div>
           <p className="text-sm sm:text-base text-[#3f4850] dark:text-[#cadced] max-w-md leading-relaxed">
-            Every residence pairs authentic Moroccan craftsmanship with surf-inspired comfort: custom
-            cedar woodwork, limestone rain showers, and organic linens.
+            {t("Every residence pairs authentic Moroccan craftsmanship with surf-inspired comfort: custom cedar woodwork, limestone rain showers, and organic linens.")}
           </p>
         </div>
 
@@ -182,23 +182,23 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                 <div className="relative w-full h-72 sm:h-80 overflow-hidden">
                   <img
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    alt={room.name}
+                    alt={t(room.name)}
                     src={room.image}
                   />
                   <div className="absolute top-4 left-4 flex flex-wrap gap-2">
                     {room.badge && (
                       <span className="px-3 py-1 rounded-full bg-white/95 dark:bg-[#0b1d29]/95 backdrop-blur-md text-[11px] font-bold uppercase text-[#006194] dark:text-[#93ccff]">
-                        {room.badge}
+                        {t(room.badge)}
                       </span>
                     )}
                     {room.tag && (
                       <span className="px-3 py-1 rounded-full bg-[#f0e0cc] text-[#221a0e] text-[11px] font-semibold uppercase">
-                        {room.tag}
+                        {t(room.tag)}
                       </span>
                     )}
                   </div>
                   <div className="absolute bottom-4 right-4 bg-[#0b1d29]/85 backdrop-blur-md px-3.5 py-1.5 rounded-lg text-white text-xs font-semibold">
-                    From €{room.pricePerNight} / night
+                    {t("From €")}{room.pricePerNight} {t("/ night")}
                   </div>
                 </div>
 
@@ -206,7 +206,7 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                   <div>
                     <div className="flex items-center justify-between gap-4 mb-2">
                       <h3 className="font-serif-display text-2xl text-[#0b1d29] dark:text-white font-semibold group-hover:text-[#006194] dark:group-hover:text-[#93ccff] transition-colors">
-                        {room.name}
+                        {t(room.name)}
                       </h3>
                       <div className="flex items-center gap-1 text-[#006194] dark:text-[#93ccff]">
                         <span
@@ -220,7 +220,7 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                     </div>
 
                     <p className="text-sm text-[#3f4850] dark:text-[#cadced] mb-6 leading-relaxed">
-                      {room.description}
+                      {t(room.description)}
                     </p>
 
                     <div className="flex flex-wrap gap-2.5 mb-6">
@@ -232,7 +232,7 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                           <span className="material-symbols-outlined text-[16px] text-[#00628d] dark:text-[#89ceff]">
                             check
                           </span>{' '}
-                          {f}
+                          {t(f)}
                         </span>
                       ))}
                     </div>
@@ -244,12 +244,12 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                         href="#room-detailed-showcase"
                         className="inline-flex items-center gap-1 text-xs md:text-sm font-semibold text-[#006194] dark:text-[#93ccff] hover:underline"
                       >
-                        Inspect Floorplan &amp; Details{' '}
+                        {t("Inspect Floorplan & Details")}{' '}
                         <span className="material-symbols-outlined text-[18px]">arrow_downward</span>
                       </a>
                     ) : (
                       <span className="text-xs text-[#3f4850] dark:text-[#cadced]">
-                        {room.capacity} • {room.size}
+                        {t(room.capacity)} • {t(room.size)}
                       </span>
                     )}
 
@@ -257,7 +257,7 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                       onClick={() => onNavigate('booking')}
                       className="px-5 py-2.5 rounded-lg bg-[#006194] hover:bg-[#007bb9] text-white text-xs md:text-sm font-semibold transition-all shadow-sm"
                     >
-                      Reserve Room
+                      {t("Reserve Room")}
                     </button>
                   </div>
                 </div>
@@ -275,18 +275,18 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
             <div className="flex items-center gap-3">
               <span className="w-8 h-0.5 bg-[#006194] dark:bg-[#93ccff]"></span>
               <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#006194] dark:text-[#93ccff]">
-                In-Depth Room Showcase
+                {t("In-Depth Room Showcase")}
               </span>
             </div>
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
               <h2 className="font-serif-display text-3xl sm:text-5xl text-[#0b1d29] dark:text-white">
-                The Sea View Balcony Room
+                {t("The Sea View Balcony Room")}
               </h2>
               <div className="flex items-center gap-4 text-[#3f4850] dark:text-[#cadced] text-sm">
-                <span>Room 204 • Second Tier Cliffside</span>
+                <span>{t("Room 204 • Second Tier Cliffside")}</span>
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#707881]"></span>
                 <span className="text-[#006194] dark:text-[#93ccff] font-semibold">
-                  Immediate Spot Check View
+                  {t("Immediate Spot Check View")}
                 </span>
               </div>
             </div>
@@ -295,33 +295,33 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
           {/* Quick Facts Ribbon */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 bg-white dark:bg-[#0b1d29] p-6 rounded-2xl shadow-sm mb-12 border border-[#bfc7d2]/20">
             <div className="flex flex-col gap-1">
-              <span className="text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">Capacity</span>
+              <span className="text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">{t("Capacity")}</span>
               <span className="text-sm md:text-base font-semibold text-[#0b1d29] dark:text-white flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-[20px] text-[#00628d] dark:text-[#89ceff]">person</span> 2 Guests
+                <span className="material-symbols-outlined text-[20px] text-[#00628d] dark:text-[#89ceff]">person</span> {t("2 Guests")}
               </span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">Bed Configuration</span>
+              <span className="text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">{t("Bed Configuration")}</span>
               <span className="text-sm md:text-base font-semibold text-[#0b1d29] dark:text-white flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-[20px] text-[#00628d] dark:text-[#89ceff]">king_bed</span> 1 Royal King
+                <span className="material-symbols-outlined text-[20px] text-[#00628d] dark:text-[#89ceff]">king_bed</span> {t("1 Royal King")}
               </span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">Ocean Aspect</span>
+              <span className="text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">{t("Ocean Aspect")}</span>
               <span className="text-sm md:text-base font-semibold text-[#0b1d29] dark:text-white flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-[20px] text-[#00628d] dark:text-[#89ceff]">visibility</span> Atlantic Point
+                <span className="material-symbols-outlined text-[20px] text-[#00628d] dark:text-[#89ceff]">visibility</span> {t("Atlantic Point")}
               </span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">Total Living Area</span>
+              <span className="text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">{t("Total Living Area")}</span>
               <span className="text-sm md:text-base font-semibold text-[#0b1d29] dark:text-white flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-[20px] text-[#00628d] dark:text-[#89ceff]">straighten</span> 34 m² + 12 m² Balcony
+                <span className="material-symbols-outlined text-[20px] text-[#00628d] dark:text-[#89ceff]">straighten</span> {t("34 m² + 12 m² Balcony")}
               </span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">Climate</span>
+              <span className="text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">{t("Climate")}</span>
               <span className="text-sm md:text-base font-semibold text-[#0b1d29] dark:text-white flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-[20px] text-[#00628d] dark:text-[#89ceff]">ac_unit</span> Silent Inverter A/C
+                <span className="material-symbols-outlined text-[20px] text-[#00628d] dark:text-[#89ceff]">ac_unit</span> {t("Silent Inverter A/C")}
               </span>
             </div>
           </div>
@@ -335,12 +335,12 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                 <div className="relative w-full h-[400px] md:h-[500px] rounded-2xl overflow-hidden shadow-lg bg-[#e0f0ff] dark:bg-white/5 border border-[#bfc7d2]/20">
                   <img
                     className="w-full h-full object-cover transition-opacity duration-300"
-                    alt="Main room showcase"
+                    alt={t("Main room showcase")}
                     src={ROOM_SHOWCASE_IMAGES[selectedGalleryIndex].src}
                   />
                   <div className="absolute bottom-4 left-4 right-4 bg-[#0b1d29]/80 backdrop-blur-md text-white text-xs md:text-sm px-4 py-2.5 rounded-lg flex items-center gap-2">
                     <span className="material-symbols-outlined text-[16px] text-[#89ceff]">photo_camera</span>
-                    <span>{ROOM_SHOWCASE_IMAGES[selectedGalleryIndex].caption}</span>
+                    <span>{t(ROOM_SHOWCASE_IMAGES[selectedGalleryIndex].caption)}</span>
                   </div>
                 </div>
 
@@ -360,7 +360,7 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                             : 'opacity-70 hover:opacity-100 border-[#bfc7d2]/30'
                         }`}
                       >
-                        <img className="w-full h-full object-cover" alt={thumb.caption} src={thumb.src} />
+                        <img className="w-full h-full object-cover" alt={t(thumb.caption)} src={thumb.src} />
                       </button>
                     );
                   })}
@@ -370,25 +370,19 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
               {/* Narrative Experience */}
               <div className="bg-white dark:bg-[#0b1d29] p-8 md:p-10 rounded-2xl shadow-sm flex flex-col gap-6 border border-[#bfc7d2]/20">
                 <h3 className="font-serif-display text-2xl md:text-3xl text-[#0b1d29] dark:text-white font-semibold">
-                  The Ocean Sanctuary Experience
+                  {t("The Ocean Sanctuary Experience")}
                 </h3>
                 <p className="text-base text-[#3f4850] dark:text-[#cadced] leading-relaxed">
-                  Positioned on the highest seaward terrace of the lodge, the Sea View Balcony Room was
-                  conceived for travelers who live by the tides. Awaken without an alarm clock to the roar
-                  of waves peeling across the bay; step bare-foot onto the smooth tadelakt balcony to check
-                  the wind direction and swell angle with your first sip of fresh spiced mint tea.
+                  {t("Positioned on the highest seaward terrace of the lodge, the Sea View Balcony Room was conceived for travelers who live by the tides. Awaken without an alarm clock to the roar of waves peeling across the bay; step bare-foot onto the smooth tadelakt balcony to check the wind direction and swell angle with your first sip of fresh spiced mint tea.")}
                 </p>
                 <p className="text-sm md:text-base text-[#3f4850] dark:text-[#cadced] leading-relaxed">
-                  Every detail honors regional authenticity: polished lime-plaster surfaces regulate coastal
-                  humidity naturally, while hand-carved cedar furniture infuses the room with a rich,
-                  grounding scent. After an afternoon surf session, replenish under the high-pressure rain
-                  shower scented with local organic argan and rosemary botanicals.
+                  {t("Every detail honors regional authenticity: polished lime-plaster surfaces regulate coastal humidity naturally, while hand-carved cedar furniture infuses the room with a rich, grounding scent. After an afternoon surf session, replenish under the high-pressure rain shower scented with local organic argan and rosemary botanicals.")}
                 </p>
 
                 {/* Amenities Badges Grid */}
                 <div className="pt-4 border-t border-[#bfc7d2]/20">
                   <h4 className="font-sans font-bold text-base text-[#0b1d29] dark:text-white mb-4">
-                    Included Room Amenities
+                    {t("Included Room Amenities")}
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                     {[
@@ -406,7 +400,7 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                         <span className="material-symbols-outlined text-[#006194] dark:text-[#93ccff] text-[20px]">
                           {amenity.icon}
                         </span>
-                        <span>{amenity.name}</span>
+                        <span>{t(amenity.name)}</span>
                       </div>
                     ))}
                   </div>
@@ -418,23 +412,23 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1] tracking-wider">
-                      Direct Balcony Viewpoint
+                      {t("Direct Balcony Viewpoint")}
                     </span>
                     <h4 className="font-serif-display text-2xl text-[#0b1d29] dark:text-white font-semibold mt-1">
-                      Taghazout Bay Swell Forecast
+                      {t("Taghazout Bay Swell Forecast")}
                     </h4>
                   </div>
                   <span className="px-3 py-1 rounded-full bg-[#ebf5ff] dark:bg-white/10 text-[#006194] dark:text-[#93ccff] text-xs font-bold">
-                    Live Sensor: Ouaddar Point
+                    {t("Live Sensor: Ouaddar Point")}
                   </span>
                 </div>
 
                 {/* Swell Forecast Chart */}
                 <div className="w-full bg-[#ebf5ff] dark:bg-white/5 p-6 rounded-xl border border-[#bfc7d2]/20">
                   <div className="flex items-center justify-between text-[#3f4850] dark:text-[#cadced] text-xs font-semibold mb-2">
-                    <span>Morning Tide (06:45)</span>
-                    <span>Midday Swell Peak (13:30)</span>
-                    <span>Sunset Glass-Off (18:15)</span>
+                    <span>{t("Morning Tide (06:45)")}</span>
+                    <span>{t("Midday Swell Peak (13:30)")}</span>
+                    <span>{t("Sunset Glass-Off (18:15)")}</span>
                   </div>
                   <svg className="w-full h-24 overflow-visible text-[#006194] dark:text-[#93ccff]" viewBox="0 0 700 120">
                     <defs>
@@ -465,18 +459,18 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                       x="360"
                       y="14"
                     >
-                      2.2m @ 14s (Optimal)
+                      {t("2.2m @ 14s (Optimal)")}
                     </text>
                   </svg>
                   <div className="flex items-center justify-between text-[#3f4850] dark:text-[#cadced] text-xs mt-3 pt-3 border-t border-[#bfc7d2]/20">
                     <span className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-[#006194]"></span> 1.4m Low Tide Shorebreak
+                      <span className="w-2 h-2 rounded-full bg-[#006194]"></span> {t("1.4m Low Tide Shorebreak")}
                     </span>
                     <span className="flex items-center gap-1.5 font-bold text-[#0b1d29] dark:text-white">
-                      <span className="w-2 h-2 rounded-full bg-[#006194]"></span> Peak Point Session: 2.2m Offshore
+                      <span className="w-2 h-2 rounded-full bg-[#006194]"></span> {t("Peak Point Session: 2.2m Offshore")}
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-[#006194]"></span> 1.7m Sunset Peeler
+                      <span className="w-2 h-2 rounded-full bg-[#006194]"></span> {t("1.7m Sunset Peeler")}
                     </span>
                   </div>
                 </div>
@@ -489,7 +483,7 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                 <div className="flex items-baseline justify-between mb-6 pb-6 border-b border-[#bfc7d2]/20">
                   <div>
                     <span className="font-serif-display text-3xl font-bold">€145</span>
-                    <span className="text-xs text-[#3f4850] dark:text-[#cadced]"> / night</span>
+                    <span className="text-xs text-[#3f4850] dark:text-[#cadced]"> {t("/ night")}</span>
                   </div>
                   <div className="flex items-center gap-1 text-[#006194] dark:text-[#93ccff]">
                     <span
@@ -499,7 +493,7 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                       star
                     </span>
                     <span className="text-sm font-bold">4.98</span>
-                    <span className="text-xs text-[#3f4850] dark:text-[#cadced]">(42 reviews)</span>
+                    <span className="text-xs text-[#3f4850] dark:text-[#cadced]">{t("(42 reviews)")}</span>
                   </div>
                 </div>
 
@@ -515,7 +509,7 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                   <div className="grid grid-cols-2 gap-2 bg-[#ebf5ff] dark:bg-white/5 p-2 rounded-xl border border-[#bfc7d2]/20">
                     <div className="flex flex-col p-2">
                       <label className="text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">
-                        Check-In
+                        {t("Check-In")}
                       </label>
                       <input
                         className="bg-transparent text-xs md:text-sm font-semibold text-[#0b1d29] dark:text-white focus:outline-none cursor-pointer mt-1"
@@ -526,7 +520,7 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                     </div>
                     <div className="flex flex-col p-2">
                       <label className="text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">
-                        Check-Out
+                        {t("Check-Out")}
                       </label>
                       <input
                         className="bg-transparent text-xs md:text-sm font-semibold text-[#0b1d29] dark:text-white focus:outline-none cursor-pointer mt-1"
@@ -540,22 +534,22 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                   {/* Guests Selector */}
                   <div className="bg-[#ebf5ff] dark:bg-white/5 p-4 rounded-xl flex flex-col gap-1 border border-[#bfc7d2]/20">
                     <label className="text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">
-                      Guests &amp; Surfers
+                      {t("Guests & Surfers")}
                     </label>
                     <select
                       value={guestChoice}
                       onChange={(e) => setGuestChoice(e.target.value)}
                       className="bg-transparent text-xs md:text-sm font-semibold text-[#0b1d29] dark:text-white focus:outline-none cursor-pointer"
                     >
-                      <option value="2">2 Adults (1 King Bed)</option>
-                      <option value="1">1 Adult (Solo Traveler)</option>
+                      <option value="2">{t("2 Adults (1 King Bed)")}</option>
+                      <option value="1">{t("1 Adult (Solo Traveler)")}</option>
                     </select>
                   </div>
 
                   {/* Add-On Extras Pills */}
                   <div className="flex flex-col gap-2 pt-2">
                     <span className="text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">
-                      Enhance Your Stay
+                      {t("Enhance Your Stay")}
                     </span>
                     <label className="flex items-center justify-between p-3 rounded-xl bg-[#ebf5ff] dark:bg-white/5 cursor-pointer hover:bg-[#e0f0ff] dark:hover:bg-white/10 transition-colors border border-[#bfc7d2]/20">
                       <div className="flex items-center gap-3">
@@ -566,11 +560,11 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                           type="checkbox"
                         />
                         <span className="text-xs font-medium text-[#0b1d29] dark:text-white">
-                          Daily Organic Berber Breakfast
+                          {t("Daily Organic Berber Breakfast")}
                         </span>
                       </div>
                       <span className="text-xs font-bold text-[#006194] dark:text-[#93ccff]">
-                        Included
+                        {t("Included")}
                       </span>
                     </label>
 
@@ -583,11 +577,11 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                           type="checkbox"
                         />
                         <span className="text-xs font-medium text-[#0b1d29] dark:text-white">
-                          Unlimited Surfboard Quiver
+                          {t("Unlimited Surfboard Quiver")}
                         </span>
                       </div>
                       <span className="text-xs font-semibold text-[#0b1d29] dark:text-white">
-                        +€20 / day
+                        {t("+€20 / day")}
                       </span>
                     </label>
 
@@ -600,7 +594,7 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                           type="checkbox"
                         />
                         <span className="text-xs font-medium text-[#0b1d29] dark:text-white">
-                          Agadir Airport (AGA) Private Transfer
+                          {t("Agadir Airport (AGA) Private Transfer")}
                         </span>
                       </div>
                       <span className="text-xs font-semibold text-[#0b1d29] dark:text-white">
@@ -612,27 +606,27 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                   {/* Dynamic Price Breakdown */}
                   <div className="flex flex-col gap-2 pt-4 pb-2 text-xs md:text-sm text-[#3f4850] dark:text-[#cadced] border-t border-[#bfc7d2]/20">
                     <div className="flex justify-between">
-                      <span>€145 × {nights} nights</span>
+                      <span>€145 × {nights} {t("nights")}</span>
                       <span>€{baseRoomTotal}</span>
                     </div>
                     {quiverAddon && (
                       <div className="flex justify-between">
-                        <span>Quiver Pass ({nights} days)</span>
+                        <span>{t("Quiver Pass (")}{nights} {t("days)")}</span>
                         <span>€{quiverTotal}</span>
                       </div>
                     )}
                     {transferAddon && (
                       <div className="flex justify-between">
-                        <span>Airport Transfer (Round trip)</span>
+                        <span>{t("Airport Transfer (Round trip)")}</span>
                         <span>€35</span>
                       </div>
                     )}
                     <div className="flex justify-between">
-                      <span>Tourist &amp; Eco Tax</span>
+                      <span>{t("Tourist & Eco Tax")}</span>
                       <span>€{touristTax}</span>
                     </div>
                     <div className="flex justify-between pt-3 text-base font-bold text-[#0b1d29] dark:text-white border-t border-[#bfc7d2]/20">
-                      <span>Total Amount</span>
+                      <span>{t("Total Amount")}</span>
                       <span className="text-[#006194] dark:text-[#93ccff]">€{grandTotal}</span>
                     </div>
                   </div>
@@ -641,7 +635,7 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                     type="submit"
                     className="w-full py-4 rounded-xl bg-[#006194] hover:bg-[#007bb9] text-white text-sm font-semibold shadow-lg hover:shadow-[#006194]/30 transition-all active:scale-[0.98]"
                   >
-                    Instant Book Sea View Room
+                    {t("Instant Book Sea View Room")}
                   </button>
 
                   <button
@@ -652,7 +646,7 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                     <span className="material-symbols-outlined text-[#006194] dark:text-[#93ccff] text-[20px]">
                       chat
                     </span>
-                    Enquire via WhatsApp Concierge
+                    {t("Enquire via WhatsApp Concierge")}
                   </button>
                 </form>
 
@@ -661,13 +655,13 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                     <span className="material-symbols-outlined text-[16px] text-[#00628d] dark:text-[#89ceff]">
                       check_circle
                     </span>{' '}
-                    Free cancellation (14d)
+                    {t("Free cancellation (14d)")}
                   </span>
                   <span className="flex items-center gap-1">
                     <span className="material-symbols-outlined text-[16px] text-[#00628d] dark:text-[#89ceff]">
                       lock
                     </span>{' '}
-                    Best rate guarantee
+                    {t("Best rate guarantee")}
                   </span>
                 </div>
               </div>
@@ -677,17 +671,16 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                 <div className="w-14 h-14 rounded-full overflow-hidden shrink-0 bg-[#006194]/20 border border-white">
                   <img
                     className="w-full h-full object-cover"
-                    alt="Portrait of Yassine"
+                    alt={t("Portrait of Yassine")}
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5FzS1saCrXyp8O2ZAvTjDMZyy6k8C4KiC11VwWUiOyyJmFTi4axzioq1e-Jns5Bo9uAoE72Qgybw77tiNKZPASm_5fSbQY57l5NTSVpuGj2ls3pYyuxHAM2SkG1xHTzf9vjGtoCVqYfomNyZsBxbm8ZXJE49_pb0JY0n4GtS4inFoHg4MFGymCwpOl5XAMRdO4y58Z0ME8BPqemv7qqj0qoEwLlfTj4OygtC2fo4DRsknoFakual-"
                   />
                 </div>
                 <div className="flex flex-col">
                   <span className="font-serif-display text-lg text-[#0b1d29] dark:text-white font-semibold">
-                    Yassine • Head Guide
+                    {t("Yassine • Head Guide")}
                   </span>
                   <p className="text-xs text-[#3f4850] dark:text-[#cadced] mt-0.5 leading-relaxed">
-                    &ldquo;Room 204 gets the first morning offshore breeze. Ask me anytime for the
-                    daily secret spot forecast.&rdquo;
+                    {t("“Room 204 gets the first morning offshore breeze. Ask me anytime for the daily secret spot forecast.”")}
                   </p>
                 </div>
               </div>
@@ -701,17 +694,17 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
         <div className="flex items-end justify-between mb-10">
           <div>
             <span className="text-xs uppercase tracking-widest text-[#675d4d] dark:text-[#d3c4b1] font-bold">
-              Discover Alternatives
+              {t("Discover Alternatives")}
             </span>
             <h3 className="font-serif-display text-2xl md:text-4xl text-[#0b1d29] dark:text-white mt-1">
-              Other Available Rooms &amp; Suites
+              {t("Other Available Rooms & Suites")}
             </h3>
           </div>
           <button
             onClick={() => window.scrollTo({ top: 400, behavior: 'smooth' })}
             className="hidden sm:inline-flex items-center gap-1 text-xs md:text-sm font-semibold text-[#006194] dark:text-[#93ccff] hover:underline"
           >
-            View All 9 Accommodations <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+            {t("View All 9 Accommodations")} <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
           </button>
         </div>
 
@@ -724,32 +717,32 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
               <div className="h-60 overflow-hidden relative">
                 <img
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  alt={rel.name}
+                  alt={t(rel.name)}
                   src={rel.image}
                 />
                 <span className="absolute top-3 left-3 bg-white/90 dark:bg-[#0b1d29]/90 px-3 py-1 rounded-full text-xs font-bold text-[#675d4d] dark:text-[#d3c4b1] uppercase">
-                  {rel.badge}
+                  {t(rel.badge)}
                 </span>
               </div>
               <div className="p-6 flex flex-col justify-between">
                 <div>
                   <h4 className="font-serif-display text-xl text-[#0b1d29] dark:text-white font-semibold group-hover:text-[#006194] dark:group-hover:text-[#93ccff] transition-colors">
-                    {rel.name}
+                    {t(rel.name)}
                   </h4>
                   <p className="text-xs text-[#3f4850] dark:text-[#cadced] mt-1 leading-relaxed">
-                    {rel.desc}
+                    {t(rel.desc)}
                   </p>
                 </div>
                 <div className="mt-4 pt-4 border-t border-[#bfc7d2]/20 flex items-center justify-between">
                   <span className="font-serif-display text-xl font-bold text-[#006194] dark:text-[#93ccff]">
                     €{rel.price}
-                    <span className="text-xs font-normal text-[#3f4850] dark:text-[#cadced]">/nt</span>
+                    <span className="text-xs font-normal text-[#3f4850] dark:text-[#cadced]">{t("/nt")}</span>
                   </span>
                   <button
                     onClick={() => onNavigate('booking')}
                     className="text-xs font-bold text-[#0b1d29] dark:text-white hover:text-[#006194] dark:hover:text-[#93ccff]"
                   >
-                    Reserve Now &rarr;
+                    {t("Reserve Now →")}
                   </button>
                 </div>
               </div>
@@ -763,14 +756,13 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
         <div className="max-w-[960px] mx-auto px-4 md:px-12">
           <div className="text-center mb-12">
             <span className="text-xs uppercase tracking-[0.2em] font-bold text-[#675d4d] dark:text-[#d3c4b1]">
-              Peace of Mind
+              {t("Peace of Mind")}
             </span>
             <h3 className="font-serif-display text-3xl sm:text-5xl text-[#0b1d29] dark:text-white mt-1">
-              Frequently Asked Questions
+              {t("Frequently Asked Questions")}
             </h3>
             <p className="text-xs md:text-sm text-[#3f4850] dark:text-[#cadced] mt-2 max-w-lg mx-auto">
-              Everything you need to know about reserving your stay, surf equipment, check-in, and
-              life at Blue Wave Lodge.
+              {t("Everything you need to know about reserving your stay, surf equipment, check-in, and life at Blue Wave Lodge.")}
             </p>
           </div>
 
@@ -785,9 +777,9 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                   <button
                     type="button"
                     onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
-                    className="w-full p-6 text-left flex items-center justify-between gap-4 font-serif-display text-lg text-[#0b1d29] dark:text-white hover:text-[#006194] transition-colors"
+                    className="w-full p-6 text-start flex items-center justify-between gap-4 font-serif-display text-lg text-[#0b1d29] dark:text-white hover:text-[#006194] transition-colors"
                   >
-                    <span>{faq.question}</span>
+                    <span>{t(faq.question)}</span>
                     <span
                       className={`material-symbols-outlined text-[#006194] dark:text-[#93ccff] transition-transform duration-300 ${
                         isOpen ? 'rotate-180' : ''
@@ -798,7 +790,7 @@ export const StayView: React.FC<StayViewProps> = ({ onNavigate, onOpenConcierge 
                   </button>
                   {isOpen && (
                     <div className="px-6 pb-6 text-[#3f4850] dark:text-[#cadced] text-xs md:text-sm leading-relaxed border-t border-[#bfc7d2]/10 pt-4">
-                      {faq.answer}
+                      {t(faq.answer)}
                     </div>
                   )}
                 </div>

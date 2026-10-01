@@ -1,6 +1,7 @@
+import { getTranslator, formatDate } from '../i18n/translations';
 import React, { useState } from 'react';
 import emailjs from '@emailjs/browser';
-import { ScreenType } from '../types';
+import { ScreenType, Language } from '../types';
 
 // ─── EmailJS config ───────────────────────────────────────────────
 // 1. Sign up at https://www.emailjs.com (free)
@@ -18,11 +19,13 @@ const EMAILJS_TEMPLATE_ID = 'template_4e7gprj';
 const EMAILJS_PUBLIC_KEY  = 'yplWBRaPT0ZimeCpR';
 
 interface BookingViewProps {
+  language: Language;
   onNavigate: (screen: ScreenType) => void;
   onOpenConcierge: () => void;
 }
 
-export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConcierge }) => {
+export const BookingView: React.FC<BookingViewProps> = ({ language, onNavigate, onOpenConcierge }) => {
+  const t = getTranslator(language);
   // Stepper state
   const [activeStep, setActiveStep] = useState<string>('step-trip');
 
@@ -116,7 +119,7 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!termsAccepted) {
-      alert('Please accept the Sanctuary Terms & Booking Policy to proceed.');
+      alert(t("Please accept the Sanctuary Terms & Booking Policy to proceed."));
       return;
     }
 
@@ -185,10 +188,10 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white dark:bg-[#0b1d29] text-[#006194] dark:text-[#93ccff] shadow-sm font-semibold">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              Imi Ouaddar • Clean Offshore
+              {t("Imi Ouaddar • Clean Offshore")}
             </span>
             <span className="hidden sm:inline">
-              Atlantic Swell: 4.5ft @ 14s NW | Water: 19°C | Next High Tide: 16:42
+              {t("Atlantic Swell: 4.5ft @ 14s NW | Water: 19°C | Next High Tide: 16:42")}
             </span>
           </div>
           <div className="flex items-center gap-4 text-xs">
@@ -196,10 +199,10 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
               <span className="material-symbols-outlined text-[16px] text-[#00628d] dark:text-[#89ceff]">
                 verified_user
               </span>{' '}
-              Best Rate Direct Guarantee
+              {t("Best Rate Direct Guarantee")}
             </span>
             <span className="hidden md:inline text-[#bfc7d2]">•</span>
-            <span className="hidden md:inline">2h Response Time for Custom Requests</span>
+            <span className="hidden md:inline">{t("2h Response Time for Custom Requests")}</span>
           </div>
         </div>
       </div>
@@ -210,14 +213,13 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="max-w-2xl">
               <span className="text-xs font-bold text-[#006194] dark:text-[#93ccff] uppercase tracking-widest block mb-2">
-                Bespoke Sanctuary Booking
+                {t("Bespoke Sanctuary Booking")}
               </span>
               <h1 className="font-serif-display text-4xl sm:text-6xl text-[#0b1d29] dark:text-white tracking-tight">
-                Reserve Your Ocean Stay
+                {t("Reserve Your Ocean Stay")}
               </h1>
               <p className="text-base text-[#3f4850] dark:text-[#cadced] mt-3">
-                Seamless booking for artisanal lodge rooms, private ocean point break coaching, and
-                Berber coastal nourishment.
+                {t("Seamless booking for artisanal lodge rooms, private ocean point break coaching, and Berber coastal nourishment.")}
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -227,7 +229,7 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white dark:bg-white/10 hover:bg-[#ebf5ff] text-[#0b1d29] dark:text-white text-xs md:text-sm font-semibold transition-all shadow-sm border border-[#bfc7d2]/20"
               >
                 <span className="material-symbols-outlined text-[18px]">visibility</span>
-                Preview Confirmation State
+                {t("Preview Confirmation State")}
               </button>
             </div>
           </div>
@@ -262,7 +264,7 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                     >
                       {step.num}
                     </span>
-                    <span>{step.label}</span>
+                    <span>{t(step.label)}</span>
                   </button>
                   {idx < arr.length - 1 && <span className="w-6 h-[1px] bg-[#bfc7d2]/40"></span>}
                 </React.Fragment>
@@ -289,15 +291,15 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                   </span>
                   <div>
                     <h2 className="font-serif-display text-2xl text-[#0b1d29] dark:text-white font-semibold">
-                      Select Travel Dates
+                      {t("Select Travel Dates")}
                     </h2>
                     <p className="text-xs text-[#3f4850] dark:text-[#cadced]">
-                      Recommended: 7-night Atlantic swell cycle (Saturday to Saturday)
+                      {t("Recommended: 7-night Atlantic swell cycle (Saturday to Saturday)")}
                     </p>
                   </div>
                 </div>
                 <span className="px-3 py-1 rounded-full bg-[#f0e0cc] text-[#221a0e] text-xs font-semibold">
-                  Peak Winter Swell
+                  {t("Peak Winter Swell")}
                 </span>
               </div>
 
@@ -305,7 +307,7 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="bg-[#ebf5ff] dark:bg-white/5 p-4 rounded-xl flex flex-col gap-1 border border-[#bfc7d2]/20">
                   <label className="text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">
-                    Check-In
+                    {t("Check-In")}
                   </label>
                   <div className="flex items-center gap-2 mt-1">
                     <span className="material-symbols-outlined text-[#006194] dark:text-[#93ccff] text-[20px]">
@@ -319,13 +321,13 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                     />
                   </div>
                   <span className="text-[11px] text-[#3f4850] dark:text-[#cadced]">
-                    Saturday • Sunset Arrival
+                    {t("Saturday • Sunset Arrival")}
                   </span>
                 </div>
 
                 <div className="bg-[#ebf5ff] dark:bg-white/5 p-4 rounded-xl flex flex-col gap-1 border border-[#bfc7d2]/20">
                   <label className="text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">
-                    Check-Out
+                    {t("Check-Out")}
                   </label>
                   <div className="flex items-center gap-2 mt-1">
                     <span className="material-symbols-outlined text-[#006194] dark:text-[#93ccff] text-[20px]">
@@ -339,19 +341,19 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                     />
                   </div>
                   <span className="text-[11px] text-[#3f4850] dark:text-[#cadced]">
-                    Saturday • Late Ocean Dip
+                    {t("Saturday • Late Ocean Dip")}
                   </span>
                 </div>
 
                 <div className="bg-[#006194]/10 dark:bg-white/10 p-4 rounded-xl flex flex-col justify-center items-center text-center border border-[#bfc7d2]/20">
                   <span className="text-[10px] uppercase font-bold text-[#006194] dark:text-[#93ccff]">
-                    Duration
+                    {t("Duration")}
                   </span>
                   <span className="font-serif-display text-2xl text-[#006194] dark:text-[#93ccff] font-bold">
-                    {nights} Nights
+                    {nights} {t("Nights")}
                   </span>
                   <span className="text-[11px] text-[#3f4850] dark:text-[#cadced]">
-                    Optimal Ocean Alignment
+                    {t("Optimal Ocean Alignment")}
                   </span>
                 </div>
               </div>
@@ -359,50 +361,50 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
               {/* Interactive Visual Calendar Strip */}
               <div className="bg-[#ebf5ff]/60 dark:bg-white/5 p-4 rounded-xl border border-[#bfc7d2]/20">
                 <div className="flex items-center justify-between mb-3 text-xs md:text-sm font-semibold text-[#0b1d29] dark:text-white">
-                  <span>November 2025 — Swell Season</span>
+                  <span>{t("November 2025 — Swell Season")}</span>
                   <span className="px-2 py-0.5 rounded text-[11px] bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300">
-                    High offshore probability
+                    {t("High offshore probability")}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-7 gap-1.5 text-center text-xs text-[#3f4850] dark:text-[#cadced]">
-                  <span>Sa (08)</span>
-                  <span>Su (09)</span>
-                  <span>Mo (10)</span>
-                  <span>Tu (11)</span>
-                  <span>We (12)</span>
-                  <span>Th (13)</span>
-                  <span>Fr (14)</span>
+                  <span>{t("Sa (08)")}</span>
+                  <span>{t("Su (09)")}</span>
+                  <span>{t("Mo (10)")}</span>
+                  <span>{t("Tu (11)")}</span>
+                  <span>{t("We (12)")}</span>
+                  <span>{t("Th (13)")}</span>
+                  <span>{t("Fr (14)")}</span>
                 </div>
 
                 <div className="grid grid-cols-7 gap-1.5 mt-2">
                   <div className="bg-[#006194] text-white rounded-lg py-2.5 flex flex-col items-center shadow-sm">
                     <span className="font-bold text-xs">08</span>
-                    <span className="text-[9px] opacity-80">Arrival</span>
+                    <span className="text-[9px] opacity-80">{t("Arrival")}</span>
                   </div>
                   <div className="bg-[#cce5ff] dark:bg-white/10 text-[#001d31] dark:text-white rounded-lg py-2.5 flex flex-col items-center">
                     <span className="font-bold text-xs">09</span>
-                    <span className="text-[9px] text-[#00628d] dark:text-[#89ceff]">Anchor Pt</span>
+                    <span className="text-[9px] text-[#00628d] dark:text-[#89ceff]">{t('Anchor Pt')}</span>
                   </div>
                   <div className="bg-[#cce5ff] dark:bg-white/10 text-[#001d31] dark:text-white rounded-lg py-2.5 flex flex-col items-center">
                     <span className="font-bold text-xs">10</span>
-                    <span className="text-[9px] text-[#00628d] dark:text-[#89ceff]">Killers</span>
+                    <span className="text-[9px] text-[#00628d] dark:text-[#89ceff]">{t('Killers')}</span>
                   </div>
                   <div className="bg-[#cce5ff] dark:bg-white/10 text-[#001d31] dark:text-white rounded-lg py-2.5 flex flex-col items-center">
                     <span className="font-bold text-xs">11</span>
-                    <span className="text-[9px] text-[#00628d] dark:text-[#89ceff]">Boilers</span>
+                    <span className="text-[9px] text-[#00628d] dark:text-[#89ceff]">{t('Boilers')}</span>
                   </div>
                   <div className="bg-[#cce5ff] dark:bg-white/10 text-[#001d31] dark:text-white rounded-lg py-2.5 flex flex-col items-center">
                     <span className="font-bold text-xs">12</span>
-                    <span className="text-[9px] text-[#00628d] dark:text-[#89ceff]">Imsouane</span>
+                    <span className="text-[9px] text-[#00628d] dark:text-[#89ceff]">{t('Imsouane')}</span>
                   </div>
                   <div className="bg-[#cce5ff] dark:bg-white/10 text-[#001d31] dark:text-white rounded-lg py-2.5 flex flex-col items-center">
                     <span className="font-bold text-xs">13</span>
-                    <span className="text-[9px] text-[#00628d] dark:text-[#89ceff]">Tamri</span>
+                    <span className="text-[9px] text-[#00628d] dark:text-[#89ceff]">{t('Tamri')}</span>
                   </div>
                   <div className="bg-[#cce5ff] dark:bg-white/10 text-[#001d31] dark:text-white rounded-lg py-2.5 flex flex-col items-center">
                     <span className="font-bold text-xs">14</span>
-                    <span className="text-[9px] text-[#00628d] dark:text-[#89ceff]">Sunset</span>
+                    <span className="text-[9px] text-[#00628d] dark:text-[#89ceff]">{t("Sunset")}</span>
                   </div>
                 </div>
               </div>
@@ -419,10 +421,10 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                 </span>
                 <div>
                   <h2 className="font-serif-display text-2xl text-[#0b1d29] dark:text-white font-semibold">
-                    Guests &amp; Accommodations
+                    {t("Guests & Accommodations")}
                   </h2>
                   <p className="text-xs text-[#3f4850] dark:text-[#cadced]">
-                    Lodge accommodates adults and young ocean explorers
+                    {t("Lodge accommodates adults and young ocean explorers")}
                   </p>
                 </div>
               </div>
@@ -431,8 +433,8 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                 {/* Adults Counter */}
                 <div className="p-4 bg-[#ebf5ff] dark:bg-white/5 rounded-xl flex items-center justify-between border border-[#bfc7d2]/20">
                   <div>
-                    <span className="text-sm font-bold text-[#0b1d29] dark:text-white block">Adults</span>
-                    <span className="text-xs text-[#3f4850] dark:text-[#cadced]">Age 13+</span>
+                    <span className="text-sm font-bold text-[#0b1d29] dark:text-white block">{t("Adults")}</span>
+                    <span className="text-xs text-[#3f4850] dark:text-[#cadced]">{t("Age 13+")}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <button
@@ -456,8 +458,8 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                 {/* Children Counter */}
                 <div className="p-4 bg-[#ebf5ff] dark:bg-white/5 rounded-xl flex items-center justify-between border border-[#bfc7d2]/20">
                   <div>
-                    <span className="text-sm font-bold text-[#0b1d29] dark:text-white block">Children</span>
-                    <span className="text-xs text-[#3f4850] dark:text-[#cadced]">Ages 4-12</span>
+                    <span className="text-sm font-bold text-[#0b1d29] dark:text-white block">{t("Children")}</span>
+                    <span className="text-xs text-[#3f4850] dark:text-[#cadced]">{t("Ages 4-12")}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <button
@@ -482,9 +484,9 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                 <div className="p-4 bg-[#ebf5ff] dark:bg-white/5 rounded-xl flex items-center justify-between border border-[#bfc7d2]/20">
                   <div>
                     <span className="text-sm font-bold text-[#0b1d29] dark:text-white block">
-                      Suites / Rooms
+                      {t("Suites / Rooms")}
                     </span>
-                    <span className="text-xs text-[#3f4850] dark:text-[#cadced]">Max 4 suites</span>
+                    <span className="text-xs text-[#3f4850] dark:text-[#cadced]">{t("Max 4 suites")}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <button
@@ -519,15 +521,15 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                   </span>
                   <div>
                     <h2 className="font-serif-display text-2xl text-[#0b1d29] dark:text-white font-semibold">
-                      Select Sanctuary Room
+                      {t("Select Sanctuary Room")}
                     </h2>
                     <p className="text-xs text-[#3f4850] dark:text-[#cadced]">
-                      Handcrafted Moroccan finishes with organic linens and unhindered ocean horizons
+                      {t("Handcrafted Moroccan finishes with organic linens and unhindered ocean horizons")}
                     </p>
                   </div>
                 </div>
                 <span className="text-[10px] font-bold uppercase text-[#675d4d] dark:text-[#d3c4b1] bg-[#f0e0cc] px-3 py-1 rounded-full">
-                  All Include Berber Breakfast
+                  {t("All Include Berber Breakfast")}
                 </span>
               </div>
 
@@ -544,11 +546,11 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                   <div className="w-full md:w-56 h-44 rounded-xl overflow-hidden relative shrink-0">
                     <img
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      alt="Sea View Suite"
+                      alt={t("Sea View Suite")}
                       src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjPhEshKOCdBbP6dinv9Djp264kPh7CMjZsCWBxw2GZDlGtP5qRtU4It3Ln5lBbzOyZOV9zWQxNArwRl-cm3KfPb6_bkY18pImb9ZqQMVI99ClyRWS0gsTkJZ38qnW4K_h9mgJvgrNIC2YNhuFPnaonzF6e6rFYpNRmRhzBEA34ysdinmCB7i-i558pZVcEsilRgnyjcTG0cyCF8_hvCMuGQuaIO-TXyRPtPhYQXWwS1Nbsw2glVNt"
                     />
                     <span className="absolute top-2.5 left-2.5 bg-white/90 dark:bg-[#0b1d29]/90 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase text-[#006194] dark:text-[#93ccff]">
-                      Ocean Front
+                      {t("Ocean Front")}
                     </span>
                   </div>
 
@@ -557,19 +559,17 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                       <div className="flex items-start justify-between gap-4">
                         <div>
                           <h3 className="font-serif-display text-xl text-[#0b1d29] dark:text-white font-semibold">
-                            Sea View Balcony Suite
+                            {t("Sea View Balcony Suite")}
                           </h3>
                           <p className="text-xs text-[#3f4850] dark:text-[#cadced] mt-1 leading-relaxed">
-                            Private shaded terrace facing the Atlantic breakers, handcrafted cedar
-                            furniture, king bed, and artisanal tadelakt bathroom with organic argan
-                            amenities.
+                            {t("Private shaded terrace facing the Atlantic breakers, handcrafted cedar furniture, king bed, and artisanal tadelakt bathroom with organic argan amenities.")}
                           </p>
                         </div>
-                        <div className="text-right shrink-0">
+                        <div className="text-end shrink-0">
                           <span className="font-serif-display text-xl font-bold text-[#006194] dark:text-[#93ccff]">
                             €180
                           </span>
-                          <span className="text-[10px] text-[#3f4850] dark:text-[#cadced] block">/ night</span>
+                          <span className="text-[10px] text-[#3f4850] dark:text-[#cadced] block">{t("/ night")}</span>
                         </div>
                       </div>
 
@@ -578,25 +578,25 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                           <span className="material-symbols-outlined text-[16px] text-[#00628d] dark:text-[#89ceff]">
                             king_bed
                           </span>{' '}
-                          King Size
+                          {t("King Size")}
                         </span>
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#e0f0ff] dark:bg-white/5">
                           <span className="material-symbols-outlined text-[16px] text-[#00628d] dark:text-[#89ceff]">
                             balcony
                           </span>{' '}
-                          Ocean Vista
+                          {t("Ocean Vista")}
                         </span>
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#e0f0ff] dark:bg-white/5">
                           <span className="material-symbols-outlined text-[16px] text-[#00628d] dark:text-[#89ceff]">
                             bathtub
                           </span>{' '}
-                          Ensuite Plaster Bath
+                          {t("Ensuite Plaster Bath")}
                         </span>
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#e0f0ff] dark:bg-white/5">
                           <span className="material-symbols-outlined text-[16px] text-[#00628d] dark:text-[#89ceff]">
                             surfing
                           </span>{' '}
-                          Board Storage
+                          {t("Board Storage")}
                         </span>
                       </div>
                     </div>
@@ -604,10 +604,10 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                     <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#bfc7d2]/15">
                       <span className="text-emerald-700 dark:text-emerald-400 text-xs font-semibold flex items-center gap-1">
                         <span className="material-symbols-outlined text-[16px]">check_circle</span>
-                        Only 2 left for your dates
+                        {t("Only 2 left for your dates")}
                       </span>
                       <span className="text-xs font-bold text-[#006194] dark:text-[#93ccff] flex items-center gap-1">
-                        {selectedRoom === 'sea-view' ? 'Selected Room' : 'Select'}
+                        {selectedRoom === 'sea-view' ? t("Selected Room") : t("Select")}
                         <span className="material-symbols-outlined text-[18px]">
                           {selectedRoom === 'sea-view' ? 'radio_button_checked' : 'radio_button_unchecked'}
                         </span>
@@ -630,11 +630,11 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                   <div className="w-full md:w-56 h-44 rounded-xl overflow-hidden relative shrink-0">
                     <img
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      alt="Pool & Garden Terrace Room"
+                      alt={t("Pool & Garden Terrace Room")}
                       src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHWsLKmyr9a7XzvoA3BL-aGbHIqUEQksWKe2DFsU995yn4lEPs7Ikc7OAJKhMrDuFpdGUABa2ryt1PZF2LMBg6FGvshgHrv16_OgEPCrAIHRFysu4SVlANhiXvItdGtm2RXT7j5y2hpa_cbF0xTJ38KYAl12ME-wYQv16SSgEHoWbb4Chl2_AgpDkOzRRDii8EkqSk1ObIW6QhSTMT95Y9llT3cz-FebBqxZagaSuBFzslbG9x1P3p"
                     />
                     <span className="absolute top-2.5 left-2.5 bg-white/90 dark:bg-[#0b1d29]/90 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase text-[#675d4d] dark:text-[#d3c4b1]">
-                      Pool Access
+                      {t("Pool Access")}
                     </span>
                   </div>
 
@@ -643,18 +643,17 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                       <div className="flex items-start justify-between gap-4">
                         <div>
                           <h3 className="font-serif-display text-xl text-[#0b1d29] dark:text-white font-semibold">
-                            Pool &amp; Garden Terrace
+                            {t("Pool & Garden Terrace")}
                           </h3>
                           <p className="text-xs text-[#3f4850] dark:text-[#cadced] mt-1 leading-relaxed">
-                            Direct garden step-out to the heated stone saltwater infinity pool. Ambient
-                            morning shadow and calm courtyard seclusion.
+                            {t("Direct garden step-out to the heated stone saltwater infinity pool. Ambient morning shadow and calm courtyard seclusion.")}
                           </p>
                         </div>
-                        <div className="text-right shrink-0">
+                        <div className="text-end shrink-0">
                           <span className="font-serif-display text-xl font-bold text-[#006194] dark:text-[#93ccff]">
                             €150
                           </span>
-                          <span className="text-[10px] text-[#3f4850] dark:text-[#cadced] block">/ night</span>
+                          <span className="text-[10px] text-[#3f4850] dark:text-[#cadced] block">{t("/ night")}</span>
                         </div>
                       </div>
 
@@ -663,27 +662,27 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                           <span className="material-symbols-outlined text-[16px] text-[#00628d] dark:text-[#89ceff]">
                             pool
                           </span>{' '}
-                          Step to Water
+                          {t("Step to Water")}
                         </span>
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#e0f0ff] dark:bg-white/5">
                           <span className="material-symbols-outlined text-[16px] text-[#00628d] dark:text-[#89ceff]">
                             bed
                           </span>{' '}
-                          Queen or Twin
+                          {t("Queen or Twin")}
                         </span>
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#e0f0ff] dark:bg-white/5">
                           <span className="material-symbols-outlined text-[16px] text-[#00628d] dark:text-[#89ceff]">
                             spa
                           </span>{' '}
-                          Courtyard Calm
+                          {t("Courtyard Calm")}
                         </span>
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#bfc7d2]/15">
-                      <span className="text-[#3f4850] dark:text-[#cadced] text-xs">Available</span>
+                      <span className="text-[#3f4850] dark:text-[#cadced] text-xs">{t("Available")}</span>
                       <span className="text-xs font-bold text-[#006194] dark:text-[#93ccff] flex items-center gap-1">
-                        {selectedRoom === 'pool' ? 'Selected Room' : 'Select'}
+                        {selectedRoom === 'pool' ? t("Selected Room") : t("Select")}
                         <span className="material-symbols-outlined text-[18px]">
                           {selectedRoom === 'pool' ? 'radio_button_checked' : 'radio_button_unchecked'}
                         </span>
@@ -706,11 +705,11 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                   <div className="w-full md:w-56 h-44 rounded-xl overflow-hidden relative shrink-0">
                     <img
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      alt="Penthouse Ocean Residence"
+                      alt={t("Penthouse Ocean Residence")}
                       src="https://lh3.googleusercontent.com/aida-public/AB6AXuCj438Su7SxNp5WG-h9_S5JNyYDL1uRYtEBLgZh5yhOl-yBcSeINcXYECeG5LbucTrQNNRHv63ptiha7-E8er758e-ENrVWfwoBtrYxRCrAnWEnjSSYC5FallNCIKfpelXcYmdJeNKUedzlbtRdyh68MVxoAbk2a6oG2jjulww982RhIqbw5ztfiExfs-AJ_y99FEZs-BUA7t-hvDpPPX5v930DUiOljq2u46Qn4rDVPyhUE25mfMGs"
                     />
                     <span className="absolute top-2.5 left-2.5 bg-[#006194] text-white px-2.5 py-1 rounded-full text-[10px] font-bold uppercase">
-                      Signature Penthouse
+                      {t("Signature Penthouse")}
                     </span>
                   </div>
 
@@ -719,18 +718,17 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                       <div className="flex items-start justify-between gap-4">
                         <div>
                           <h3 className="font-serif-display text-xl text-[#0b1d29] dark:text-white font-semibold">
-                            Penthouse Ocean Residence
+                            {t("Penthouse Ocean Residence")}
                           </h3>
                           <p className="text-xs text-[#3f4850] dark:text-[#cadced] mt-1 leading-relaxed">
-                            Entire upper-level panoramic lodge flat with dual wrap-around sunset decks,
-                            private outdoor shower, fireplace, and lounge for wave observation.
+                            {t("Entire upper-level panoramic lodge flat with dual wrap-around sunset decks, private outdoor shower, fireplace, and lounge for wave observation.")}
                           </p>
                         </div>
-                        <div className="text-right shrink-0">
+                        <div className="text-end shrink-0">
                           <span className="font-serif-display text-xl font-bold text-[#006194] dark:text-[#93ccff]">
                             €320
                           </span>
-                          <span className="text-[10px] text-[#3f4850] dark:text-[#cadced] block">/ night</span>
+                          <span className="text-[10px] text-[#3f4850] dark:text-[#cadced] block">{t("/ night")}</span>
                         </div>
                       </div>
 
@@ -739,27 +737,27 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                           <span className="material-symbols-outlined text-[16px] text-[#00628d] dark:text-[#89ceff]">
                             qr_code_2
                           </span>{' '}
-                          270° Vista
+                          {t("270° Vista")}
                         </span>
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#e0f0ff] dark:bg-white/5">
                           <span className="material-symbols-outlined text-[16px] text-[#00628d] dark:text-[#89ceff]">
                             fireplace
                           </span>{' '}
-                          Fire Hearth
+                          {t("Fire Hearth")}
                         </span>
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#e0f0ff] dark:bg-white/5">
                           <span className="material-symbols-outlined text-[16px] text-[#00628d] dark:text-[#89ceff]">
                             groups
                           </span>{' '}
-                          Up to 4 Guests
+                          {t("Up to 4 Guests")}
                         </span>
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#bfc7d2]/15">
-                      <span className="text-[#3f4850] dark:text-[#cadced] text-xs">1 Residence remaining</span>
+                      <span className="text-[#3f4850] dark:text-[#cadced] text-xs">{t("1 Residence remaining")}</span>
                       <span className="text-xs font-bold text-[#006194] dark:text-[#93ccff] flex items-center gap-1">
-                        {selectedRoom === 'penthouse' ? 'Selected Room' : 'Select'}
+                        {selectedRoom === 'penthouse' ? t("Selected Room") : t("Select")}
                         <span className="material-symbols-outlined text-[18px]">
                           {selectedRoom === 'penthouse' ? 'radio_button_checked' : 'radio_button_unchecked'}
                         </span>
@@ -782,15 +780,15 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                   </span>
                   <div>
                     <h2 className="font-serif-display text-2xl text-[#0b1d29] dark:text-white font-semibold">
-                      Surf &amp; Coaching Program
+                      {t("Surf & Coaching Program")}
                     </h2>
                     <p className="text-xs text-[#3f4850] dark:text-[#cadced]">
-                      Would you like to add ocean sessions to your stay?
+                      {t("Would you like to add ocean sessions to your stay?")}
                     </p>
                   </div>
                 </div>
                 <span className="hidden sm:inline text-xs text-[#00628d] dark:text-[#89ceff] bg-[#c9e6ff]/40 dark:bg-white/10 px-3 py-1 rounded-full font-semibold">
-                  ISA Certified Coaches
+                  {t("ISA Certified Coaches")}
                 </span>
               </div>
 
@@ -815,8 +813,8 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                     }`}
                   >
                     <span className="material-symbols-outlined text-[24px]">{tier.icon}</span>
-                    <span className="text-xs font-bold leading-tight">{tier.title}</span>
-                    <span className="text-[10px] opacity-80">{tier.sub}</span>
+                    <span className="text-xs font-bold leading-tight">{t(tier.title)}</span>
+                    <span className="text-[10px] opacity-80">{t(tier.sub)}</span>
                   </button>
                 ))}
               </div>
@@ -824,17 +822,17 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
               {/* Multi-Guest Allocation Module */}
               <div className="bg-[#ebf5ff] dark:bg-white/5 p-5 rounded-xl flex flex-col gap-4 border border-[#bfc7d2]/20">
                 <span className="text-sm font-bold text-[#0b1d29] dark:text-white">
-                  Custom Guest Surf Assignments
+                  {t("Custom Guest Surf Assignments")}
                 </span>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Guest 1 */}
                   <div className="bg-white dark:bg-[#0b1d29] p-4 rounded-xl shadow-sm flex flex-col gap-2 border border-[#bfc7d2]/20">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-[#0b1d29] dark:text-white">
-                        Guest 1 (Lead Traveler)
+                        {t("Guest 1 (Lead Traveler)")}
                       </span>
                       <span className="px-2 py-0.5 rounded bg-[#cce5ff] text-[#001d31] text-[10px] font-semibold">
-                        Point Guiding
+                        {t("Point Guiding")}
                       </span>
                     </div>
                     <select
@@ -842,25 +840,25 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                       onChange={(e) => setGuest1Surf(e.target.value)}
                       className="w-full bg-[#ebf5ff] dark:bg-white/10 rounded-lg p-2.5 text-xs text-[#0b1d29] dark:text-white focus:outline-none"
                     >
-                      <option value="Advanced Guiding">Level 3: Intermediate/Advanced Point Break Guiding (+€320)</option>
-                      <option value="Beginner Coaching">Level 1: Daily Sandbank Surf Lessons (+€280)</option>
-                      <option value="Equipment Rental Only">Quiver Rental Only (Torq / Firewire) (+€120)</option>
-                      <option value="No Coaching">No Coaching</option>
+                      <option value="Advanced Guiding">{t("Level 3: Intermediate/Advanced Point Break Guiding (+€320)")}</option>
+                      <option value="Beginner Coaching">{t("Level 1: Daily Sandbank Surf Lessons (+€280)")}</option>
+                      <option value="Equipment Rental Only">{t("Quiver Rental Only (Torq / Firewire) (+€120)")}</option>
+                      <option value="No Coaching">{t("No Coaching")}</option>
                     </select>
                     <div className="flex items-center gap-2 text-[#3f4850] dark:text-[#cadced] text-[11px] pt-1">
                       <span className="material-symbols-outlined text-[16px] text-[#00628d] dark:text-[#89ceff]">
                         check
                       </span>
-                      <span>4x4 Beach Transfer &amp; Video Analysis Included</span>
+                      <span>{t("4x4 Beach Transfer & Video Analysis Included")}</span>
                     </div>
                   </div>
 
                   {/* Guest 2 */}
                   <div className="bg-white dark:bg-[#0b1d29] p-4 rounded-xl shadow-sm flex flex-col gap-2 border border-[#bfc7d2]/20">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-[#0b1d29] dark:text-white">Guest 2</span>
+                      <span className="text-xs font-bold text-[#0b1d29] dark:text-white">{t("Guest 2")}</span>
                       <span className="px-2 py-0.5 rounded bg-[#f0e0cc] text-[#221a0e] text-[10px] font-semibold">
-                        Lessons
+                        {t("Lessons")}
                       </span>
                     </div>
                     <select
@@ -868,16 +866,16 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                       onChange={(e) => setGuest2Surf(e.target.value)}
                       className="w-full bg-[#ebf5ff] dark:bg-white/10 rounded-lg p-2.5 text-xs text-[#0b1d29] dark:text-white focus:outline-none"
                     >
-                      <option value="Beginner Lessons">Level 1: Daily Sandbank Surf Lessons (+€280)</option>
-                      <option value="Improver Guiding">Level 2: Reef &amp; Point Transition (+€320)</option>
-                      <option value="Equipment Rental Only">Quiver Rental Only (+€120)</option>
-                      <option value="No Surf">No Surf Coaching</option>
+                      <option value="Beginner Lessons">{t("Level 1: Daily Sandbank Surf Lessons (+€280)")}</option>
+                      <option value="Improver Guiding">{t("Level 2: Reef & Point Transition (+€320)")}</option>
+                      <option value="Equipment Rental Only">{t("Quiver Rental Only (+€120)")}</option>
+                      <option value="No Surf">{t("No Surf Coaching")}</option>
                     </select>
                     <div className="flex items-center gap-2 text-[#3f4850] dark:text-[#cadced] text-[11px] pt-1">
                       <span className="material-symbols-outlined text-[16px] text-[#00628d] dark:text-[#89ceff]">
                         check
                       </span>
-                      <span>1:4 Coach Ratio + Soft-top &amp; 3/2mm Wetsuit</span>
+                      <span>{t("1:4 Coach Ratio + Soft-top & 3/2mm Wetsuit")}</span>
                     </div>
                   </div>
                 </div>
@@ -896,14 +894,14 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                   </span>
                   <div>
                     <h2 className="font-serif-display text-2xl text-[#0b1d29] dark:text-white font-semibold">
-                      Retreat Extras &amp; Coastal Flow
+                      {t("Retreat Extras & Coastal Flow")}
                     </h2>
                     <p className="text-xs text-[#3f4850] dark:text-[#cadced]">
-                      Elevate your stay with handpicked Berber wellness and seamless arrivals
+                      {t("Elevate your stay with handpicked Berber wellness and seamless arrivals")}
                     </p>
                   </div>
                 </div>
-                <span className="text-xs text-[#3f4850] dark:text-[#cadced]">Flexible Additions</span>
+                <span className="text-xs text-[#3f4850] dark:text-[#cadced]">{t("Flexible Additions")}</span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -918,16 +916,15 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-sm text-[#0b1d29] dark:text-white">
-                        Agadir Airport Transfer
+                        {t("Agadir Airport Transfer")}
                       </span>
                       <span className="text-sm font-bold text-[#006194] dark:text-[#93ccff]">€70</span>
                     </div>
                     <p className="text-xs text-[#3f4850] dark:text-[#cadced] mt-1 leading-relaxed">
-                      Round-trip private air-conditioned van from Agadir Al-Massira (AGA) right to our lodge
-                      gates.
+                      {t("Round-trip private air-conditioned van from Agadir Al-Massira (AGA) right to our lodge gates.")}
                     </p>
                     <span className="inline-block mt-2 text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">
-                      Private Driver • Surfboard Roof Rack
+                      {t("Private Driver • Surfboard Roof Rack")}
                     </span>
                   </div>
                 </label>
@@ -943,16 +940,15 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-sm text-[#0b1d29] dark:text-white">
-                        Daily Sunset Shala Yoga
+                        {t("Daily Sunset Shala Yoga")}
                       </span>
                       <span className="text-sm font-bold text-[#006194] dark:text-[#93ccff]">€105</span>
                     </div>
                     <p className="text-xs text-[#3f4850] dark:text-[#cadced] mt-1 leading-relaxed">
-                      7 evenings of restorative ocean-terrace Vinyasa &amp; Yin sessions tailored for paddle
-                      recovery.
+                      {t("7 evenings of restorative ocean-terrace Vinyasa & Yin sessions tailored for paddle recovery.")}
                     </p>
                     <span className="inline-block mt-2 text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">
-                      Mats, Bolsters &amp; Herbal Mint Tea
+                      {t("Mats, Bolsters & Herbal Mint Tea")}
                     </span>
                   </div>
                 </label>
@@ -968,16 +964,15 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-sm text-[#0b1d29] dark:text-white">
-                        Organic Half-Board Dining
+                        {t("Organic Half-Board Dining")}
                       </span>
                       <span className="text-sm font-bold text-[#006194] dark:text-[#93ccff]">€175</span>
                     </div>
                     <p className="text-xs text-[#3f4850] dark:text-[#cadced] mt-1 leading-relaxed">
-                      Nightly family-style 3-course Moroccan tagines, ocean-fresh line fish, couscous, and
-                      fresh pastries.
+                      {t("Nightly family-style 3-course Moroccan tagines, ocean-fresh line fish, couscous, and fresh pastries.")}
                     </p>
                     <span className="inline-block mt-2 text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">
-                      Local Souss Valley Produce
+                      {t("Local Souss Valley Produce")}
                     </span>
                   </div>
                 </label>
@@ -993,16 +988,15 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-sm text-[#0b1d29] dark:text-white">
-                        Premium Fiber Quiver Pass
+                        {t("Premium Fiber Quiver Pass")}
                       </span>
                       <span className="text-sm font-bold text-[#006194] dark:text-[#93ccff]">€60</span>
                     </div>
                     <p className="text-xs text-[#3f4850] dark:text-[#cadced] mt-1 leading-relaxed">
-                      Unlimited board swapping from our test center: custom PU twin fins, fishes, and
-                      performance shortboards.
+                      {t("Unlimited board swapping from our test center: custom PU twin fins, fishes, and performance shortboards.")}
                     </p>
                     <span className="inline-block mt-2 text-[10px] uppercase font-bold text-[#675d4d] dark:text-[#d3c4b1]">
-                      Swap Anytime Based on Tide
+                      {t("Swap Anytime Based on Tide")}
                     </span>
                   </div>
                 </label>
@@ -1021,22 +1015,22 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                   </span>
                   <div>
                     <h2 className="font-serif-display text-2xl text-[#0b1d29] dark:text-white font-semibold">
-                      Guest Details &amp; Arrival
+                      {t("Guest Details & Arrival")}
                     </h2>
                     <p className="text-xs text-[#3f4850] dark:text-[#cadced]">
-                      We tailor your room temperature and arrival tagine before landing
+                      {t("We tailor your room temperature and arrival tagine before landing")}
                     </p>
                   </div>
                 </div>
                 <span className="text-xs text-[#006194] dark:text-[#93ccff] flex items-center gap-1 font-semibold">
-                  <span className="material-symbols-outlined text-[16px]">lock</span> Encrypted
+                  <span className="material-symbols-outlined text-[16px]">lock</span> {t("Encrypted")}
                 </span>
               </div>
 
               <form onSubmit={handleFormSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-semibold text-[#3f4850] dark:text-[#cadced]">
-                    First Name *
+                    {t("First Name *")}
                   </label>
                   <input
                     className="h-[50px] px-4 rounded-lg bg-[#ebf5ff] dark:bg-white/10 text-[#0b1d29] dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#006194] border border-[#bfc7d2]/20"
@@ -1049,7 +1043,7 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-semibold text-[#3f4850] dark:text-[#cadced]">
-                    Last Name *
+                    {t("Last Name *")}
                   </label>
                   <input
                     className="h-[50px] px-4 rounded-lg bg-[#ebf5ff] dark:bg-white/10 text-[#0b1d29] dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#006194] border border-[#bfc7d2]/20"
@@ -1062,7 +1056,7 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-semibold text-[#3f4850] dark:text-[#cadced]">
-                    Email Address *
+                    {t("Email Address *")}
                   </label>
                   <input
                     className="h-[50px] px-4 rounded-lg bg-[#ebf5ff] dark:bg-white/10 text-[#0b1d29] dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#006194] border border-[#bfc7d2]/20"
@@ -1075,7 +1069,7 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-semibold text-[#3f4850] dark:text-[#cadced]">
-                    WhatsApp / Phone Number *
+                    {t("WhatsApp / Phone Number *")}
                   </label>
                   <input
                     className="h-[50px] px-4 rounded-lg bg-[#ebf5ff] dark:bg-white/10 text-[#0b1d29] dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#006194] border border-[#bfc7d2]/20"
@@ -1088,30 +1082,30 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-semibold text-[#3f4850] dark:text-[#cadced]">
-                    Country of Residence *
+                    {t("Country of Residence *")}
                   </label>
                   <select
                     value={country}
                     onChange={(e) => setCountry(e.target.value)}
                     className="h-[50px] px-4 rounded-lg bg-[#ebf5ff] dark:bg-white/10 text-[#0b1d29] dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#006194] border border-[#bfc7d2]/20"
                   >
-                    <option value="SE">Sweden</option>
-                    <option value="FR">France</option>
-                    <option value="DE">Germany</option>
-                    <option value="UK">United Kingdom</option>
-                    <option value="MA">Morocco</option>
-                    <option value="US">United States</option>
-                    <option value="ES">Spain</option>
+                    <option value="SE">{t("Sweden")}</option>
+                    <option value="FR">{t("France")}</option>
+                    <option value="DE">{t("Germany")}</option>
+                    <option value="UK">{t("United Kingdom")}</option>
+                    <option value="MA">{t("Morocco")}</option>
+                    <option value="US">{t("United States")}</option>
+                    <option value="ES">{t("Spain")}</option>
                   </select>
                 </div>
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-semibold text-[#3f4850] dark:text-[#cadced]">
-                    Flight Arrival Info / ETA (Optional)
+                    {t("Flight Arrival Info / ETA (Optional)")}
                   </label>
                   <input
                     className="h-[50px] px-4 rounded-lg bg-[#ebf5ff] dark:bg-white/10 text-[#0b1d29] dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#006194] border border-[#bfc7d2]/20"
-                    placeholder="e.g. Royal Air Maroc AT802 @ 16:30"
+                    placeholder={t("e.g. Royal Air Maroc AT802 @ 16:30")}
                     type="text"
                     value={flightEta}
                     onChange={(e) => setFlightEta(e.target.value)}
@@ -1120,11 +1114,11 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
 
                 <div className="sm:col-span-2 flex flex-col gap-1.5">
                   <label className="text-xs font-semibold text-[#3f4850] dark:text-[#cadced]">
-                    Dietary Preferences or Surf Board Dimensions
+                    {t("Dietary Preferences or Surf Board Dimensions")}
                   </label>
                   <textarea
                     className="p-4 rounded-lg bg-[#ebf5ff] dark:bg-white/10 text-[#0b1d29] dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#006194] border border-[#bfc7d2]/20"
-                    placeholder="Let our chef know about vegetarian/vegan desires, or tell our guides your favorite board dimensions..."
+                    placeholder={t("Let our chef know about vegetarian/vegan desires, or tell our guides your favorite board dimensions...")}
                     rows={3}
                     value={specialRequests}
                     onChange={(e) => setSpecialRequests(e.target.value)}
@@ -1141,19 +1135,18 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                       required
                     />
                     <span className="text-xs text-[#3f4850] dark:text-[#cadced] leading-relaxed">
-                      I agree to the Blue Wave Lodge{' '}
+                      {t("I agree to the Blue Wave Lodge")}{' '}
                       <span className="text-[#006194] dark:text-[#93ccff] underline">
-                        Sanctuary Terms &amp; Booking Policy
+                        {t("Sanctuary Terms & Booking Policy")}
                       </span>
-                      . I understand no payment is charged now; availability is personally reviewed by the
-                      host within 2 hours.
+                      {t(". I understand no payment is charged now; availability is personally reviewed by the host within 2 hours.")}
                     </span>
                   </label>
                 </div>
 
                 <div className="sm:col-span-2 mt-4 flex flex-col sm:flex-row gap-4">
                   {sendError && (
-                    <p className="sm:col-span-2 text-red-500 text-xs text-center">{sendError}</p>
+                    <p className="sm:col-span-2 text-red-500 text-xs text-center">{t(sendError)}</p>
                   )}
                   <button
                     type="submit"
@@ -1161,9 +1154,9 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                     className="flex-1 py-4 px-6 rounded-xl bg-[#006194] hover:bg-[#007bb9] disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-semibold shadow-lg transition-all active:scale-[0.99] flex items-center justify-center gap-2"
                   >
                     {isSending ? (
-                      <><span>Sending…</span><span className="material-symbols-outlined text-[20px] animate-spin">progress_activity</span></>
+                      <><span>{t("Sending…")}</span><span className="material-symbols-outlined text-[20px] animate-spin">progress_activity</span></>
                     ) : (
-                      <><span>Send Reservation Request</span><span className="material-symbols-outlined text-[20px]">arrow_forward</span></>
+                      <><span>{t("Send Reservation Request")}</span><span className="material-symbols-outlined text-[20px]">arrow_forward</span></>
                     )}
                   </button>
 
@@ -1173,7 +1166,7 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                     className="py-4 px-6 rounded-xl bg-[#e0f0ff] dark:bg-white/10 text-[#006194] dark:text-[#93ccff] hover:bg-[#d8ebfc] text-xs md:text-sm font-semibold transition-all flex items-center justify-center gap-2 border border-[#bfc7d2]/20"
                   >
                     <span className="material-symbols-outlined text-[20px]">chat</span>
-                    <span>Fast-Track via WhatsApp</span>
+                    <span>{t("Fast-Track via WhatsApp")}</span>
                   </button>
                 </div>
               </form>
@@ -1186,9 +1179,9 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
               <div className="flex items-center justify-between pb-4 border-b border-[#bfc7d2]/20">
                 <div>
                   <span className="text-[10px] uppercase font-bold text-[#006194] dark:text-[#93ccff]">
-                    Summary
+                    {t("Summary")}
                   </span>
-                  <h3 className="font-serif-display text-2xl font-semibold">Your Stay Overview</h3>
+                  <h3 className="font-serif-display text-2xl font-semibold">{t("Your Stay Overview")}</h3>
                 </div>
                 <span className="material-symbols-outlined text-[#006194] dark:text-[#93ccff] text-[28px]">
                   beach_access
@@ -1198,42 +1191,42 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
               {/* Dynamic Details List */}
               <div className="space-y-3 text-xs md:text-sm">
                 <div className="flex justify-between items-center py-2 bg-[#ebf5ff] dark:bg-white/5 px-3 rounded-lg border border-[#bfc7d2]/20">
-                  <span className="text-[#3f4850] dark:text-[#cadced]">Dates:</span>
+                  <span className="text-[#3f4850] dark:text-[#cadced]">{t("Dates:")}</span>
                   <span className="font-bold text-[#0b1d29] dark:text-white">
-                    {checkIn} – {checkOut}
+                    {formatDate(checkIn, language)} – {formatDate(checkOut, language)}
                   </span>
                 </div>
 
                 <div className="flex justify-between items-center py-1">
-                  <span className="text-[#3f4850] dark:text-[#cadced]">Nights:</span>
-                  <span className="font-semibold text-[#0b1d29] dark:text-white">{nights} Nights</span>
+                  <span className="text-[#3f4850] dark:text-[#cadced]">{t("Nights:")}</span>
+                  <span className="font-semibold text-[#0b1d29] dark:text-white">{nights} {t("Nights")}</span>
                 </div>
 
                 <div className="flex justify-between items-center py-1">
-                  <span className="text-[#3f4850] dark:text-[#cadced]">Party Size:</span>
+                  <span className="text-[#3f4850] dark:text-[#cadced]">{t("Party Size:")}</span>
                   <span className="font-semibold text-[#0b1d29] dark:text-white">
-                    {adults} Adults{children > 0 ? `, ${children} Children` : ''} • {rooms} Suite{rooms > 1 ? 's' : ''}
+                    {adults} {t("Adults")}{children > 0 ? `, ${children} ${t('Children')}` : ''} • {rooms} {t(rooms === 1 ? 'Suite' : 'Suites')}
                   </span>
                 </div>
 
                 <div className="flex justify-between items-start py-1">
-                  <span className="text-[#3f4850] dark:text-[#cadced]">Room:</span>
-                  <div className="text-right">
+                  <span className="text-[#3f4850] dark:text-[#cadced]">{t("Room:")}</span>
+                  <div className="text-end">
                     <span className="font-semibold block text-[#0b1d29] dark:text-white">
-                      {activeRoomData.name}
+                      {t(activeRoomData.name)}
                     </span>
                     <span className="text-xs text-[#006194] dark:text-[#93ccff] font-bold">
-                      €{activeRoomData.total} total
+                      €{activeRoomData.total} {t("total")}
                     </span>
                   </div>
                 </div>
 
                 <div className="flex justify-between items-start py-1">
-                  <span className="text-[#3f4850] dark:text-[#cadced]">Surf Package:</span>
-                  <div className="text-right">
-                    <span className="font-semibold block text-[#0b1d29] dark:text-white">{surfCategory}</span>
+                  <span className="text-[#3f4850] dark:text-[#cadced]">{t("Surf Package:")}</span>
+                  <div className="text-end">
+                    <span className="font-semibold block text-[#0b1d29] dark:text-white">{t(surfCategory)}</span>
                     <span className="text-xs text-[#3f4850] dark:text-[#cadced]">
-                      €{surfCost} total ({adults} guests)
+                      €{surfCost} {t("total (")}{adults} {t("guests)")}
                     </span>
                   </div>
                 </div>
@@ -1241,22 +1234,22 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                 {/* Extras itemized */}
                 <div className="flex flex-col gap-1.5 pt-2 border-t border-[#bfc7d2]/20 text-xs text-[#3f4850] dark:text-[#cadced]">
                   <div className="flex justify-between">
-                    <span>Airport Transfer:</span>
-                    <span>{transferExtra ? '€70' : 'Not selected'}</span>
+                    <span>{t("Airport Transfer:")}</span>
+                    <span>{transferExtra ? '€70' : t("Not selected")}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Sunset Shala Yoga:</span>
-                    <span>{yogaExtra ? '€105' : 'Not selected'}</span>
+                    <span>{t("Sunset Shala Yoga:")}</span>
+                    <span>{yogaExtra ? '€105' : t("Not selected")}</span>
                   </div>
                   {halfboardExtra && (
                     <div className="flex justify-between">
-                      <span>Half-Board Feast:</span>
+                      <span>{t("Half-Board Feast:")}</span>
                       <span>€175</span>
                     </div>
                   )}
                   {quiverExtra && (
                     <div className="flex justify-between">
-                      <span>Fiber Quiver Pass:</span>
+                      <span>{t("Fiber Quiver Pass:")}</span>
                       <span>€60</span>
                     </div>
                   )}
@@ -1266,18 +1259,18 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                 <div className="pt-4 mt-2 border-t border-[#bfc7d2]/20 flex items-baseline justify-between">
                   <div>
                     <span className="font-serif-display text-xl text-[#0b1d29] dark:text-white block leading-tight font-bold">
-                      Total Stay
+                      {t("Total Stay")}
                     </span>
                     <span className="text-[10px] text-[#3f4850] dark:text-[#cadced]">
-                      Includes tourist tax &amp; VAT
+                      {t("Includes tourist tax & VAT")}
                     </span>
                   </div>
-                  <div className="text-right">
+                  <div className="text-end">
                     <span className="font-serif-display text-2xl font-bold text-[#006194] dark:text-[#93ccff]">
                       €{grandTotal}
                     </span>
                     <span className="block text-[10px] text-[#675d4d] dark:text-[#d3c4b1] font-semibold">
-                      Deposit due on review: €{depositAmount}
+                      {t("Deposit due on review: €")}{depositAmount}
                     </span>
                   </div>
                 </div>
@@ -1289,19 +1282,19 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                   <span className="material-symbols-outlined text-[18px] text-[#00628d] dark:text-[#89ceff]">
                     schedule
                   </span>
-                  <span>Host Review within 2 hours</span>
+                  <span>{t("Host Review within 2 hours")}</span>
                 </div>
                 <div className="flex items-center gap-2 text-[#0b1d29] dark:text-white">
                   <span className="material-symbols-outlined text-[18px] text-[#00628d] dark:text-[#89ceff]">
                     event_busy
                   </span>
-                  <span>Free cancellation up to 14 days prior</span>
+                  <span>{t("Free cancellation up to 14 days prior")}</span>
                 </div>
                 <div className="flex items-center gap-2 text-[#0b1d29] dark:text-white">
                   <span className="material-symbols-outlined text-[18px] text-[#00628d] dark:text-[#89ceff]">
                     water_drop
                   </span>
-                  <span>Complimentary surf check briefing daily</span>
+                  <span>{t("Complimentary surf check briefing daily")}</span>
                 </div>
               </div>
 
@@ -1310,7 +1303,7 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                 onClick={() => jumpTo('step-details')}
                 className="w-full py-3 px-4 rounded-xl bg-[#006194] text-white text-xs md:text-sm font-semibold hover:bg-[#007bb9] transition-all flex items-center justify-center gap-2 shadow-md"
               >
-                <span>Proceed to Confirmation</span>
+                <span>{t("Proceed to Confirmation")}</span>
                 <span className="material-symbols-outlined text-[18px]">south</span>
               </button>
             </div>
@@ -1322,10 +1315,10 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
               </div>
               <div>
                 <h4 className="font-serif-display text-base font-bold text-[#0b1d29] dark:text-white">
-                  Need a custom date?
+                  {t("Need a custom date?")}
                 </h4>
                 <p className="text-xs text-[#3f4850] dark:text-[#cadced] leading-relaxed">
-                  Our Imi Ouaddar lodge concierge can accommodate split stays or private surf camp buyouts.
+                  {t("Our Imi Ouaddar lodge concierge can accommodate split stays or private surf camp buyouts.")}
                 </p>
                 <a
                   className="text-[#006194] dark:text-[#93ccff] text-xs font-bold underline inline-block mt-1"
@@ -1357,20 +1350,19 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
 
             <div className="text-center">
               <span className="text-xs uppercase tracking-widest text-[#675d4d] dark:text-[#d3c4b1] font-bold block mb-1">
-                Reservation Request Received
+                {t("Reservation Request Received")}
               </span>
               <h2 className="font-serif-display text-2xl md:text-3xl font-semibold">
-                Marhaban! Your Atlantic Haven Awaits
+                {t("Marhaban! Your Atlantic Haven Awaits")}
               </h2>
               <p className="text-xs md:text-sm text-[#3f4850] dark:text-[#cadced] mt-2">
-                Thank you, <strong>{firstName || 'Valued Guest'}</strong>. We have logged your
-                reservation request for{' '}
+                {t("Thank you,")} <strong>{firstName || t('Valued Guest')}</strong>{t(". We have logged your reservation request for")}{' '}
                 <span className="text-[#006194] dark:text-[#93ccff] font-semibold">
-                  {activeRoomData.name}
+                  {t(activeRoomData.name)}
                 </span>{' '}
-                for{' '}
+                {t("for")}{' '}
                 <strong>
-                  {checkIn} - {checkOut} ({nights} nights)
+                  {formatDate(checkIn, language)} - {formatDate(checkOut, language)} ({nights} {t("nights)")}
                 </strong>
                 .
               </p>
@@ -1378,25 +1370,25 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
 
             <div className="bg-[#ebf5ff] dark:bg-white/5 p-4 rounded-2xl flex flex-col gap-2.5 text-xs text-[#3f4850] dark:text-[#cadced] border border-[#bfc7d2]/20">
               <div className="flex items-center justify-between">
-                <span className="text-[#0b1d29] dark:text-white font-semibold">Status:</span>
+                <span className="text-[#0b1d29] dark:text-white font-semibold">{t("Status:")}</span>
                 <span className="px-2.5 py-0.5 rounded-full bg-[#f0e0cc] text-[#221a0e] text-[10px] font-bold">
-                  Under Concierge Review
+                  {t("Under Concierge Review")}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[#0b1d29] dark:text-white font-semibold">Response Window:</span>
-                <span className="text-[#006194] dark:text-[#93ccff] font-bold">Within 2 hours</span>
+                <span className="text-[#0b1d29] dark:text-white font-semibold">{t("Response Window:")}</span>
+                <span className="text-[#006194] dark:text-[#93ccff] font-bold">{t("Within 2 hours")}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[#0b1d29] dark:text-white font-semibold">Total Estimated:</span>
+                <span className="text-[#0b1d29] dark:text-white font-semibold">{t("Total Estimated:")}</span>
                 <span className="font-bold text-[#0b1d29] dark:text-white">€{grandTotal}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[#0b1d29] dark:text-white font-semibold">Selected Add-ons:</span>
+                <span className="text-[#0b1d29] dark:text-white font-semibold">{t("Selected Add-ons:")}</span>
                 <span>
-                  {transferExtra ? 'Transfer • ' : ''}
-                  {yogaExtra ? 'Sunset Yoga • ' : ''}
-                  {surfCategory}
+                  {transferExtra ? t("Transfer •") + ' ' : ''}
+                  {yogaExtra ? t("Sunset Yoga •") + ' ' : ''}
+                  {t(surfCategory)}
                 </span>
               </div>
             </div>
@@ -1408,7 +1400,7 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                 className="w-full py-3.5 px-5 rounded-xl bg-[#006194] hover:bg-[#007bb9] text-white text-xs md:text-sm font-semibold flex items-center justify-center gap-2 shadow-md transition-all"
               >
                 <span className="material-symbols-outlined text-[20px]">chat</span>
-                <span>Open WhatsApp for Instant VIP Verification</span>
+                <span>{t("Open WhatsApp for Instant VIP Verification")}</span>
               </button>
 
               <button
@@ -1416,7 +1408,7 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                 onClick={() => setShowSuccessModal(false)}
                 className="w-full py-3 px-5 rounded-xl bg-[#ebf5ff] dark:bg-white/10 hover:bg-[#d8ebfc] text-[#0b1d29] dark:text-white text-xs md:text-sm font-semibold transition-all"
               >
-                Return to Booking Overview
+                {t("Return to Booking Overview")}
               </button>
             </div>
           </div>

@@ -1,3 +1,4 @@
+import { getTranslator } from '../i18n/translations';
 import React, { useState } from 'react';
 import { ScreenType, Language } from '../types';
 import logoWhite from '../bluewave-white.png';
@@ -21,6 +22,7 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleDarkMode,
   onOpenConcierge
 }) => {
+  const t = getTranslator(language);
   const [stayDropdown, setStayDropdown] = useState(false);
   const [surfDropdown, setSurfDropdown] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -33,7 +35,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="bg-[#006194] text-white text-xs px-4 py-1.5 flex items-center justify-between border-b border-white/10">
           <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap scrollbar-none">
             <span className="font-semibold text-white/80 uppercase tracking-widest hidden sm:inline">
-              Screens:
+              {t("Screens:")}
             </span>
             <button
               onClick={() => onNavigate('home')}
@@ -43,7 +45,7 @@ export const Header: React.FC<HeaderProps> = ({
                   : 'bg-white/15 text-white hover:bg-white/25'
               }`}
             >
-              1. Home Overview
+              {t("1. Home Overview")}
             </button>
             <button
               onClick={() => onNavigate('stay')}
@@ -53,7 +55,7 @@ export const Header: React.FC<HeaderProps> = ({
                   : 'bg-white/15 text-white hover:bg-white/25'
               }`}
             >
-              2. Stay / Sanctuaries
+              {t("2. Stay / Sanctuaries")}
             </button>
             <button
               onClick={() => onNavigate('packages')}
@@ -63,7 +65,7 @@ export const Header: React.FC<HeaderProps> = ({
                   : 'bg-white/15 text-white hover:bg-white/25'
               }`}
             >
-              3. Surf &amp; Packages
+              {t("3. Surf & Packages")}
             </button>
             <button
               onClick={() => onNavigate('booking')}
@@ -73,12 +75,12 @@ export const Header: React.FC<HeaderProps> = ({
                   : 'bg-white/15 text-white hover:bg-white/25'
               }`}
             >
-              4. Reserve / Booking Flow
+              {t("4. Reserve / Booking Flow")}
             </button>
           </div>
           <div className="hidden md:flex items-center gap-2 text-white/80">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>Taghazout Bay Swell: 1.8m @ 14s NW</span>
+            <span>{t("Taghazout Bay Swell: 1.8m @ 14s NW")}</span>
           </div>
         </div>
 
@@ -88,21 +90,13 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center gap-4">
             <button
               onClick={() => onNavigate('home')}
-              className="flex items-center gap-3 group text-left"
+              className="flex items-center gap-3 group text-start"
             >
               <img
                 src={logoWhite}
-                alt="Blue Wave Lodge Logo"
+                alt={t("Blue Wave Lodge Logo")}
                 className="h-8 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105 invert dark:invert-0"
               />
-              <div className="flex flex-col">
-                <span className="font-sans font-bold text-lg md:text-xl text-[#006194] dark:text-[#93ccff] tracking-tight leading-none">
-                  Blue Wave
-                </span>
-                <span className="text-[10px] md:text-xs text-[#675d4d] dark:text-[#d3c4b1] uppercase tracking-[0.2em] font-semibold leading-tight">
-                  Lodge • Morocco
-                </span>
-              </div>
             </button>
           </div>
 
@@ -116,7 +110,7 @@ export const Header: React.FC<HeaderProps> = ({
                   : ''
               }`}
             >
-              {language === 'ar' ? 'الرئيسية' : language === 'fr' ? 'Accueil' : 'Home'}
+              {t("Home")}
             </button>
 
             {/* Stay Dropdown */}
@@ -133,7 +127,7 @@ export const Header: React.FC<HeaderProps> = ({
                     : ''
                 }`}
               >
-                <span>{language === 'ar' ? 'الإقامة' : language === 'fr' ? 'Séjour' : 'Stay'}</span>
+                <span>{t("Stay")}</span>
                 <span className="material-symbols-outlined text-[16px]">expand_more</span>
               </button>
               {stayDropdown && (
@@ -143,36 +137,36 @@ export const Header: React.FC<HeaderProps> = ({
                       onNavigate('stay');
                       setStayDropdown(false);
                     }}
-                    className="text-left px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
+                    className="text-start px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
                   >
-                    Lodge Rooms
+                    {t("Lodge Rooms")}
                   </button>
                   <button
                     onClick={() => {
                       onNavigate('stay');
                       setStayDropdown(false);
                     }}
-                    className="text-left px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
+                    className="text-start px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
                   >
-                    Sea View Suites
+                    {t("Sea View Suites")}
                   </button>
                   <button
                     onClick={() => {
                       onNavigate('stay');
                       setStayDropdown(false);
                     }}
-                    className="text-left px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
+                    className="text-start px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
                   >
-                    Pool View Rooms
+                    {t("Pool View Rooms")}
                   </button>
                   <button
                     onClick={() => {
                       onNavigate('stay');
                       setStayDropdown(false);
                     }}
-                    className="text-left px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
+                    className="text-start px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
                   >
-                    Ocean Apartments
+                    {t("Ocean Apartments")}
                   </button>
                 </div>
               )}
@@ -192,7 +186,7 @@ export const Header: React.FC<HeaderProps> = ({
                     : ''
                 }`}
               >
-                <span>{language === 'ar' ? 'ركوب الأمواج' : language === 'fr' ? 'Surf' : 'Surf'}</span>
+                <span>{t("Surf")}</span>
                 <span className="material-symbols-outlined text-[16px]">expand_more</span>
               </button>
               {surfDropdown && (
@@ -202,45 +196,45 @@ export const Header: React.FC<HeaderProps> = ({
                       onNavigate('packages');
                       setSurfDropdown(false);
                     }}
-                    className="text-left px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
+                    className="text-start px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
                   >
-                    Surf Lessons
+                    {t("Surf Lessons")}
                   </button>
                   <button
                     onClick={() => {
                       onNavigate('packages');
                       setSurfDropdown(false);
                     }}
-                    className="text-left px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
+                    className="text-start px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
                   >
-                    Surf Guiding
+                    {t("Surf Guiding")}
                   </button>
                   <button
                     onClick={() => {
                       onNavigate('packages');
                       setSurfDropdown(false);
                     }}
-                    className="text-left px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
+                    className="text-start px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
                   >
-                    Surf &amp; Stay
+                    {t("Surf & Stay")}
                   </button>
                   <button
                     onClick={() => {
                       onNavigate('packages');
                       setSurfDropdown(false);
                     }}
-                    className="text-left px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
+                    className="text-start px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
                   >
-                    Surf + Yoga
+                    {t("Surf + Yoga")}
                   </button>
                   <button
                     onClick={() => {
                       onNavigate('packages');
                       setSurfDropdown(false);
                     }}
-                    className="text-left px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
+                    className="text-start px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
                   >
-                    Equipment Rental
+                    {t("Equipment Rental")}
                   </button>
                 </div>
               )}
@@ -252,7 +246,7 @@ export const Header: React.FC<HeaderProps> = ({
                 currentScreen === 'packages' ? 'text-[#006194] dark:text-[#93ccff] font-bold' : ''
               }`}
             >
-              {language === 'ar' ? 'الباقات' : language === 'fr' ? 'Forfaits' : 'Packages'}
+              {t("Packages")}
             </button>
 
             <button
@@ -264,7 +258,7 @@ export const Header: React.FC<HeaderProps> = ({
               }}
               className="py-2 transition-colors hover:text-[#006194] dark:hover:text-[#93ccff]"
             >
-              {language === 'ar' ? 'التجارب' : language === 'fr' ? 'Expériences' : 'Experiences'}
+              {t("Experiences")}
             </button>
 
             <button
@@ -276,7 +270,7 @@ export const Header: React.FC<HeaderProps> = ({
               }}
               className="py-2 transition-colors hover:text-[#006194] dark:hover:text-[#93ccff]"
             >
-              {language === 'ar' ? 'الصور' : language === 'fr' ? 'Galerie' : 'Gallery'}
+              {t("Gallery")}
             </button>
 
             <button
@@ -288,7 +282,7 @@ export const Header: React.FC<HeaderProps> = ({
               }}
               className="py-2 transition-colors hover:text-[#006194] dark:hover:text-[#93ccff]"
             >
-              {language === 'ar' ? 'الموقع' : language === 'fr' ? 'Localisation' : 'Location'}
+              {t("Location")}
             </button>
           </nav>
 
@@ -335,7 +329,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               type="button"
               onClick={onToggleDarkMode}
-              title="Toggle Dark / Light Mode"
+              title={t("Toggle Dark / Light Mode")}
               className="w-9 h-9 rounded-full flex items-center justify-center text-[#3f4850] dark:text-[#d2e5f6] hover:bg-[#e0f0ff] dark:hover:bg-white/10 transition-colors"
             >
               <span className="material-symbols-outlined text-[20px]">
@@ -349,11 +343,7 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => onNavigate('booking')}
               className="hidden sm:inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-[#006194] hover:bg-[#007bb9] text-white text-xs md:text-sm font-semibold shadow-[0_4px_20px_-2px_rgba(0,97,148,0.25)] transition-all active:scale-[0.98] whitespace-nowrap"
             >
-              {language === 'ar'
-                ? 'احجز إقامتك'
-                : language === 'fr'
-                ? 'Réserver un séjour'
-                : 'Book Your Stay'}
+              {t("Book Your Stay")}
             </button>
 
             {/* Profile Avatar with Popover */}
@@ -373,8 +363,8 @@ export const Header: React.FC<HeaderProps> = ({
                       BW
                     </div>
                     <div>
-                      <p className="font-bold text-sm">Guest Sanctuary</p>
-                      <p className="text-xs text-[#3f4850] dark:text-white/60">Imi Ouaddar Member</p>
+                      <p className="font-bold text-sm">{t("Guest Sanctuary")}</p>
+                      <p className="text-xs text-[#3f4850] dark:text-white/60">{t("Imi Ouaddar Member")}</p>
                     </div>
                   </div>
                   <div className="py-2 flex flex-col gap-1 text-xs">
@@ -383,20 +373,20 @@ export const Header: React.FC<HeaderProps> = ({
                         onNavigate('booking');
                         setProfileOpen(false);
                       }}
-                      className="text-left py-2 hover:text-[#006194] flex items-center gap-2"
+                      className="text-start py-2 hover:text-[#006194] flex items-center gap-2"
                     >
                       <span className="material-symbols-outlined text-[16px]">book_online</span>
-                      <span>Manage Reservations</span>
+                      <span>{t("Manage Reservations")}</span>
                     </button>
                     <button
                       onClick={() => {
                         onOpenConcierge();
                         setProfileOpen(false);
                       }}
-                      className="text-left py-2 hover:text-[#006194] flex items-center gap-2"
+                      className="text-start py-2 hover:text-[#006194] flex items-center gap-2"
                     >
                       <span className="material-symbols-outlined text-[16px]">chat</span>
-                      <span>Message Surf Concierge</span>
+                      <span>{t("Message Surf Concierge")}</span>
                     </button>
                   </div>
                 </div>
@@ -424,39 +414,39 @@ export const Header: React.FC<HeaderProps> = ({
                 onNavigate('home');
                 setMobileMenuOpen(false);
               }}
-              className="text-left py-2 text-[#006194] dark:text-[#93ccff]"
+              className="text-start py-2 text-[#006194] dark:text-[#93ccff]"
             >
-              Home Overview
+              {t("Home Overview")}
             </button>
             <button
               onClick={() => {
                 onNavigate('stay');
                 setMobileMenuOpen(false);
               }}
-              className="text-left py-2 hover:text-[#006194]"
+              className="text-start py-2 hover:text-[#006194]"
             >
-              Accommodations &amp; Suites
+              {t("Accommodations & Suites")}
             </button>
             <button
               onClick={() => {
                 onNavigate('packages');
                 setMobileMenuOpen(false);
               }}
-              className="text-left py-2 hover:text-[#006194]"
+              className="text-start py-2 hover:text-[#006194]"
             >
-              Surf &amp; Packages
+              {t("Surf & Packages")}
             </button>
             <button
               onClick={() => {
                 onNavigate('booking');
                 setMobileMenuOpen(false);
               }}
-              className="text-left py-2 hover:text-[#006194]"
+              className="text-start py-2 hover:text-[#006194]"
             >
-              Reserve Sanctuary
+              {t("Reserve Sanctuary")}
             </button>
             <div className="pt-3 border-t border-[#bfc7d2]/20 flex items-center justify-between">
-              <span className="text-xs text-[#675d4d] dark:text-[#d3c4b1]">Language:</span>
+              <span className="text-xs text-[#675d4d] dark:text-[#d3c4b1]">{t("Language:")}</span>
               <div className="flex gap-2 text-xs">
                 <button
                   onClick={() => onLanguageChange('en')}

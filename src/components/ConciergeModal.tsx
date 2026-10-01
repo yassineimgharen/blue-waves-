@@ -1,11 +1,15 @@
+import { Language } from '../types';
+import { getTranslator } from '../i18n/translations';
 import React, { useState } from 'react';
 
 interface ConciergeModalProps {
+  language: Language;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const ConciergeModal: React.FC<ConciergeModalProps> = ({ isOpen, onClose }) => {
+export const ConciergeModal: React.FC<ConciergeModalProps> = ({ language, isOpen, onClose }) => {
+  const t = getTranslator(language);
   const [messages, setMessages] = useState([
     {
       sender: 'concierge',
@@ -27,10 +31,11 @@ export const ConciergeModal: React.FC<ConciergeModalProps> = ({ isOpen, onClose 
     setTimeout(() => {
       let reply =
         'Thank you! Anchor Point is peeling with a clean 1.8m swell this morning. I will note your request and you can also reach us directly via WhatsApp at +212 661 000 000.';
-      if (userMsg.toLowerCase().includes('room') || userMsg.toLowerCase().includes('stay')) {
+      const query = userMsg.toLocaleLowerCase();
+      if (['room', 'stay', 'chambre', 'séjour', 'غرف', 'إقام'].some(word => query.includes(word))) {
         reply =
           'Our Sea View Balcony Rooms are 94% booked for this week, but we have availability for next week! You can book directly with 14-day free cancellation.';
-      } else if (userMsg.toLowerCase().includes('beginner') || userMsg.toLowerCase().includes('lesson')) {
+      } else if (['beginner', 'lesson', 'débutant', 'cours', 'مبتدئ', 'دروس'].some(word => query.includes(word))) {
         reply =
           'Our beginner surf lessons take place directly at Imi Ouaddar sandy beach break right in front of the lodge gates with a 1:4 instructor ratio!';
       }
@@ -48,8 +53,8 @@ export const ConciergeModal: React.FC<ConciergeModalProps> = ({ isOpen, onClose 
               <span className="material-symbols-outlined text-[22px]">surfing</span>
             </div>
             <div>
-              <p className="font-bold text-sm">Yassine • Surf Concierge</p>
-              <p className="text-xs text-white/80">Online • Blue Wave Lodge HQ</p>
+              <p className="font-bold text-sm">{t("Yassine • Surf Concierge")}</p>
+              <p className="text-xs text-white/80">{t("Online • Blue Wave Lodge HQ")}</p>
             </div>
           </div>
           <button
@@ -74,7 +79,7 @@ export const ConciergeModal: React.FC<ConciergeModalProps> = ({ isOpen, onClose 
                     : 'bg-white dark:bg-[#0b1d29] border border-[#bfc7d2]/20 text-[#0b1d29] dark:text-white rounded-bl-none shadow-sm'
                 }`}
               >
-                {m.text}
+                {m.sender === 'concierge' ? t(m.text) : m.text}
               </div>
             </div>
           ))}
@@ -83,22 +88,22 @@ export const ConciergeModal: React.FC<ConciergeModalProps> = ({ isOpen, onClose 
         {/* Quick Question Chips */}
         <div className="px-3 py-2 bg-white dark:bg-[#0b1d29] border-t border-[#bfc7d2]/20 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap text-xs">
           <button
-            onClick={() => setInput('What is the swell forecast today?')}
+            onClick={() => setInput(t("What is the swell forecast today?"))}
             className="px-2.5 py-1 rounded-full bg-[#ebf5ff] dark:bg-white/10 hover:bg-[#e0f0ff] text-[#006194] dark:text-[#93ccff]"
           >
-            Swell Forecast?
+            {t("Swell Forecast?")}
           </button>
           <button
-            onClick={() => setInput('Can I arrange airport transfer?')}
+            onClick={() => setInput(t("Can I arrange airport transfer?"))}
             className="px-2.5 py-1 rounded-full bg-[#ebf5ff] dark:bg-white/10 hover:bg-[#e0f0ff] text-[#006194] dark:text-[#93ccff]"
           >
-            Airport Transfer?
+            {t("Airport Transfer?")}
           </button>
           <button
-            onClick={() => setInput('Do you have boards for beginners?')}
+            onClick={() => setInput(t("Do you have boards for beginners?"))}
             className="px-2.5 py-1 rounded-full bg-[#ebf5ff] dark:bg-white/10 hover:bg-[#e0f0ff] text-[#006194] dark:text-[#93ccff]"
           >
-            Beginner Boards?
+            {t("Beginner Boards?")}
           </button>
         </div>
 
@@ -107,7 +112,7 @@ export const ConciergeModal: React.FC<ConciergeModalProps> = ({ isOpen, onClose 
           <input
             type="text"
             className="flex-1 bg-[#ebf5ff] dark:bg-[#071a26] text-[#0b1d29] dark:text-white px-3 py-2 rounded-xl text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-[#006194]"
-            placeholder="Type your question or request..."
+            placeholder={t("Type your question or request...")}
             value={input}
             onChange={(e) => setInput(e.target.value)}
           />
