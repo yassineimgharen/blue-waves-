@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ScreenType, Language } from '../types';
-import { LOGO_URL } from '../data/mockData';
+import logoWhite from '../bluewave-white.png';
 
 interface HeaderProps {
   currentScreen: ScreenType;
@@ -91,9 +91,9 @@ export const Header: React.FC<HeaderProps> = ({
               className="flex items-center gap-3 group text-left"
             >
               <img
-                src={LOGO_URL}
+                src={logoWhite}
                 alt="Blue Wave Lodge Logo"
-                className="h-8 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                className="h-8 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105 invert dark:invert-0"
               />
               <div className="flex flex-col">
                 <span className="font-sans font-bold text-lg md:text-xl text-[#006194] dark:text-[#93ccff] tracking-tight leading-none">
@@ -347,7 +347,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               type="button"
               onClick={() => onNavigate('booking')}
-              className="hidden sm:inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-[#006194] hover:bg-[#007bb9] text-white text-xs md:text-sm font-semibold shadow-[0_4px_20px_-2px_rgba(0,97,148,0.25)] transition-all active:scale-[0.98]"
+              className="hidden sm:inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-[#006194] hover:bg-[#007bb9] text-white text-xs md:text-sm font-semibold shadow-[0_4px_20px_-2px_rgba(0,97,148,0.25)] transition-all active:scale-[0.98] whitespace-nowrap"
             >
               {language === 'ar'
                 ? 'احجز إقامتك'

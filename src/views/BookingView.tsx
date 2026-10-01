@@ -1,5 +1,21 @@
 import React, { useState } from 'react';
+import emailjs from '@emailjs/browser';
 import { ScreenType } from '../types';
+
+// ─── EmailJS config ───────────────────────────────────────────────
+// 1. Sign up at https://www.emailjs.com (free)
+// 2. Add an Email Service (Gmail, Outlook, etc.) → copy the Service ID
+// 3. Create an Email Template → copy the Template ID
+//    Template variables used: {{guest_name}}, {{guest_email}}, {{guest_phone}},
+//    {{country}}, {{check_in}}, {{check_out}}, {{nights}}, {{adults}},
+//    {{children}}, {{rooms}}, {{room_name}}, {{surf_package}},
+//    {{guest1_surf}}, {{guest2_surf}}, {{extras}}, {{grand_total}},
+//    {{deposit}}, {{flight_eta}}, {{special_requests}}, {{to_email}}
+// 4. Go to Account → API Keys → copy the Public Key
+// 5. Replace the three placeholders below:
+const EMAILJS_SERVICE_ID  = 'service_ah6rbtp';
+const EMAILJS_TEMPLATE_ID = 'template_4e7gprj';
+const EMAILJS_PUBLIC_KEY  = 'yplWBRaPT0ZimeCpR';
 
 interface BookingViewProps {
   onNavigate: (screen: ScreenType) => void;
@@ -43,6 +59,8 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
 
   // Success Modal
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
 
   // Calculate nights
   const calculateNights = () => {
@@ -95,13 +113,68 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
     }
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!termsAccepted) {
       alert('Please accept the Sanctuary Terms & Booking Policy to proceed.');
       return;
     }
-    setShowSuccessModal(true);
+
+    const extrasSelected = [
+      transferExtra  ? `Airport Transfer (€70)`           : null,
+      yogaExtra      ? `Sunset Shala Yoga (€105)`          : null,
+      halfboardExtra ? `Organic Half-Board Dining (€175)`  : null,
+      quiverExtra    ? `Premium Fiber Quiver Pass (€60)`   : null,
+    ].filter(Boolean).join(', ') || 'None';
+
+    const templateParams = {
+      guest_name:       `${firstName} ${lastName}`,
+      guest_email:      email,
+      guest_phone:      phone,
+      country,
+      check_in:         checkIn,
+      check_out:        checkOut,
+      nights,
+      adults,
+      children,
+      rooms,
+      room_name:        activeRoomData.name,
+      room_total:       `€${activeRoomData.total}`,
+      surf_package:     surfCategory,
+      surf_cost:        `€${surfCost}`,
+      guest1_surf:      guest1Surf,
+      guest2_surf:      guest2Surf,
+      extras:           extrasSelected,
+      extras_total:     `€${extrasTotal}`,
+      grand_total:      `€${grandTotal}`,
+      deposit:          `€${depositAmount}`,
+      flight_eta:       flightEta || 'Not provided',
+      special_requests: specialRequests || 'None',
+    };
+
+    setIsSending(true);
+    setSendError(null);
+
+    try {
+      // Send to both addresses sequentially
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        { ...templateParams, to_email: 'reservation@bluewavelodge.com' },
+        EMAILJS_PUBLIC_KEY
+      );
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        { ...templateParams, to_email: 'contact@bluewavelodge.com' },
+        EMAILJS_PUBLIC_KEY
+      );
+      setShowSuccessModal(true);
+    } catch (err) {
+      setSendError('Failed to send reservation. Please try again or contact us directly.');
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -1079,12 +1152,19 @@ export const BookingView: React.FC<BookingViewProps> = ({ onNavigate, onOpenConc
                 </div>
 
                 <div className="sm:col-span-2 mt-4 flex flex-col sm:flex-row gap-4">
+                  {sendError && (
+                    <p className="sm:col-span-2 text-red-500 text-xs text-center">{sendError}</p>
+                  )}
                   <button
                     type="submit"
-                    className="flex-1 py-4 px-6 rounded-xl bg-[#006194] hover:bg-[#007bb9] text-white text-sm font-semibold shadow-lg transition-all active:scale-[0.99] flex items-center justify-center gap-2"
+                    disabled={isSending}
+                    className="flex-1 py-4 px-6 rounded-xl bg-[#006194] hover:bg-[#007bb9] disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-semibold shadow-lg transition-all active:scale-[0.99] flex items-center justify-center gap-2"
                   >
-                    <span>Send Reservation Request</span>
-                    <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
+                    {isSending ? (
+                      <><span>Sending…</span><span className="material-symbols-outlined text-[20px] animate-spin">progress_activity</span></>
+                    ) : (
+                      <><span>Send Reservation Request</span><span className="material-symbols-outlined text-[20px]">arrow_forward</span></>
+                    )}
                   </button>
 
                   <button
