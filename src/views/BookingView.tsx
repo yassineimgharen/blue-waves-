@@ -1365,7 +1365,7 @@ export const BookingView: React.FC<BookingViewProps> = ({ language, onNavigate, 
                   {formatDate(checkIn, language)} - {formatDate(checkOut, language)} ({nights} {t("nights)")}
                 </strong>
                 .
-              </p>
+              </p>u
             </div>
 
             <div className="bg-[#ebf5ff] dark:bg-white/5 p-4 rounded-2xl flex flex-col gap-2.5 text-xs text-[#3f4850] dark:text-[#cadced] border border-[#bfc7d2]/20">

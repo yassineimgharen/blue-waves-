@@ -46,7 +46,7 @@ export const Footer: React.FC<FooterProps> = ({ language, onNavigate }) => {
               <span className="material-symbols-outlined text-[18px] text-[#00628d] dark:text-[#89ceff]">
                 location_on
               </span>
-              <span>{t("Route d'Essaouira, Plage Imi Ouaddar, Taghazout Bay, Morocco")}</span>
+              <span>{t("Lot 150 Imi Ouaddar Commune Tamri, Imi Ouaddar 80502, Morocco")}</span>
             </div>
           </div>
 
@@ -136,15 +136,15 @@ export const Footer: React.FC<FooterProps> = ({ language, onNavigate }) => {
               </a>
               <a
                 className="hover:text-[#006194] dark:hover:text-[#93ccff] transition-colors"
-                href="tel:+212528000000"
+                href="tel:+212 696985757"
               >
-                {t("+212 (0) 528 000 000 (Front Desk)")}
+                {t("+212 (0) 696 985 757")}
               </a>
               <a
                 className="hover:text-[#006194] dark:hover:text-[#93ccff] transition-colors"
-                href="tel:+212661000000"
+                href="tel:+212 696991149"
               >
-                {t("+212 (0) 661 000 000 (Surf House)")}
+                {t("+212 (0) 696 991 149")}
               </a>
             </div>
 
