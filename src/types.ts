@@ -1,14 +1,16 @@
-export type ScreenType = 'home' | 'stay' | 'packages' | 'booking';
+export type ScreenType = 'home' | 'stay' | 'offers' | 'booking' | 'room' | 'dining';
 
 export type Language = 'en' | 'fr' | 'ar';
 
 export interface RoomItem {
   id: string;
   name: string;
-  pricePerNight: number;
+  pricePerNight: number | null;
+  maxGuests?: number;
+  currency: string;
   rating: number;
   reviewsCount?: number;
-  category: ('sea-view' | 'pool-view' | 'apartments' | 'couples' | 'families')[];
+  category: ('rooms' | 'apartments' | 'sea-view' | 'pool-view' | 'couples' | 'families')[];
   image: string;
   badge?: string;
   tag?: string;
@@ -17,6 +19,7 @@ export interface RoomItem {
   capacity: string;
   size: string;
   bedType: string;
+  gallery?: { src: string; caption: string }[];
 }
 
 export interface PackageItem {
@@ -25,12 +28,25 @@ export interface PackageItem {
   categoryTag: string;
   isPopular?: boolean;
   price: number;
+  currency: string;
   durationNights: number;
   durationDays: number;
   image: string;
   summary: string;
   highlights: string[];
   detailedDescription: string;
+}
+
+export interface StaySurfOffer {
+  id: string;
+  title: string;
+  nights: number;
+  image: string;
+  roomIncluded: string;
+  surfActivity: string;
+  includes: string[];
+  price: string;
+  isPopular?: boolean;
 }
 
 export interface SurfLevel {
@@ -60,4 +76,23 @@ export interface Testimonial {
   packageTaken: string;
   initials: string;
   rating: number;
+}
+
+export type SurfAddon = 'none' | 'lesson' | 'session' | 'guiding' | 'rental';
+
+export interface BookingDraft {
+  roomId: string;
+  checkIn: string;
+  checkOut: string;
+  adults: number;
+  children: number;
+  surfAddon: SurfAddon;
+  offerNights: number | null;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  country: string;
+  specialRequests: string;
+  termsAccepted: boolean;
 }

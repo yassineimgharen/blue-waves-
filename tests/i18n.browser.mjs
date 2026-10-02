@@ -84,54 +84,91 @@ async function checkArabicText() {
   assert.deepEqual([...new Set(untranslated)], [], 'English catalog text remains in the Arabic page');
 }
 try {
+  await command('Emulation.setDeviceMetricsOverride', { width: 1440, height: 1000, deviceScaleFactor: 1, mobile: false });
   await command('Page.navigate', { url: baseUrl });
+  await new Promise(resolve => setTimeout(resolve, 500));
   for (let attempt = 0; attempt < 100; attempt++) {
     if (await evaluate('!!document.querySelector("header")')) break;
     await tick();
   }
   assert.ok(await evaluate('!!document.querySelector("header")'), 'App did not load');
   assert.ok(await evaluate(`document.fonts.load('24px "Material Symbols Outlined"', 'south equalizer')
-    .then(fonts => fonts.length > 0 && fonts.every(font => font.status === 'loaded'))`),
-    'The icon font must load so ligature names render as symbols');
+    .then(fonts => fonts.length > 0 && fonts.every(font => font.status === 'loaded'))`));
   for (const language of ['ar', 'fr', 'en']) {
     const t = getTranslator(language);
     await click(language.toUpperCase());
     assert.equal(await evaluate('document.documentElement.lang'), language);
     assert.equal(await evaluate('document.documentElement.dir'), language === 'ar' ? 'rtl' : 'ltr');
-    for (const page of ['1. Home Overview', '2. Stay / Sanctuaries', '3. Surf & Packages', '4. Reserve / Booking Flow']) {
+    for (const page of ['Home', 'Rooms & Apartments', 'Offers', 'Book Now']) {
       await click(t(page));
       await checkIcons();
       if (language === 'ar') await checkArabicText();
-      console.log(`PASS ${language}: ${page} (text and icon fonts)`);
+      console.log(`PASS ${language}: ${page}`);
     }
   }
-  const t = getTranslator('ar');
+  // Card -> unique room URL -> booking. Room selection survives navigation and language changes.
+  await click('Rooms & Apartments');
+  const roomLinks = await evaluate(`Array.from(document.querySelectorAll('main article h3 a'), link => link.getAttribute('href'))`);
+  assert.equal(new Set(roomLinks).size, roomLinks.length);
+  for (const href of roomLinks) {
+    await evaluate(`location.hash = ${JSON.stringify(href)}`); await tick();
+    assert.ok(await evaluate('!!document.querySelector("main h1")'));
+    assert.ok(await evaluate(`document.querySelector('main').textContent.includes('Bed Configuration')`));
+  }
+  await evaluate(`document.querySelector('main aside button').click()`); await tick();
+  const selectedRoom = await evaluate(`document.querySelector('input[name="roomId"]:checked').value`);
+  assert.equal(selectedRoom, 'amlal');
+  assert.equal(await evaluate(`document.querySelector('select[name="surfAddon"]').value`), 'none');
   await click('AR');
-  await click(t('Preview Confirmation State'));
-  await checkIcons();
+  assert.equal(await evaluate(`document.querySelector('input[name="roomId"]:checked').value`), selectedRoom);
   await checkArabicText();
-  await click(t('Return to Booking Overview'));
-  await click(t('3. Surf & Packages'));
-  await click(t('View Package Details'));
-  await checkIcons();
-  await checkArabicText();
-  await click(t('Dismiss'));
-  await click(t('Speak with Head Coach'));
-  await checkIcons();
-  await checkArabicText();
-  await evaluate(`document.querySelectorAll('button').forEach(button => {
-    if (button.querySelector('.material-symbols-outlined')?.textContent.trim() === 'close') button.click();
-  })`);
-  await tick();
+  await click('EN');
+  // An offer requests its duration without selecting a paid surf service.
+  await click('Offers');
+  await click('Request this offer');
+  assert.ok(await evaluate(`document.querySelector('form').textContent.includes('3 Nights + Surf')`));
+  assert.equal(await evaluate(`document.querySelector('select[name="surfAddon"]').value`), 'none');
+  await evaluate(`(() => {
+    const input = document.querySelector('input[name="checkIn"]');
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, '2027-11-08');
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  })()`); await tick();
+  assert.equal(await evaluate(`document.querySelector('input[name="checkOut"]').value`), '2027-11-11');
+  await click('Home'); await click('Book Now');
+  assert.equal(await evaluate(`document.querySelector('input[name="checkIn"]').value`), '2027-11-08');
+  assert.equal(await evaluate(`document.querySelector('input[name="roomId"]:checked').value`), 'amlal');
+  // Mobile navigation retains every accommodation-first destination.
   await command('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
-  await evaluate(`[...document.querySelectorAll('button')].find(button =>
-    button.querySelector('.material-symbols-outlined')?.textContent.trim() === 'menu').click()`);
-  await tick();
-  await checkIcons();
-  await checkArabicText();
-  await click(t('Accommodations & Suites'));
-  assert.ok(await evaluate(`document.querySelector('h1').textContent.includes(${JSON.stringify(t('Stay Your Way.'))})`));
-  console.log('PASS Arabic dialogs and mobile navigation');
+  await click('AR');
+  await evaluate(`[...document.querySelectorAll('button')].find(button => button.querySelector('.material-symbols-outlined')?.textContent.trim() === 'menu').click()`); await tick();
+  await checkIcons(); await checkArabicText();
+  assert.ok(await evaluate(`document.body.scrollWidth <= innerWidth + 1`), 'Unexpected horizontal page overflow');
+  console.log('PASS room details, room selection, stay-only default, offers, persistence and mobile navigation');
+
+  // Exercise actual multi-image gallery behavior without assigning unknown owner images to rooms.
+  await command('Page.navigate', { url: `${baseUrl}/tests/room-gallery.html` });
+  await new Promise(resolve => setTimeout(resolve, 500));
+  for (let attempt = 0; attempt < 100; attempt++) {
+    if (await evaluate(`!!document.querySelector('button[aria-label="Next photo"]')`)) break;
+    await tick();
+  }
+  await evaluate(`document.querySelector('button[aria-label="View photo 2"]').click()`); await tick();
+  assert.equal(await evaluate(`document.querySelector('main img').alt`), 'Fixture photo 2');
+  await click('Fullscreen');
+  assert.equal(await evaluate('document.querySelector("dialog").open'), true);
+  assert.equal(await evaluate('document.body.style.overflow'), 'hidden');
+  await command('Input.dispatchKeyEvent', { type: 'keyDown', key: 'ArrowRight', code: 'ArrowRight' }); await tick();
+  assert.equal(await evaluate(`document.querySelector('dialog img').alt`), 'Fixture photo 3');
+  await command('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape' }); await tick();
+  assert.equal(await evaluate('document.querySelector("dialog").open'), false);
+  assert.notEqual(await evaluate('document.body.style.overflow'), 'hidden');
+  const point = await evaluate(`(() => { const r = document.querySelector('main img').getBoundingClientRect(); return { x: r.x + r.width * .75, y: r.y + r.height * .5 }; })()`);
+  await command('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: point.x, y: point.y }] });
+  await command('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: point.x - 120, y: point.y }] });
+  await command('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await tick();
+  assert.equal(await evaluate(`document.querySelector('main img').alt`), 'Fixture photo 1');
+  console.log('PASS gallery thumbnails, fullscreen, keyboard, Escape and mobile swipe');
 } finally {
   await send('Target.closeTarget', { targetId });
   socket.close();

@@ -1,18 +1,39 @@
 import { getTranslator } from './i18n/translations';
 import React, { useState, useEffect } from 'react';
-import { ScreenType, Language, PackageItem } from './types';
+import { ScreenType, Language, RoomItem, BookingDraft } from './types';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { PackageModal } from './components/PackageModal';
 import { ConciergeModal } from './components/ConciergeModal';
 import { HomeView } from './views/HomeView';
 import { StayView } from './views/StayView';
-import { PackagesView } from './views/PackagesView';
+import { OffersView } from './views/OffersView';
+import { RoomDetailView } from './views/RoomDetailView';
+import { ACCOMMODATIONS } from './data/accommodations';
+import { emptyBooking, addNights } from './lib/booking';
+import { DiningView } from './views/DiningView';
 import { BookingView } from './views/BookingView';
 
+function readRoute() {
+  const [screen, detail] = window.location.hash.slice(1).split('/');
+  if (screen === 'rooms') return { screen: 'room' as ScreenType, detail };
+  if (['home', 'stay', 'offers', 'booking', 'dining'].includes(screen)) return { screen: screen as ScreenType, detail };
+  return { screen: 'home' as ScreenType, detail: undefined };
+}
+
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<ScreenType>('home');
-  const [selectedPackage, setSelectedPackage] = useState<PackageItem | null>(null);
+  const [route, setRoute] = useState(readRoute);
+  const currentScreen = route.screen;
+  const [booking, setBooking] = useState<BookingDraft>({ ...emptyBooking });
+  const activeRoom = ACCOMMODATIONS.find(room => room.id === route.detail);
+  useEffect(() => {
+    const onHashChange = () => setRoute(readRoute());
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+  useEffect(() => {
+    if (route.screen === 'home' && route.detail) document.getElementById(route.detail)?.scrollIntoView({ behavior: 'smooth' });
+    else window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [route]);
   const [isConciergeOpen, setIsConciergeOpen] = useState(false);
   const [language, setLanguage] = useState<Language>('en');
   const t = getTranslator(language);
@@ -38,23 +59,18 @@ export default function App() {
     }
   }, [language]);
 
-  // Scroll to top on screen change
-  const navigateTo = (screen: ScreenType) => {
-    setCurrentScreen(screen);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const navigateTo = (screen: ScreenType, section?: string) => {
+    const hash = `#${screen}${section ? `/${section}` : ''}`;
+    if (window.location.hash === hash) setRoute(readRoute());
+    else window.location.hash = hash;
   };
-
-  const handleOpenPackage = (pkg: PackageItem) => {
-    setSelectedPackage(pkg);
+  const bookRoom = (room: RoomItem) => {
+    setBooking(current => ({ ...current, roomId: room.id }));
+    navigateTo('booking');
   };
-
-  const handleClosePackage = () => {
-    setSelectedPackage(null);
-  };
-
-  const handleBookPackage = (screen: ScreenType) => {
-    setSelectedPackage(null);
-    navigateTo(screen);
+  const chooseOffer = (nights: number) => {
+    setBooking(current => ({ ...current, offerNights: nights, checkOut: addNights(current.checkIn, nights) }));
+    navigateTo('booking');
   };
 
   return (
@@ -75,31 +91,28 @@ export default function App() {
         {currentScreen === 'home' && (
           <HomeView
             onNavigate={navigateTo}
-            onOpenPackage={handleOpenPackage}
+            onBook={bookRoom}
+            onOffer={chooseOffer}
+            onSearch={draft => { setBooking(current => ({ ...current, ...draft })); navigateTo('booking'); }}
             onOpenConcierge={() => setIsConciergeOpen(true)}
             language={language}
           />
         )}
 
         {currentScreen === 'stay' && (
-          <StayView
-            onNavigate={navigateTo}
-            onOpenConcierge={() => setIsConciergeOpen(true)}
-            language={language}
-          />
+          <StayView language={language} onBook={bookRoom} />
         )}
 
-        {currentScreen === 'packages' && (
-          <PackagesView
-            onNavigate={navigateTo}
-            onOpenPackage={handleOpenPackage}
-            onOpenConcierge={() => setIsConciergeOpen(true)}
-            language={language}
-          />
-        )}
+        {currentScreen === 'offers' && <OffersView language={language} onChoose={chooseOffer} />}
+        {currentScreen === 'dining' && <DiningView language={language} onNavigate={navigateTo} />}
+        {currentScreen === 'room' && (activeRoom
+          ? <RoomDetailView key={activeRoom.id} room={activeRoom} language={language} onBook={bookRoom} />
+          : <div className="max-w-[1360px] mx-auto p-12"><h1>{t('Accommodation not found')}</h1><a href="#stay">{t('Back to Rooms & Apartments')}</a></div>)}
 
         {currentScreen === 'booking' && (
           <BookingView
+            draft={booking}
+            onChange={setBooking}
             onNavigate={navigateTo}
             onOpenConcierge={() => setIsConciergeOpen(true)}
             language={language}
@@ -147,19 +160,19 @@ export default function App() {
           title={t("Stay / Sanctuaries Screen")}
         >
           <span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
-          {t("Stay & Rooms")}
+          {t("Rooms & Apartments")}
         </button>
         <button
-          onClick={() => navigateTo('packages')}
+          onClick={() => navigateTo('offers')}
           className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
-            currentScreen === 'packages'
+            currentScreen === 'offers'
               ? 'bg-[#006194] text-white shadow-md font-semibold'
               : 'text-white/80 hover:text-white hover:bg-white/10'
           }`}
-          title={t("Surf & Packages Screen")}
+          title={t("Offers")}
         >
           <span className="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
-          {t("Surf Packages")}
+          {t("Offers")}
         </button>
         <button
           onClick={() => navigateTo('booking')}
@@ -177,14 +190,6 @@ export default function App() {
 
       {/* Shared Footer */}
       <Footer onNavigate={navigateTo} language={language} />
-
-      {/* Package Detail Modal Drawer */}
-      <PackageModal
-        language={language}
-        pkg={selectedPackage}
-        onClose={handleClosePackage}
-        onBook={handleBookPackage}
-      />
 
       {/* Floating Concierge Chat Widget */}
       <ConciergeModal

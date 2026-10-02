@@ -1,9 +1,12 @@
+import { ACCOMMODATIONS } from '../data/accommodations';
+import { RoomCard } from '../components/RoomCard';
+import { StayOffers } from '../components/StayOffers';
+import { todayISO, addNights } from '../lib/booking';
 import { getTranslator } from '../i18n/translations';
 import React, { useState } from 'react';
-import { ScreenType, PackageItem, Language } from '../types';
+import heroBg from '../images/68c49e7e-6fd8-4fe8-a539-23852e4c8983.jpeg';
+import { ScreenType, RoomItem, Language, BookingDraft } from '../types';
 import {
-  ROOMS_DATA,
-  SURF_LEVELS_DATA,
   GALLERY_ITEMS,
   TESTIMONIALS_DATA,
   AMENITIES_DATA
@@ -12,29 +15,32 @@ import {
 interface HomeViewProps {
   language: Language;
   onNavigate: (screen: ScreenType) => void;
-  onOpenPackage: (pkg: PackageItem) => void;
+  onBook: (room: RoomItem) => void;
+  onSearch: (draft: Partial<BookingDraft>) => void;
+  onOffer: (nights: number) => void;
   onOpenConcierge: () => void;
 }
 
 export const HomeView: React.FC<HomeViewProps> = ({
   language,
   onNavigate,
-  onOpenPackage,
+  onBook,
+  onSearch,
+  onOffer,
   onOpenConcierge
 }) => {
   const t = getTranslator(language);
-  const [selectedLevel, setSelectedLevel] = useState<string>('first-time');
   const [galleryFilter, setGalleryFilter] = useState<'all' | 'surf' | 'rooms' | 'pool' | 'lifestyle'>('all');
 
   // Booking widget form state
-  const [checkIn, setCheckIn] = useState('2025-11-08');
-  const [checkOut, setCheckOut] = useState('2025-11-15');
+  const [checkIn, setCheckIn] = useState('');
+  const [checkOut, setCheckOut] = useState('');
   const [guests, setGuests] = useState('2 Adults');
-  const [surfPackage, setSurfPackage] = useState('Coaching');
+  const [roomId, setRoomId] = useState('');
 
   const handleSearchRates = (e: React.FormEvent) => {
     e.preventDefault();
-    onNavigate('booking');
+    onSearch({ checkIn, checkOut, roomId, adults: guests === '1 Adult' ? 1 : guests === '3+ Group' ? 3 : 2, children: guests === '2 Adults, 1 Child' ? 1 : 0 });
   };
 
   const filteredGallery =
@@ -42,53 +48,16 @@ export const HomeView: React.FC<HomeViewProps> = ({
       ? GALLERY_ITEMS
       : GALLERY_ITEMS.filter((item) => item.category === galleryFilter);
 
-  const activeLevelData = SURF_LEVELS_DATA[selectedLevel];
 
   return (
     <div className="flex flex-col w-full">
-      {/* SWELL & WEATHER TICKER */}
-      <aside
-        aria-label={t("Real-time Surf Conditions")}
-        className="w-full bg-[#d8ebfc] dark:bg-[#071a26] py-2.5 px-4 md:px-12 border-b border-[#bfc7d2]/20"
-      >
-        <div className="max-w-[1360px] mx-auto flex flex-wrap items-center justify-between gap-3 text-[#3f4850] dark:text-[#cadced] text-xs md:text-sm">
-          <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white dark:bg-[#0b1d29] text-[#006194] dark:text-[#93ccff] shadow-sm font-semibold">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> {t("Clean Offshore")}
-            </span>
-            <span className="hidden sm:inline">
-              {t("Atlantic Swell:")} <strong className="text-[#0b1d29] dark:text-white">{t("1.8m @ 13s NW")}</strong>
-            </span>
-            <span className="text-[#bfc7d2]">•</span>
-            <span>
-              {t("Water:")} <strong className="text-[#0b1d29] dark:text-white">19°C</strong>
-            </span>
-            <span className="text-[#bfc7d2]">•</span>
-            <span>
-              {t("Tide:")} <strong className="text-[#0b1d29] dark:text-white">{t("High 16:42 (+2.1m)")}</strong>
-            </span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="text-[#675d4d] dark:text-[#d3c4b1] hidden md:inline">
-              {t("Imi Ouaddar • Point Breaks & Sanctuary")}
-            </span>
-            <button
-              onClick={() => onNavigate('packages')}
-              className="text-[#006194] dark:text-[#93ccff] hover:underline inline-flex items-center gap-1 font-semibold"
-            >
-              {t("Daily Surf Report")} <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
-            </button>
-          </div>
-        </div>
-      </aside>
-
       {/* SECTION 1: HERO */}
       <section className="relative w-full overflow-hidden bg-[#0b1d29] text-white">
         <div className="absolute inset-0 z-0">
           <img
             alt={t("Blue Wave Lodge oceanfront infinity pool and sunset over Imi Ouaddar Atlantic coast")}
             className="w-full h-full object-cover scale-105 transform motion-safe:transition-transform motion-safe:duration-1000 motion-safe:ease-out"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjErvv9n5pVEZorD7ouFsRmOJtpzgrvX-CqJBCLp5G09aOBgea56UDFYthItvi__FB4AXMq0KDP_iAM4asisvTSDqrZVU24pqKAi9AyZ9DjBnhoCE0jiWVIEFiqb9mDe03RhZEuaekDaEtpoqLNHfXwfNflWn8_ypZYW6YzjZWQv9atY4945tA66gbp6jh8YL9xWYub376JY_GkQtIYgVw8q2br30QKtvzN1WfU3WJH7ilWU19Kcr4"
+            src={heroBg}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0b1d29] via-[#0b1d29]/40 to-[#0b1d29]/50"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-[#0b1d29]/80 via-[#0b1d29]/30 to-transparent"></div>
@@ -103,11 +72,11 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
             <h1 className="font-serif-display text-4xl sm:text-6xl md:text-7xl text-white tracking-tight leading-[1.08] mb-6 font-normal">
               {t("Stay by the Ocean.")} <br />
-              <span className="italic font-normal text-[#cce5ff]">{t("Surf Morocco.")}</span>
+              <span className="italic font-normal text-[#cce5ff]">{t("Feel at Home.")}</span>
             </h1>
 
             <p className="text-base sm:text-lg text-white/90 max-w-xl mb-8 leading-relaxed font-sans">
-              {t("A relaxing ocean escape in Imi Ouaddar combining comfortable accommodation, authentic Moroccan hospitality, and unforgettable surf experiences.")}
+              {t("Comfortable rooms and apartments, Moroccan hospitality, and time to unwind by the ocean. Surf is an optional extra.")}
             </p>
 
             <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -120,10 +89,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </button>
 
               <button
-                onClick={() => onNavigate('packages')}
+                onClick={() => onNavigate('stay')}
                 className="px-7 py-3.5 rounded-lg bg-white/15 hover:bg-white/25 text-white backdrop-blur-md text-sm font-semibold transition-all flex items-center gap-2"
               >
-                <span>{t("Explore Surf Packages")}</span>
+                <span>{t("Explore Rooms & Apartments")}</span>
                 <span className="material-symbols-outlined text-[18px]">surfing</span>
               </button>
             </div>
@@ -136,7 +105,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </span>
             <span className="hidden sm:inline text-white/40">•</span>
             <span className="flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-[18px] text-[#89ceff]">surfing</span> {t("ISA Coaching")}
+              <span className="material-symbols-outlined text-[18px] text-[#89ceff]">surfing</span> {t("Equipped Apartments")}
             </span>
             <span className="hidden sm:inline text-white/40">•</span>
             <span className="flex items-center gap-1.5">
@@ -175,6 +144,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
               <input
                 className="bg-transparent text-sm md:text-base font-semibold text-[#0b1d29] dark:text-white focus:outline-none cursor-pointer"
                 type="date"
+                min={todayISO()}
+                required
+                aria-label={t("Check-In")}
                 value={checkIn}
                 onChange={(e) => setCheckIn(e.target.value)}
               />
@@ -191,6 +163,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
               <input
                 className="bg-transparent text-sm md:text-base font-semibold text-[#0b1d29] dark:text-white focus:outline-none cursor-pointer"
                 type="date"
+                min={addNights(checkIn, 1) || todayISO()}
+                required
+                aria-label={t("Check-Out")}
                 value={checkOut}
                 onChange={(e) => setCheckOut(e.target.value)}
               />
@@ -206,6 +181,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </label>
               <select
                 className="bg-transparent text-sm md:text-base font-semibold text-[#0b1d29] dark:text-white focus:outline-none cursor-pointer"
+                aria-label={t("Guests")}
                 value={guests}
                 onChange={(e) => setGuests(e.target.value)}
               >
@@ -216,24 +192,11 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </select>
             </div>
 
-            {/* Surf Experience Option */}
-            <div className="lg:col-span-2 flex flex-col gap-1 p-3 rounded-xl bg-[#f6faff] dark:bg-white/5 hover:bg-[#ebf5ff] dark:hover:bg-white/10 transition-colors">
-              <label className="text-[11px] uppercase tracking-wider text-[#675d4d] dark:text-[#d3c4b1] font-bold flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-[16px] text-[#006194] dark:text-[#93ccff]">
-                  skateboarding
-                </span>{' '}
-                {t("Surf Package")}
-              </label>
-              <select
-                className="bg-transparent text-sm md:text-base font-semibold text-[#0b1d29] dark:text-white focus:outline-none cursor-pointer truncate"
-                value={surfPackage}
-                onChange={(e) => setSurfPackage(e.target.value)}
-              >
-                <option value="Coaching">{t("Surf Coaching (All Levels)")}</option>
-                <option value="Surf & Stay">{t("Surf & Stay Standard")}</option>
-                <option value="Yoga">{t("Surf + Yoga Retreat")}</option>
-                <option value="Guiding">{t("Advanced Spot Guiding")}</option>
-                <option value="None">{t("None (Room Only)")}</option>
+            <div className="lg:col-span-2 flex flex-col gap-1 p-3 rounded-xl bg-[#f6faff] dark:bg-white/5">
+              <label htmlFor="home-room" className="text-[11px] uppercase tracking-wider text-[#675d4d] dark:text-[#d3c4b1] font-bold">{t('Room / Apartment')}</label>
+              <select id="home-room" className="bg-transparent text-sm font-semibold focus:outline-none w-full" value={roomId} onChange={event => setRoomId(event.target.value)}>
+                <option value="">{t('Choose on next step')}</option>
+                {ACCOMMODATIONS.map(room => <option key={room.id} value={room.id}>{t(room.name)}</option>)}
               </select>
             </div>
 
@@ -251,69 +214,27 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
       </div>
 
-      {/* SECTION 2: INTRO EDITORIAL */}
-      <section className="w-full max-w-[1360px] mx-auto px-4 md:px-12 py-12 md:py-20" id="about">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-6 space-y-6">
-            <div className="inline-flex items-center gap-2 text-[#006194] dark:text-[#93ccff] text-xs font-bold uppercase tracking-[0.2em]">
-              <span className="w-6 h-[1.5px] bg-[#006194] dark:bg-[#93ccff]"></span>
-              {t("Sanctuary in Taghazout Bay")}
-            </div>
-            <h2 className="font-serif-display text-3xl sm:text-5xl text-[#0b1d29] dark:text-white tracking-tight leading-tight">
-              {t("Where Berber soul meets the Atlantic crest.")}
+      {/* SECTION 4: FEATURED ACCOMMODATIONS */}
+      <section className="w-full max-w-[1360px] mx-auto px-4 md:px-12 py-20" id="rooms">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+          <div>
+            <span className="text-xs uppercase tracking-[0.2em] font-bold text-[#006194] dark:text-[#93ccff]">
+              {t("Coastal Sanctuaries")}
+            </span>
+            <h2 className="font-serif-display text-3xl sm:text-5xl text-[#0b1d29] dark:text-white mt-2">
+              {t("Rooms & Apartments")}
             </h2>
-            <p className="text-base sm:text-lg text-[#3f4850] dark:text-[#cadced] leading-relaxed">
-              {t("Tucked away in the tranquil fishing enclave of Imi Ouaddar—just north of Taghazout and minutes from Tamri's secret dunes—Blue Wave Lodge is an unhurried beachfront haven designed for surfers, creators, and coastal seekers.")}
-            </p>
-            <p className="text-sm sm:text-base text-[#3f4850] dark:text-[#cadced] leading-relaxed">
-              {t("Wake to morning offshore breezes, recharge by our freshwater cliffside pool, share mint tea and freshly caught Atlantic sea bream, and catch sunset glow over the point from our panoramic rooftop shala.")}
-            </p>
-            <div className="grid grid-cols-3 gap-4 pt-4">
-              <div className="p-4 rounded-xl bg-[#ebf5ff] dark:bg-white/5">
-                <span className="font-serif-display text-2xl sm:text-3xl text-[#006194] dark:text-[#93ccff] font-semibold">
-                  300+
-                </span>
-                <p className="text-xs text-[#675d4d] dark:text-[#d3c4b1] mt-1">{t("Days of sunshine annually")}</p>
-              </div>
-              <div className="p-4 rounded-xl bg-[#ebf5ff] dark:bg-white/5">
-                <span className="font-serif-display text-2xl sm:text-3xl text-[#006194] dark:text-[#93ccff] font-semibold">
-                  12
-                </span>
-                <p className="text-xs text-[#675d4d] dark:text-[#d3c4b1] mt-1">{t("World-class reef & beach breaks")}</p>
-              </div>
-              <div className="p-4 rounded-xl bg-[#ebf5ff] dark:bg-white/5">
-                <span className="font-serif-display text-2xl sm:text-3xl text-[#006194] dark:text-[#93ccff] font-semibold">
-                  100%
-                </span>
-                <p className="text-xs text-[#675d4d] dark:text-[#d3c4b1] mt-1">{t("Ocean-facing lodge living")}</p>
-              </div>
-            </div>
           </div>
+          <button
+            onClick={() => onNavigate('stay')}
+            className="inline-flex items-center gap-2 text-[#006194] dark:text-[#93ccff] font-semibold hover:underline"
+          >
+            {t("Explore All Accommodations")} <span className="material-symbols-outlined">arrow_forward</span>
+          </button>
+        </div>
 
-          <div className="lg:col-span-6 relative">
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-              <img
-                className="w-full h-[460px] md:h-[520px] object-cover hover:scale-105 transition-transform duration-700"
-                alt={t("Warm sunlight illuminating the bohemian Moroccan tadelakt architecture of Blue Wave Lodge")}
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-2W5TuuT8jqI8E1UIR-rJw_UPbCBjA0eq3Kf1cPAe_bfEccH5ua4zG_S5wiwMDJ_dTdwg8xBYkvH4tgJ_xoPO9rgFFH8s8t9z8OtdHNlklQf7PhzPfOdrt_nRJIruTf89I261lN8KdUUQxVP_tTB5xsf2Stwy9fo5Xm-QU3o5sBAoDpak2oD3KEuJdIYCe6PxUQxwiIpJsWf9brY1Fd5XfMpR6Vdgqx26T1iCJ9t_dLknvfdIc3Zv"
-              />
-              <div className="absolute bottom-6 left-6 right-6 p-5 rounded-xl bg-white/95 dark:bg-[#0b1d29]/95 backdrop-blur-md shadow-lg border border-[#bfc7d2]/20">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#675d4d] dark:text-[#d3c4b1]">
-                      {t("Location Marker")}
-                    </span>
-                    <h4 className="font-serif-display text-lg text-[#0b1d29] dark:text-white font-semibold">
-                      {t("Imi Ouaddar, Taghazout Bay")}
-                    </h4>
-                  </div>
-                  <span className="px-3 py-1 rounded-full bg-[#cce5ff] text-[#001d31] text-xs font-semibold">
-                    {t("25 min from Agadir")}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {ACCOMMODATIONS.map(room => <RoomCard key={room.id} room={room} language={language} onBook={onBook} />)}
         </div>
       </section>
 
@@ -328,7 +249,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               {t("Why Blue Wave Lodge")}
             </h2>
             <p className="text-sm sm:text-base text-[#3f4850] dark:text-[#cadced]">
-              {t("Carefully balanced between surf performance house and serene Moroccan boutique haven.")}
+              {t("A comfortable place to stay, with spaces to relax and enjoy the Moroccan coast.")}
             </p>
           </div>
 
@@ -387,195 +308,16 @@ export const HomeView: React.FC<HomeViewProps> = ({
               <div className="w-14 h-14 rounded-xl bg-[#f0e0cc] text-[#675d4d] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <span className="material-symbols-outlined text-[28px]">verified</span>
               </div>
-              <h3 className="text-lg font-bold text-[#0b1d29] dark:text-white mb-2">{t("Certified Surf Guiding")}</h3>
+              <h3 className="text-lg font-bold text-[#0b1d29] dark:text-white mb-2">{t("Personalized Stays")}</h3>
               <p className="text-sm text-[#3f4850] dark:text-[#cadced] leading-relaxed">
-                {t("Local Moroccan surf masters with ISA credentials guiding you to the best daily conditions from Anchor Point to Tamri.")}
+                {t("Choose your accommodation and ask our team about the experiences you would like to add.")}
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* SECTION 4: FEATURED ACCOMMODATIONS */}
-      <section className="w-full max-w-[1360px] mx-auto px-4 md:px-12 py-20" id="rooms">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-          <div>
-            <span className="text-xs uppercase tracking-[0.2em] font-bold text-[#006194] dark:text-[#93ccff]">
-              {t("Coastal Sanctuaries")}
-            </span>
-            <h2 className="font-serif-display text-3xl sm:text-5xl text-[#0b1d29] dark:text-white mt-2">
-              {t("Boutique Accommodations")}
-            </h2>
-          </div>
-          <button
-            onClick={() => onNavigate('stay')}
-            className="inline-flex items-center gap-2 text-[#006194] dark:text-[#93ccff] font-semibold hover:underline"
-          >
-            {t("Explore All Accommodations")} <span className="material-symbols-outlined">arrow_forward</span>
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {ROOMS_DATA.map((room) => (
-            <div
-              key={room.id}
-              className="rounded-2xl overflow-hidden bg-white dark:bg-[#0b1d29] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group border border-[#bfc7d2]/20"
-            >
-              <div className="relative h-64 overflow-hidden">
-                <img
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  alt={t(room.name)}
-                  src={room.image}
-                />
-                {room.badge && (
-                  <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-white/90 dark:bg-[#0b1d29]/90 backdrop-blur-md text-[#0b1d29] dark:text-white text-xs font-bold">
-                    {t(room.badge)}
-                  </span>
-                )}
-              </div>
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-3 text-xs text-[#675d4d] dark:text-[#d3c4b1] mb-2">
-                    <span className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[16px]">king_bed</span> {t(room.bedType)}
-                    </span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[16px]">person</span> {t(room.capacity)}
-                    </span>
-                  </div>
-                  <h3 className="font-serif-display text-xl text-[#0b1d29] dark:text-white font-semibold mb-2">
-                    {t(room.name)}
-                  </h3>
-                  <p className="text-xs text-[#3f4850] dark:text-[#cadced] line-clamp-2 leading-relaxed">
-                    {t(room.description)}
-                  </p>
-                </div>
-                <div className="mt-6 pt-4 border-t border-[#bfc7d2]/20 flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] text-[#675d4d] dark:text-[#d3c4b1] uppercase font-bold">{t("From")}</span>
-                    <p className="text-lg font-bold text-[#006194] dark:text-[#93ccff]">
-                      €{room.pricePerNight}{' '}
-                      <span className="text-xs font-normal text-[#3f4850] dark:text-[#cadced]">{t("/ night")}</span>
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => onNavigate('stay')}
-                    className="px-4 py-2 rounded-lg bg-[#ebf5ff] dark:bg-white/10 hover:bg-[#006194] hover:text-white text-[#006194] dark:text-[#93ccff] text-xs font-semibold transition-colors"
-                  >
-                    {t("Select Room")}
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* SECTION 5: SURF ACADEMY & INTERACTIVE SKILL MATCHER */}
-      <section className="w-full bg-[#ebf5ff] dark:bg-[#071a26]/60 py-20" id="surf-guide">
-        <div className="max-w-[1360px] mx-auto px-4 md:px-12">
-          <div className="max-w-2xl mb-12">
-            <span className="text-xs uppercase tracking-[0.2em] font-bold text-[#006194] dark:text-[#93ccff]">
-              {t("Wave Mastery")}
-            </span>
-            <h2 className="font-serif-display text-3xl sm:text-5xl text-[#0b1d29] dark:text-white mt-2 mb-4">
-              {t("Surf Academy & Guiding")}
-            </h2>
-            <p className="text-sm sm:text-base text-[#3f4850] dark:text-[#cadced]">
-              {t("From first white-water pop-ups to peeling right-hand points, our seasoned guides match Atlantic swells to your skill level.")}
-            </p>
-          </div>
-
-          {/* Interactive Surf Skill Level Breakdown */}
-          <div className="bg-white dark:bg-[#0b1d29] rounded-2xl p-6 md:p-8 shadow-sm border border-[#bfc7d2]/20">
-            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-              <div>
-                <h3 className="font-serif-display text-2xl text-[#0b1d29] dark:text-white font-semibold">
-                  {t("Find Your Surfing Level")}
-                </h3>
-                <p className="text-sm text-[#3f4850] dark:text-[#cadced] mt-1">
-                  {t("Select your current stage to see our recommended Moroccan spots and training strategy.")}
-                </p>
-              </div>
-              <span className="px-4 py-1.5 rounded-full bg-[#ebf5ff] dark:bg-white/10 text-[#006194] dark:text-[#93ccff] text-xs font-semibold self-start md:self-auto">
-                {t("Interactive Skill Matcher")}
-              </span>
-            </div>
-
-            {/* Level Selector Tabs */}
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-8">
-              {Object.keys(SURF_LEVELS_DATA).map((key) => {
-                const lvl = SURF_LEVELS_DATA[key];
-                const isActive = selectedLevel === key;
-                return (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => setSelectedLevel(key)}
-                    className={`py-3 px-4 rounded-xl text-center text-xs md:text-sm font-semibold transition-all ${
-                      isActive
-                        ? 'bg-[#006194] text-white shadow-md'
-                        : 'bg-[#f6faff] dark:bg-white/5 hover:bg-[#ebf5ff] dark:hover:bg-white/10 text-[#0b1d29] dark:text-white'
-                    }`}
-                  >
-                    {lvl.levelNumber}. {t(lvl.title)}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Dynamic Content Box */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center p-6 rounded-xl bg-[#f6faff] dark:bg-white/5 border border-[#bfc7d2]/20">
-              <div className="lg:col-span-8 space-y-4">
-                <div className="inline-flex items-center gap-2 text-[#006194] dark:text-[#93ccff] text-xs font-bold uppercase tracking-wider">
-                  <span className="w-2 h-2 rounded-full bg-[#006194] dark:bg-[#93ccff]"></span>
-                  {t("Level Profile • Bracket")} {activeLevelData.levelNumber}
-                </div>
-                <h4 className="font-serif-display text-2xl text-[#0b1d29] dark:text-white font-semibold">
-                  {t(activeLevelData.headline)}
-                </h4>
-                <p className="text-sm md:text-base text-[#3f4850] dark:text-[#cadced] leading-relaxed">
-                  {t(activeLevelData.description)}
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 text-xs md:text-sm">
-                  <div className="flex items-center gap-2 text-[#0b1d29] dark:text-white">
-                    <span className="material-symbols-outlined text-[#006194] dark:text-[#93ccff] text-[18px]">
-                      place
-                    </span>
-                    <span>
-                      <strong>{t("Spots:")}</strong> {t(activeLevelData.spots)}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 text-[#0b1d29] dark:text-white">
-                    <span className="material-symbols-outlined text-[#006194] dark:text-[#93ccff] text-[18px]">
-                      surfing
-                    </span>
-                    <span>
-                      <strong>{t("Quiver:")}</strong> {t(activeLevelData.quiver)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="lg:col-span-4 flex flex-col items-center justify-center p-6 rounded-xl bg-[#ebf5ff] dark:bg-white/10 text-center">
-                <span className="text-[11px] uppercase tracking-wider text-[#675d4d] dark:text-[#d3c4b1] font-bold">
-                  {t("Recommended Package")}
-                </span>
-                <span className="font-serif-display text-xl text-[#006194] dark:text-[#93ccff] mt-1 mb-4 font-bold">
-                  {t(activeLevelData.recommendedPackage)}
-                </span>
-                <button
-                  onClick={() => onNavigate('packages')}
-                  className="px-5 py-2.5 rounded-lg bg-[#006194] text-white text-xs font-semibold hover:bg-[#007bb9] transition-colors"
-                >
-                  {t("View Package Details")}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <StayOffers language={language} onChoose={onOffer} />
 
       {/* SECTION 6: LODGE EXPERIENCES & AMENITIES */}
       <section className="w-full max-w-[1360px] mx-auto px-4 md:px-12 py-20" id="experiences">
@@ -670,6 +412,72 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 2: INTRO EDITORIAL */}
+      <section className="w-full max-w-[1360px] mx-auto px-4 md:px-12 py-12 md:py-20" id="about">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="lg:col-span-6 space-y-6">
+            <div className="inline-flex items-center gap-2 text-[#006194] dark:text-[#93ccff] text-xs font-bold uppercase tracking-[0.2em]">
+              <span className="w-6 h-[1.5px] bg-[#006194] dark:bg-[#93ccff]"></span>
+              {t("Sanctuary in Taghazout Bay")}
+            </div>
+            <h2 className="font-serif-display text-3xl sm:text-5xl text-[#0b1d29] dark:text-white tracking-tight leading-tight">
+              {t("Where Berber soul meets the Atlantic crest.")}
+            </h2>
+            <p className="text-base sm:text-lg text-[#3f4850] dark:text-[#cadced] leading-relaxed">
+              {t("Blue Wave Lodge welcomes couples, families and friends to comfortable accommodation in Imi Ouaddar, on Morocco’s Atlantic coast.")}
+            </p>
+            <p className="text-sm sm:text-base text-[#3f4850] dark:text-[#cadced] leading-relaxed">
+              {t("Wake to morning offshore breezes, recharge by our freshwater cliffside pool, share mint tea and freshly caught Atlantic sea bream, and catch sunset glow over the point from our panoramic rooftop shala.")}
+            </p>
+            <div className="grid grid-cols-3 gap-4 pt-4">
+              <div className="p-4 rounded-xl bg-[#ebf5ff] dark:bg-white/5">
+                <span className="font-serif-display text-2xl sm:text-3xl text-[#006194] dark:text-[#93ccff] font-semibold">
+                  300+
+                </span>
+                <p className="text-xs text-[#675d4d] dark:text-[#d3c4b1] mt-1">{t("Days of sunshine annually")}</p>
+              </div>
+              <div className="p-4 rounded-xl bg-[#ebf5ff] dark:bg-white/5">
+                <span className="font-serif-display text-2xl sm:text-3xl text-[#006194] dark:text-[#93ccff] font-semibold">
+                  12
+                </span>
+                <p className="text-xs text-[#675d4d] dark:text-[#d3c4b1] mt-1">{t("World-class reef & beach breaks")}</p>
+              </div>
+              <div className="p-4 rounded-xl bg-[#ebf5ff] dark:bg-white/5">
+                <span className="font-serif-display text-2xl sm:text-3xl text-[#006194] dark:text-[#93ccff] font-semibold">
+                  100%
+                </span>
+                <p className="text-xs text-[#675d4d] dark:text-[#d3c4b1] mt-1">{t("Ocean-facing lodge living")}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-6 relative">
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+              <img
+                className="w-full h-[460px] md:h-[520px] object-cover hover:scale-105 transition-transform duration-700"
+                alt={t("Warm sunlight illuminating the bohemian Moroccan tadelakt architecture of Blue Wave Lodge")}
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-2W5TuuT8jqI8E1UIR-rJw_UPbCBjA0eq3Kf1cPAe_bfEccH5ua4zG_S5wiwMDJ_dTdwg8xBYkvH4tgJ_xoPO9rgFFH8s8t9z8OtdHNlklQf7PhzPfOdrt_nRJIruTf89I261lN8KdUUQxVP_tTB5xsf2Stwy9fo5Xm-QU3o5sBAoDpak2oD3KEuJdIYCe6PxUQxwiIpJsWf9brY1Fd5XfMpR6Vdgqx26T1iCJ9t_dLknvfdIc3Zv"
+              />
+              <div className="absolute bottom-6 left-6 right-6 p-5 rounded-xl bg-white/95 dark:bg-[#0b1d29]/95 backdrop-blur-md shadow-lg border border-[#bfc7d2]/20">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#675d4d] dark:text-[#d3c4b1]">
+                      {t("Location Marker")}
+                    </span>
+                    <h4 className="font-serif-display text-lg text-[#0b1d29] dark:text-white font-semibold">
+                      {t("Imi Ouaddar, Taghazout Bay")}
+                    </h4>
+                  </div>
+                  <span className="px-3 py-1 rounded-full bg-[#cce5ff] text-[#001d31] text-xs font-semibold">
+                    {t("25 min from Agadir")}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -782,8 +590,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     airport_shuttle
                   </span>
                   <div>
-                    <p className="font-bold text-[#0b1d29] dark:text-white">{t("Complimentary Transfers")}</p>
-                    <p>{t("Included for 7+ night stays from Agadir Airport (AGA) or Agadir CTM Station.")}</p>
+                    <p className="font-bold text-[#0b1d29] dark:text-white">{t("Airport Transfers")}</p>
+                    <p>{t("Airport transfers can be requested. Availability and pricing are confirmed by the lodge.")}</p>
                   </div>
                 </div>
               </div>
@@ -839,21 +647,21 @@ export const HomeView: React.FC<HomeViewProps> = ({
             {t("Ready for Your Moroccan Ocean Escape?")}
           </h2>
           <p className="text-base sm:text-lg text-white/90 max-w-xl mx-auto mb-10 leading-relaxed font-sans">
-            {t("Reserve your room or package directly with us for guaranteed lowest rates, flexible rescheduling, and complimentary surfboard lockers.")}
+            {t("Request your room or apartment directly with the lodge. Our team will confirm the details of your stay.")}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <button
               onClick={() => onNavigate('booking')}
               className="px-8 py-4 rounded-lg bg-white text-[#006194] hover:bg-[#f6faff] text-sm font-bold shadow-2xl transition-all transform active:scale-95 flex items-center gap-2"
             >
-              <span>{t("Check Live Availability")}</span>
+              <span>{t("Request Availability")}</span>
               <span className="material-symbols-outlined text-[20px]">calendar_month</span>
             </button>
             <button
               onClick={onOpenConcierge}
               className="px-8 py-4 rounded-lg bg-white/15 hover:bg-white/25 text-white backdrop-blur-md text-sm font-semibold transition-all flex items-center gap-2"
             >
-              <span>{t("Chat With Surf Guide")}</span>
+              <span>{t("Contact the Lodge")}</span>
               <span className="material-symbols-outlined text-[20px]">chat</span>
             </button>
           </div>

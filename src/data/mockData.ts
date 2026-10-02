@@ -8,6 +8,7 @@ export const ROOMS_DATA: RoomItem[] = [
     id: 'sea-view-balcony',
     name: 'Sea View Balcony Room',
     pricePerNight: 145,
+    currency: 'EUR',
     rating: 4.98,
     reviewsCount: 42,
     category: ['sea-view', 'couples'],
@@ -26,6 +27,7 @@ export const ROOMS_DATA: RoomItem[] = [
     id: 'pool-view-suite',
     name: 'Pool View Suite',
     pricePerNight: 125,
+    currency: 'EUR',
     rating: 4.92,
     reviewsCount: 36,
     category: ['pool-view', 'couples'],
@@ -44,6 +46,7 @@ export const ROOMS_DATA: RoomItem[] = [
     id: 'penthouse-ocean-apartment',
     name: 'Penthouse Ocean Apartment',
     pricePerNight: 260,
+    currency: 'EUR',
     rating: 5.0,
     reviewsCount: 29,
     category: ['apartments', 'families'],
@@ -62,6 +65,7 @@ export const ROOMS_DATA: RoomItem[] = [
     id: 'standard-double',
     name: 'Standard Double Room',
     pricePerNight: 85,
+    currency: 'EUR',
     rating: 4.88,
     reviewsCount: 54,
     category: ['couples'],
@@ -84,6 +88,7 @@ export const RELATED_ROOMS = [
     badge: 'Garden Oasis',
     desc: 'Quiet shaded patio, rain shower, ideal for unwinding after deep sun.',
     price: 115,
+    currency: 'EUR',
     image:
       'https://lh3.googleusercontent.com/aida-public/AB6AXuDw7U3Ta5tGTC_6rFvK2eGqWqF04hYg4yi8fQKgBdZ_bynA-4CVxGjYELoEtdeBTj2Iv0JQypwdl8V3nWlcLbSNKVFr11yCR6MdsKmVW4zHUKRUJv0f0WbrWfPyKta9BMIodNHnB84bXTJA5eIEhMpQKrcd4wyyPNxteQGTG09yFvVtISbcysVrxCWA7KGrKF53k2busZefB3JU0waFNQaXOMF0KcboiOJEBz1d9Y3b7z6juij9jeey'
   },
@@ -92,6 +97,7 @@ export const RELATED_ROOMS = [
     badge: 'Top Floor',
     desc: 'Open sunset panoramas, private workstation, and custom record player.',
     price: 160,
+    currency: 'EUR',
     image:
       'https://lh3.googleusercontent.com/aida-public/AB6AXuBCHDE2HbXDH2-gCjtO12mn-6xktzLRi5A2NdHX6lrmRhg_fcFmdlbLz70LzDuHyaQfpbBQl0GrTEV-IfUGFLVeMcLmS1YgatyvLDqtHGhI6665-lNzfeqrA2ufx-0ebTqNKejVOWeqQLXyfGxK1HQCew8ShyX10LrkztZavkj4EJJ1PI1Z7Wonp4JmIF_EKgrXgOftOpZKVo9Ps1aiyDyN8aqVR4Z2tEOwqfJ_cAwKdckwBTyZf3pl'
   },
@@ -100,6 +106,7 @@ export const RELATED_ROOMS = [
     badge: 'Family • 4 Guests',
     desc: 'Independent kitchen, spacious living quarters, and direct beach trail access.',
     price: 210,
+    currency: 'EUR',
     image:
       'https://lh3.googleusercontent.com/aida-public/AB6AXuD_VpIhGAS-dELkpoRq2fBDKhHU16P5zkQA6hE6VjRMGaIipZnMaBouMr4h3otgFmruPjnfoVxscZW2D6gDsUdPeBjINVJ2FJWKS2hdfHyXidTpj8Jkpx2uu8XKZH6NXyr9rSUhIH6L4Pdb8zj0l7hiYCmrN8NB3Tv-4rXmCDzH8ohr_lMpTBLYiniAfItSFOs-4yjKbot5E8DbGcoBAb1MjM_uI5m-T_l03-S2elnDVoPO-hrFHxlr'
   }
@@ -111,6 +118,7 @@ export const PACKAGES_DATA: PackageItem[] = [
     title: '4-Day Surf Escape',
     categoryTag: 'Short Break',
     price: 420,
+    currency: 'EUR',
     durationNights: 3,
     durationDays: 4,
     image:
@@ -126,6 +134,7 @@ export const PACKAGES_DATA: PackageItem[] = [
     categoryTag: 'Signature Week',
     isPopular: true,
     price: 790,
+    currency: 'EUR',
     durationNights: 6,
     durationDays: 7,
     image:
@@ -140,6 +149,7 @@ export const PACKAGES_DATA: PackageItem[] = [
     title: 'Coaching Intensive Week',
     categoryTag: 'Performance',
     price: 940,
+    currency: 'EUR',
     durationNights: 6,
     durationDays: 7,
     image:
@@ -154,6 +164,7 @@ export const PACKAGES_DATA: PackageItem[] = [
     title: 'Surf & Yoga Sanctuary',
     categoryTag: 'Sanctuary',
     price: 980,
+    currency: 'EUR',
     durationNights: 6,
     durationDays: 7,
     image:

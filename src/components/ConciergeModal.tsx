@@ -13,7 +13,7 @@ export const ConciergeModal: React.FC<ConciergeModalProps> = ({ language, isOpen
   const [messages, setMessages] = useState([
     {
       sender: 'concierge',
-      text: 'Salam! Marhaban. I am Yassine, Head Surf Concierge at Blue Wave Lodge. How can I help customize your Taghazout Bay stay today?'
+      text: 'Welcome to Blue Wave Lodge. How can we help with your room, apartment or stay?'
     }
   ]);
   const [input, setInput] = useState('');
@@ -30,14 +30,14 @@ export const ConciergeModal: React.FC<ConciergeModalProps> = ({ language, isOpen
 
     setTimeout(() => {
       let reply =
-        'Thank you! Anchor Point is peeling with a clean 1.8m swell this morning. I will note your request and you can also reach us directly via WhatsApp at +212 661 000 000.';
+        'Please contact our lodge team on WhatsApp at +212 696985757 to confirm availability and arrange your stay.';
       const query = userMsg.toLocaleLowerCase();
       if (['room', 'stay', 'chambre', 'séjour', 'غرف', 'إقام'].some(word => query.includes(word))) {
         reply =
-          'Our Sea View Balcony Rooms are 94% booked for this week, but we have availability for next week! You can book directly with 14-day free cancellation.';
+          'Send your dates and guest count. The lodge will confirm the room rate and availability before your booking is finalized.';
       } else if (['beginner', 'lesson', 'débutant', 'cours', 'مبتدئ', 'دروس'].some(word => query.includes(word))) {
         reply =
-          'Our beginner surf lessons take place directly at Imi Ouaddar sandy beach break right in front of the lodge gates with a 1:4 instructor ratio!';
+          'Surf is optional. Our team will confirm the service, schedule and price with you.';
       }
       setMessages((prev) => [...prev, { sender: 'concierge', text: reply }]);
     }, 600);
@@ -53,7 +53,7 @@ export const ConciergeModal: React.FC<ConciergeModalProps> = ({ language, isOpen
               <span className="material-symbols-outlined text-[22px]">surfing</span>
             </div>
             <div>
-              <p className="font-bold text-sm">{t("Yassine • Surf Concierge")}</p>
+              <p className="font-bold text-sm">{t("Lodge Concierge")}</p>
               <p className="text-xs text-white/80">{t("Online • Blue Wave Lodge HQ")}</p>
             </div>
           </div>
@@ -88,10 +88,10 @@ export const ConciergeModal: React.FC<ConciergeModalProps> = ({ language, isOpen
         {/* Quick Question Chips */}
         <div className="px-3 py-2 bg-white dark:bg-[#0b1d29] border-t border-[#bfc7d2]/20 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap text-xs">
           <button
-            onClick={() => setInput(t("What is the swell forecast today?"))}
+            onClick={() => setInput(t("Which rooms are available for my stay?"))}
             className="px-2.5 py-1 rounded-full bg-[#ebf5ff] dark:bg-white/10 hover:bg-[#e0f0ff] text-[#006194] dark:text-[#93ccff]"
           >
-            {t("Swell Forecast?")}
+            {t("Rooms & Apartments")}
           </button>
           <button
             onClick={() => setInput(t("Can I arrange airport transfer?"))}

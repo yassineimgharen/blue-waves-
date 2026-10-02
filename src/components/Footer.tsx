@@ -86,32 +86,32 @@ export const Footer: React.FC<FooterProps> = ({ language, onNavigate }) => {
           {/* Surf & Life */}
           <div className="lg:col-span-2 flex flex-col gap-3">
             <span className="font-sans font-bold text-base text-[#0b1d29] dark:text-white">
-              {t("Surf & Life")}
+              {t("Optional Experiences")}
             </span>
             <div className="flex flex-col gap-2 text-sm">
               <button
-                onClick={() => onNavigate('packages')}
+                onClick={() => onNavigate('offers')}
                 className="text-start hover:text-[#006194] dark:hover:text-[#93ccff] transition-colors"
               >
-                {t("Surf Academy")}
+                {t("Surf Lesson")}
               </button>
               <button
-                onClick={() => onNavigate('packages')}
+                onClick={() => onNavigate('offers')}
                 className="text-start hover:text-[#006194] dark:hover:text-[#93ccff] transition-colors"
               >
-                {t("Point Break Guiding")}
+                {t("Surf Guiding")}
               </button>
               <button
-                onClick={() => onNavigate('packages')}
+                onClick={() => onNavigate('offers')}
                 className="text-start hover:text-[#006194] dark:hover:text-[#93ccff] transition-colors"
               >
                 {t("Yoga Shala")}
               </button>
               <button
-                onClick={() => onNavigate('packages')}
+                onClick={() => onNavigate('offers')}
                 className="text-start hover:text-[#006194] dark:hover:text-[#93ccff] transition-colors"
               >
-                {t("All-Inclusive Retreats")}
+                {t("Room + Surf Offers")}
               </button>
             </div>
           </div>

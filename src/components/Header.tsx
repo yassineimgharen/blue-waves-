@@ -5,7 +5,7 @@ import logoWhite from '../bluewave-white.png';
 
 interface HeaderProps {
   currentScreen: ScreenType;
-  onNavigate: (screen: ScreenType) => void;
+  onNavigate: (screen: ScreenType, section?: string) => void;
   language: Language;
   onLanguageChange: (lang: Language) => void;
   isDarkMode: boolean;
@@ -23,10 +23,18 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenConcierge
 }) => {
   const t = getTranslator(language);
-  const [stayDropdown, setStayDropdown] = useState(false);
-  const [surfDropdown, setSurfDropdown] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+
+  const links: { label: string; screen: ScreenType; section?: string }[] = [
+    { label: 'Home', screen: 'home' },
+    { label: 'Rooms & Apartments', screen: 'stay' },
+    { label: 'Offers', screen: 'offers' },
+    { label: 'Rooftop & Restaurant', screen: 'dining' },
+    { label: 'Experiences', screen: 'home', section: 'experiences' },
+    { label: 'Gallery', screen: 'home', section: 'gallery' },
+    { label: 'Contact', screen: 'home', section: 'location' },
+  ];
 
   return (
     <>
@@ -45,7 +53,7 @@ export const Header: React.FC<HeaderProps> = ({
                   : 'bg-white/15 text-white hover:bg-white/25'
               }`}
             >
-              {t("1. Home Overview")}
+              {t("Home")}
             </button>
             <button
               onClick={() => onNavigate('stay')}
@@ -55,17 +63,17 @@ export const Header: React.FC<HeaderProps> = ({
                   : 'bg-white/15 text-white hover:bg-white/25'
               }`}
             >
-              {t("2. Stay / Sanctuaries")}
+              {t("Rooms & Apartments")}
             </button>
             <button
-              onClick={() => onNavigate('packages')}
+              onClick={() => onNavigate('offers')}
               className={`px-2.5 py-0.5 rounded-full transition-all text-xs ${
-                currentScreen === 'packages'
+                currentScreen === 'offers'
                   ? 'bg-white text-[#006194] font-bold shadow-sm'
                   : 'bg-white/15 text-white hover:bg-white/25'
               }`}
             >
-              {t("3. Surf & Packages")}
+              {t("Offers")}
             </button>
             <button
               onClick={() => onNavigate('booking')}
@@ -75,7 +83,7 @@ export const Header: React.FC<HeaderProps> = ({
                   : 'bg-white/15 text-white hover:bg-white/25'
               }`}
             >
-              {t("4. Reserve / Booking Flow")}
+              {t("Book Now")}
             </button>
           </div>
           <div className="hidden md:flex items-center gap-2 text-white/80">
@@ -101,189 +109,8 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden xl:flex items-center gap-7 text-sm font-semibold text-[#3f4850] dark:text-[#e0f0ff]">
-            <button
-              onClick={() => onNavigate('home')}
-              className={`py-2 transition-colors hover:text-[#006194] dark:hover:text-[#93ccff] ${
-                currentScreen === 'home'
-                  ? 'text-[#006194] dark:text-[#93ccff] font-bold border-b-2 border-[#006194]'
-                  : ''
-              }`}
-            >
-              {t("Home")}
-            </button>
-
-            {/* Stay Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setStayDropdown(true)}
-              onMouseLeave={() => setStayDropdown(false)}
-            >
-              <button
-                onClick={() => onNavigate('stay')}
-                className={`flex items-center gap-1 py-2 transition-colors hover:text-[#006194] dark:hover:text-[#93ccff] ${
-                  currentScreen === 'stay'
-                    ? 'text-[#006194] dark:text-[#93ccff] font-bold border-b-2 border-[#006194]'
-                    : ''
-                }`}
-              >
-                <span>{t("Stay")}</span>
-                <span className="material-symbols-outlined text-[16px]">expand_more</span>
-              </button>
-              {stayDropdown && (
-                <div className="absolute top-full left-0 flex flex-col w-56 py-2 bg-white dark:bg-[#0b1d29] rounded-xl shadow-xl border border-[#bfc7d2]/20 text-[#3f4850] dark:text-[#d2e5f6] text-sm animate-in fade-in">
-                  <button
-                    onClick={() => {
-                      onNavigate('stay');
-                      setStayDropdown(false);
-                    }}
-                    className="text-start px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
-                  >
-                    {t("Lodge Rooms")}
-                  </button>
-                  <button
-                    onClick={() => {
-                      onNavigate('stay');
-                      setStayDropdown(false);
-                    }}
-                    className="text-start px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
-                  >
-                    {t("Sea View Suites")}
-                  </button>
-                  <button
-                    onClick={() => {
-                      onNavigate('stay');
-                      setStayDropdown(false);
-                    }}
-                    className="text-start px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
-                  >
-                    {t("Pool View Rooms")}
-                  </button>
-                  <button
-                    onClick={() => {
-                      onNavigate('stay');
-                      setStayDropdown(false);
-                    }}
-                    className="text-start px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
-                  >
-                    {t("Ocean Apartments")}
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Surf Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setSurfDropdown(true)}
-              onMouseLeave={() => setSurfDropdown(false)}
-            >
-              <button
-                onClick={() => onNavigate('packages')}
-                className={`flex items-center gap-1 py-2 transition-colors hover:text-[#006194] dark:hover:text-[#93ccff] ${
-                  currentScreen === 'packages'
-                    ? 'text-[#006194] dark:text-[#93ccff] font-bold border-b-2 border-[#006194]'
-                    : ''
-                }`}
-              >
-                <span>{t("Surf")}</span>
-                <span className="material-symbols-outlined text-[16px]">expand_more</span>
-              </button>
-              {surfDropdown && (
-                <div className="absolute top-full left-0 flex flex-col w-60 py-2 bg-white dark:bg-[#0b1d29] rounded-xl shadow-xl border border-[#bfc7d2]/20 text-[#3f4850] dark:text-[#d2e5f6] text-sm animate-in fade-in">
-                  <button
-                    onClick={() => {
-                      onNavigate('packages');
-                      setSurfDropdown(false);
-                    }}
-                    className="text-start px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
-                  >
-                    {t("Surf Lessons")}
-                  </button>
-                  <button
-                    onClick={() => {
-                      onNavigate('packages');
-                      setSurfDropdown(false);
-                    }}
-                    className="text-start px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
-                  >
-                    {t("Surf Guiding")}
-                  </button>
-                  <button
-                    onClick={() => {
-                      onNavigate('packages');
-                      setSurfDropdown(false);
-                    }}
-                    className="text-start px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
-                  >
-                    {t("Surf & Stay")}
-                  </button>
-                  <button
-                    onClick={() => {
-                      onNavigate('packages');
-                      setSurfDropdown(false);
-                    }}
-                    className="text-start px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
-                  >
-                    {t("Surf + Yoga")}
-                  </button>
-                  <button
-                    onClick={() => {
-                      onNavigate('packages');
-                      setSurfDropdown(false);
-                    }}
-                    className="text-start px-4 py-2 hover:bg-[#e0f0ff] dark:hover:bg-white/10 hover:text-[#006194]"
-                  >
-                    {t("Equipment Rental")}
-                  </button>
-                </div>
-              )}
-            </div>
-
-            <button
-              onClick={() => onNavigate('packages')}
-              className={`py-2 transition-colors hover:text-[#006194] dark:hover:text-[#93ccff] ${
-                currentScreen === 'packages' ? 'text-[#006194] dark:text-[#93ccff] font-bold' : ''
-              }`}
-            >
-              {t("Packages")}
-            </button>
-
-            <button
-              onClick={() => {
-                onNavigate('home');
-                setTimeout(() => {
-                  document.getElementById('experiences')?.scrollIntoView({ behavior: 'smooth' });
-                }, 100);
-              }}
-              className="py-2 transition-colors hover:text-[#006194] dark:hover:text-[#93ccff]"
-            >
-              {t("Experiences")}
-            </button>
-
-            <button
-              onClick={() => {
-                onNavigate('home');
-                setTimeout(() => {
-                  document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' });
-                }, 100);
-              }}
-              className="py-2 transition-colors hover:text-[#006194] dark:hover:text-[#93ccff]"
-            >
-              {t("Gallery")}
-            </button>
-
-            <button
-              onClick={() => {
-                onNavigate('home');
-                setTimeout(() => {
-                  document.getElementById('location')?.scrollIntoView({ behavior: 'smooth' });
-                }, 100);
-              }}
-              className="py-2 transition-colors hover:text-[#006194] dark:hover:text-[#93ccff]"
-            >
-              {t("Location")}
-            </button>
+          <nav aria-label={t('Main navigation')} className="hidden xl:flex items-center gap-4 text-xs 2xl:text-sm font-semibold text-[#3f4850] dark:text-[#e0f0ff]">
+            {links.map(link => <button key={link.label} onClick={() => onNavigate(link.screen, link.section)} className={`py-2 transition-colors hover:text-[#006194] dark:hover:text-[#93ccff] ${currentScreen === link.screen && !link.section ? 'text-[#006194] dark:text-[#93ccff]' : ''}`}>{t(link.label)}</button>)}
           </nav>
 
           {/* Right Controls: Language, Dark Mode, CTA, Profile */}
@@ -343,7 +170,7 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => onNavigate('booking')}
               className="hidden sm:inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-[#006194] hover:bg-[#007bb9] text-white text-xs md:text-sm font-semibold shadow-[0_4px_20px_-2px_rgba(0,97,148,0.25)] transition-all active:scale-[0.98] whitespace-nowrap"
             >
-              {t("Book Your Stay")}
+              {t("Book Now")}
             </button>
 
             {/* Profile Avatar with Popover */}
@@ -386,7 +213,7 @@ export const Header: React.FC<HeaderProps> = ({
                       className="text-start py-2 hover:text-[#006194] flex items-center gap-2"
                     >
                       <span className="material-symbols-outlined text-[16px]">chat</span>
-                      <span>{t("Message Surf Concierge")}</span>
+                      <span>{t("Contact the Lodge")}</span>
                     </button>
                   </div>
                 </div>
@@ -409,42 +236,7 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Mobile Dropdown Menu */}
         {mobileMenuOpen && (
           <div className="xl:hidden bg-white dark:bg-[#0b1d29] border-t border-[#bfc7d2]/20 px-6 py-5 flex flex-col gap-3 text-sm font-semibold">
-            <button
-              onClick={() => {
-                onNavigate('home');
-                setMobileMenuOpen(false);
-              }}
-              className="text-start py-2 text-[#006194] dark:text-[#93ccff]"
-            >
-              {t("Home Overview")}
-            </button>
-            <button
-              onClick={() => {
-                onNavigate('stay');
-                setMobileMenuOpen(false);
-              }}
-              className="text-start py-2 hover:text-[#006194]"
-            >
-              {t("Accommodations & Suites")}
-            </button>
-            <button
-              onClick={() => {
-                onNavigate('packages');
-                setMobileMenuOpen(false);
-              }}
-              className="text-start py-2 hover:text-[#006194]"
-            >
-              {t("Surf & Packages")}
-            </button>
-            <button
-              onClick={() => {
-                onNavigate('booking');
-                setMobileMenuOpen(false);
-              }}
-              className="text-start py-2 hover:text-[#006194]"
-            >
-              {t("Reserve Sanctuary")}
-            </button>
+            {[...links, { label: 'Book Now', screen: 'booking' as ScreenType }].map(link => <button key={link.label} onClick={() => { onNavigate(link.screen, link.section); setMobileMenuOpen(false); }} className="text-start py-2 hover:text-[#006194]">{t(link.label)}</button>)}
             <div className="pt-3 border-t border-[#bfc7d2]/20 flex items-center justify-between">
               <span className="text-xs text-[#675d4d] dark:text-[#d3c4b1]">{t("Language:")}</span>
               <div className="flex gap-2 text-xs">

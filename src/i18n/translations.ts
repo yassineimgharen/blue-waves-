@@ -1,7 +1,9 @@
+import { stayMessages } from './stayTranslations';
 import { Language } from '../types';
 
 // English source phrases are stable catalog keys. IDs and form values stay language-neutral.
 const messages = {
+  ...stayMessages,
   "Anchor Pt": { "fr": "Anchor Point", "ar": "أنكور بوينت" },
   "Anchor Point": { "fr": "Anchor Point", "ar": "أنكور بوينت" },
   "Killers": { "fr": "Killers", "ar": "كيلرز" },

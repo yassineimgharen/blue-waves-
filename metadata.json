@@ -1,6 +1,6 @@
 {
   "name": "Blue Wave Lodge",
-  "description": "Boutique ocean sanctuary and surf lodge in Imi Ouaddar, Taghazout Bay, Morocco. Curated rooms, ISA coaching, and all-inclusive retreats.",
+  "description": "Rooms and apartments in Imi Ouaddar, Morocco. Stay by the ocean and add optional experiences.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
