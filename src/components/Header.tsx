@@ -1,6 +1,7 @@
 import { getTranslator } from '../i18n/translations';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ScreenType, Language } from '../types';
+import { ACCOMMODATIONS, ROOM_GROUPS } from '../data/accommodations';
 import logoWhite from '../bluewave-white.png';
 
 interface HeaderProps {
@@ -25,16 +26,34 @@ export const Header: React.FC<HeaderProps> = ({
   const t = getTranslator(language);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [roomsDropdownOpen, setRoomsDropdownOpen] = useState(false);
+  const [mobileRoomsOpen, setMobileRoomsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const links: { label: string; screen: ScreenType; section?: string }[] = [
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setRoomsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const otherLinks: { label: string; screen: ScreenType; section?: string }[] = [
     { label: 'Home', screen: 'home' },
-    { label: 'Rooms & Apartments', screen: 'stay' },
     { label: 'Offers', screen: 'offers' },
     { label: 'Rooftop & Restaurant', screen: 'dining' },
     { label: 'Experiences', screen: 'home', section: 'experiences' },
-    { label: 'Gallery', screen: 'home', section: 'gallery' },
     { label: 'Contact', screen: 'home', section: 'location' },
   ];
+
+  const navigateToRoom = (id: string) => {
+    window.location.hash = `#rooms/${id}`;
+    setRoomsDropdownOpen(false);
+    setMobileMenuOpen(false);
+  };
 
   return (
     <>
@@ -110,7 +129,55 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Desktop Navigation Links */}
           <nav aria-label={t('Main navigation')} className="hidden xl:flex items-center gap-4 text-xs 2xl:text-sm font-semibold text-[#3f4850] dark:text-[#e0f0ff]">
-            {links.map(link => <button key={link.label} onClick={() => onNavigate(link.screen, link.section)} className={`py-2 transition-colors hover:text-[#006194] dark:hover:text-[#93ccff] ${currentScreen === link.screen && !link.section ? 'text-[#006194] dark:text-[#93ccff]' : ''}`}>{t(link.label)}</button>)}
+            {/* Home */}
+            <button onClick={() => onNavigate('home')} className={`py-2 transition-colors hover:text-[#006194] dark:hover:text-[#93ccff] ${currentScreen === 'home' ? 'text-[#006194] dark:text-[#93ccff]' : ''}`}>{t('Home')}</button>
+
+            {/* Rooms & Apartments dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setRoomsDropdownOpen(o => !o)}
+                className={`flex items-center gap-1 py-2 transition-colors hover:text-[#006194] dark:hover:text-[#93ccff] ${currentScreen === 'stay' || currentScreen === 'room' ? 'text-[#006194] dark:text-[#93ccff]' : ''}`}
+              >
+                {t('Rooms & Apartments')}
+                <span className={`material-symbols-outlined text-[16px] transition-transform duration-200 ${roomsDropdownOpen ? 'rotate-180' : ''}`}>expand_more</span>
+              </button>
+
+              {roomsDropdownOpen && (
+                <div className="absolute top-full left-0 mt-1 w-64 bg-white dark:bg-[#0b1d29] rounded-2xl shadow-2xl border border-[#bfc7d2]/20 py-3 z-50 animate-in fade-in">
+                  {/* View all link */}
+                  <button onClick={() => { onNavigate('stay'); setRoomsDropdownOpen(false); }} className="w-full text-left px-4 py-2 text-xs font-bold text-[#006194] dark:text-[#93ccff] hover:bg-[#ebf5ff] dark:hover:bg-white/10 flex items-center gap-2">
+                    <span className="material-symbols-outlined text-[15px]">grid_view</span>
+                    {t('All Rooms & Apartments')}
+                  </button>
+                  <div className="my-2 border-t border-[#bfc7d2]/20" />
+                  {ROOM_GROUPS.map(group => {
+                    const rooms = ACCOMMODATIONS.filter(r => (group.ids as readonly string[]).includes(r.id));
+                    return (
+                      <div key={group.label} className="px-2 mb-1">
+                        <p className="px-2 py-1 text-[10px] uppercase tracking-widest font-bold text-[#675d4d] dark:text-[#d3c4b1]">{t(group.label)}</p>
+                        {rooms.map(room => (
+                          <button
+                            key={room.id}
+                            onClick={() => navigateToRoom(room.id)}
+                            className="w-full text-left px-3 py-2 rounded-lg text-sm text-[#3f4850] dark:text-[#cadced] hover:bg-[#ebf5ff] dark:hover:bg-white/10 hover:text-[#006194] dark:hover:text-[#93ccff] transition-colors flex items-center gap-2"
+                          >
+                            <span className="material-symbols-outlined text-[15px] text-[#006194] dark:text-[#93ccff]">
+                              {group.label === 'Apartment' ? 'apartment' : group.label === 'Sea-view room' ? 'water' : group.label === 'Pool-view room' ? 'pool' : 'king_bed'}
+                            </span>
+                            {t(room.name)}
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Other links */}
+            {otherLinks.filter(l => l.label !== 'Home').map(link => (
+              <button key={link.label} onClick={() => onNavigate(link.screen, link.section)} className={`py-2 transition-colors hover:text-[#006194] dark:hover:text-[#93ccff] ${currentScreen === link.screen && !link.section ? 'text-[#006194] dark:text-[#93ccff]' : ''}`}>{t(link.label)}</button>
+            ))}
           </nav>
 
           {/* Right Controls: Language, Dark Mode, CTA, Profile */}
@@ -235,29 +302,39 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Mobile Dropdown Menu */}
         {mobileMenuOpen && (
-          <div className="xl:hidden bg-white dark:bg-[#0b1d29] border-t border-[#bfc7d2]/20 px-6 py-5 flex flex-col gap-3 text-sm font-semibold">
-            {[...links, { label: 'Book Now', screen: 'booking' as ScreenType }].map(link => <button key={link.label} onClick={() => { onNavigate(link.screen, link.section); setMobileMenuOpen(false); }} className="text-start py-2 hover:text-[#006194]">{t(link.label)}</button>)}
+          <div className="xl:hidden bg-white dark:bg-[#0b1d29] border-t border-[#bfc7d2]/20 px-6 py-5 flex flex-col gap-1 text-sm font-semibold">
+            <button onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }} className="text-start py-2 hover:text-[#006194]">{t('Home')}</button>
+
+            {/* Rooms accordion */}
+            <button onClick={() => setMobileRoomsOpen(o => !o)} className="text-start py-2 hover:text-[#006194] flex items-center justify-between">
+              <span>{t('Rooms & Apartments')}</span>
+              <span className={`material-symbols-outlined text-[18px] transition-transform duration-200 ${mobileRoomsOpen ? 'rotate-180' : ''}`}>expand_more</span>
+            </button>
+            {mobileRoomsOpen && (
+              <div className="pl-3 flex flex-col gap-1 mb-1">
+                <button onClick={() => { onNavigate('stay'); setMobileMenuOpen(false); }} className="text-start py-1.5 text-xs font-bold text-[#006194] dark:text-[#93ccff]">{t('All Rooms & Apartments')}</button>
+                {ROOM_GROUPS.map(group => (
+                  <div key={group.label}>
+                    <p className="text-[10px] uppercase tracking-widest font-bold text-[#675d4d] dark:text-[#d3c4b1] py-1">{t(group.label)}</p>
+                    {ACCOMMODATIONS.filter(r => (group.ids as readonly string[]).includes(r.id)).map(room => (
+                      <button key={room.id} onClick={() => navigateToRoom(room.id)} className="w-full text-start py-1.5 pl-2 text-sm text-[#3f4850] dark:text-[#cadced] hover:text-[#006194]">{t(room.name)}</button>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {otherLinks.filter(l => l.label !== 'Home').map(link => (
+              <button key={link.label} onClick={() => { onNavigate(link.screen, link.section); setMobileMenuOpen(false); }} className="text-start py-2 hover:text-[#006194]">{t(link.label)}</button>
+            ))}
+            <button onClick={() => { onNavigate('booking'); setMobileMenuOpen(false); }} className="text-start py-2 text-[#006194] font-bold">{t('Book Now')}</button>
+
             <div className="pt-3 border-t border-[#bfc7d2]/20 flex items-center justify-between">
-              <span className="text-xs text-[#675d4d] dark:text-[#d3c4b1]">{t("Language:")}</span>
+              <span className="text-xs text-[#675d4d] dark:text-[#d3c4b1]">{t('Language:')}</span>
               <div className="flex gap-2 text-xs">
-                <button
-                  onClick={() => onLanguageChange('en')}
-                  className={`px-2 py-1 rounded ${language === 'en' ? 'bg-[#006194] text-white' : ''}`}
-                >
-                  EN
-                </button>
-                <button
-                  onClick={() => onLanguageChange('fr')}
-                  className={`px-2 py-1 rounded ${language === 'fr' ? 'bg-[#006194] text-white' : ''}`}
-                >
-                  FR
-                </button>
-                <button
-                  onClick={() => onLanguageChange('ar')}
-                  className={`px-2 py-1 rounded ${language === 'ar' ? 'bg-[#006194] text-white' : ''}`}
-                >
-                  AR
-                </button>
+                {(['en','fr','ar'] as const).map(lang => (
+                  <button key={lang} onClick={() => onLanguageChange(lang)} className={`px-2 py-1 rounded uppercase ${language === lang ? 'bg-[#006194] text-white' : ''}`}>{lang}</button>
+                ))}
               </div>
             </div>
           </div>

@@ -1,9 +1,104 @@
 import type { RoomItem } from '../types';
 
-/**
- * Owner-supplied room albums. First photo is used on the room card.
- * Import files from ../images and assign them only once the owner confirms
- * which room they belong to. Unassigned UUID files must not be guessed.
- * Existing catalog photos remain visible until an album is supplied.
- */
-export const roomImages: Record<string, NonNullable<RoomItem['gallery']>> = {};
+// Owner-supplied folders define each album; identical file copies are included once.
+// The first image is the cover used throughout the accommodation catalog.
+export const roomImages: Record<string, NonNullable<RoomItem['gallery']>> = {
+  azemmour: [
+    { src: new URL('../images/azemmur/chambre-06-azmmur-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_01-650x572.jpg', import.meta.url).href, caption: 'Azemmour' },
+    { src: new URL('../images/azemmur/chambre-06-azmmur-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_04-650x572.jpg', import.meta.url).href, caption: 'Azemmour' },
+    { src: new URL('../images/azemmur/chambre-06-azmmur-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_07-1-650x572.jpg', import.meta.url).href, caption: 'Azemmour' },
+    { src: new URL('../images/azemmur/chambre-06-azmmur-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_09-650x572 (1).jpg', import.meta.url).href, caption: 'Azemmour' },
+    { src: new URL('../images/azemmur/chambre-06-azmmur-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_12-650x572.jpg', import.meta.url).href, caption: 'Azemmour' },
+    { src: new URL('../images/azemmur/residence-blue-wave-lodge-imi-ouaddar_chambre-1-ayyur_05-650x572.jpg', import.meta.url).href, caption: 'Azemmour' },
+    { src: new URL('../images/azemmur/residence-blue-wave-lodge-imi-ouaddar_chambre-1-ayyur_06-650x572.jpg', import.meta.url).href, caption: 'Azemmour' },
+  ],
+  titrit: [
+    { src: new URL('../images/titrit/chambre-10-titrit-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_03-650x572.jpg', import.meta.url).href, caption: 'Titrit' },
+    { src: new URL('../images/titrit/chambre-10-titrit-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_05-650x572.jpg', import.meta.url).href, caption: 'Titrit' },
+    { src: new URL('../images/titrit/chambre-10-titrit-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_09-650x572.jpg', import.meta.url).href, caption: 'Titrit' },
+    { src: new URL('../images/titrit/chambre-10-titrit-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_21-650x572.jpg', import.meta.url).href, caption: 'Titrit' },
+    { src: new URL('../images/titrit/chambre-10-titrit-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_25-650x572.jpg', import.meta.url).href, caption: 'Titrit' },
+    { src: new URL('../images/titrit/chambre-10-titrit-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_28-650x572.jpg', import.meta.url).href, caption: 'Titrit' },
+    { src: new URL('../images/titrit/chambre-10-titrit-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_32-650x572.jpg', import.meta.url).href, caption: 'Titrit' },
+    { src: new URL('../images/titrit/chambre-10-titrit-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_33-650x572.jpg', import.meta.url).href, caption: 'Titrit' },
+    { src: new URL('../images/titrit/chambre-10-titrit-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_34-650x572.jpg', import.meta.url).href, caption: 'Titrit' },
+    { src: new URL('../images/titrit/chambre-10-titrit-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_35-650x572.jpg', import.meta.url).href, caption: 'Titrit' },
+  ],
+  tawja: [
+    { src: new URL('../images/tawja/chambre-09-tawja-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_05-650x572.jpg', import.meta.url).href, caption: 'Tawja' },
+    { src: new URL('../images/tawja/chambre-09-tawja-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_10-650x572.jpg', import.meta.url).href, caption: 'Tawja' },
+    { src: new URL('../images/tawja/chambre-09-tawja-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_15-650x572.jpg', import.meta.url).href, caption: 'Tawja' },
+    { src: new URL('../images/tawja/chambre-09-tawja-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_16-2-650x572 (1).jpg', import.meta.url).href, caption: 'Tawja' },
+    { src: new URL('../images/tawja/chambre-09-tawja-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_17-650x572.jpg', import.meta.url).href, caption: 'Tawja' },
+    { src: new URL('../images/tawja/chambre-09-tawja-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_18-650x572.jpg', import.meta.url).href, caption: 'Tawja' },
+  ],
+  adrar: [
+    { src: new URL('../images/adrar/chambre-04-adrar-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_06-650x572.jpg', import.meta.url).href, caption: 'Adrar' },
+    { src: new URL('../images/adrar/chambre-04-adrar-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_08-650x572 (1).jpg', import.meta.url).href, caption: 'Adrar' },
+    { src: new URL('../images/adrar/chambre-04-adrar-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_12-650x572 (1).jpg', import.meta.url).href, caption: 'Adrar' },
+    { src: new URL('../images/adrar/chambre-04-adrar-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_20-650x572.jpg', import.meta.url).href, caption: 'Adrar' },
+    { src: new URL('../images/adrar/chambre-04-adrar-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_22-650x572.jpg', import.meta.url).href, caption: 'Adrar' },
+  ],
+  ayour: [
+    { src: new URL('../images/ayour/residence-blue-wave-lodge-imi-ouaddar_chambre-1-ayyur_02-650x572.jpeg', import.meta.url).href, caption: 'Ayour' },
+    { src: new URL('../images/ayour/09-chambre-01-ayyur-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar-650x572.jpg', import.meta.url).href, caption: 'Ayour' },
+    { src: new URL('../images/ayour/10-chambre-01-ayyur-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar-650x572.jpg', import.meta.url).href, caption: 'Ayour' },
+    { src: new URL('../images/ayour/residence-blue-wave-lodge-imi-ouaddar_chambre-1-ayyur_03-1-650x572.jpeg', import.meta.url).href, caption: 'Ayour' },
+    { src: new URL('../images/ayour/residence-blue-wave-lodge-imi-ouaddar_chambre-1-ayyur_08-650x572.jpeg', import.meta.url).href, caption: 'Ayour' },
+  ],
+  islman: [
+    { src: new URL('../images/islman/chambre-08-islman-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_01-1-650x572.jpg', import.meta.url).href, caption: 'Islman' },
+    { src: new URL('../images/islman/chambre-08-islman-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_03-650x572.jpg', import.meta.url).href, caption: 'Islman' },
+    { src: new URL('../images/islman/chambre-08-islman-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_05-650x572.jpg', import.meta.url).href, caption: 'Islman' },
+    { src: new URL('../images/islman/chambre-08-islman-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_19-650x572.jpg', import.meta.url).href, caption: 'Islman' },
+    { src: new URL('../images/islman/chambre-08-islman-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_20-650x572.jpg', import.meta.url).href, caption: 'Islman' },
+    { src: new URL('../images/islman/chambre-08-islman-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_22-650x572.jpg', import.meta.url).href, caption: 'Islman' },
+    { src: new URL('../images/islman/chambre-08-islman-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_23-650x572.jpg', import.meta.url).href, caption: 'Islman' },
+  ],
+  ajdig: [
+    { src: new URL('../images/ajdig/chambre-07-ajddig-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_01-1-650x572.jpg', import.meta.url).href, caption: 'Ajdig' },
+    { src: new URL('../images/ajdig/chambre-07-ajddig-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_03-650x572.jpg', import.meta.url).href, caption: 'Ajdig' },
+    { src: new URL('../images/ajdig/chambre-07-ajddig-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_05-650x572.jpg', import.meta.url).href, caption: 'Ajdig' },
+    { src: new URL('../images/ajdig/chambre-07-ajddig-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_09-650x572.jpg', import.meta.url).href, caption: 'Ajdig' },
+    { src: new URL('../images/ajdig/chambre-07-ajddig-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_10-650x572.jpg', import.meta.url).href, caption: 'Ajdig' },
+    { src: new URL('../images/ajdig/chambre-07-ajddig-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_11-650x572.jpg', import.meta.url).href, caption: 'Ajdig' },
+    { src: new URL('../images/ajdig/chambre-07-ajddig-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_12-650x572.jpg', import.meta.url).href, caption: 'Ajdig' },
+    { src: new URL('../images/ajdig/chambre-07-ajddig-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_16-650x572.jpg', import.meta.url).href, caption: 'Ajdig' },
+  ],
+  tafoukt: [
+    { src: new URL('../images/tafukt/chambre-03-tafukt-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_03-650x572.jpg', import.meta.url).href, caption: 'Tafoukt' },
+    { src: new URL('../images/tafukt/chambre-03-tafukt-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_01-650x572.jpg', import.meta.url).href, caption: 'Tafoukt' },
+    { src: new URL('../images/tafukt/chambre-03-tafukt-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_05-650x572.jpg', import.meta.url).href, caption: 'Tafoukt' },
+    { src: new URL('../images/tafukt/chambre-03-tafukt-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_09-650x572.jpg', import.meta.url).href, caption: 'Tafoukt' },
+    { src: new URL('../images/tafukt/chambre-03-tafukt-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_20-650x572.jpg', import.meta.url).href, caption: 'Tafoukt' },
+    { src: new URL('../images/tafukt/chambre-03-tafukt-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_21-650x572.jpg', import.meta.url).href, caption: 'Tafoukt' },
+    { src: new URL('../images/tafukt/chambre-03-tafukt-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_22-650x572.jpg', import.meta.url).href, caption: 'Tafoukt' },
+  ],
+  aman: [
+    { src: new URL('../images/aman/chambre-02-aman-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_01-1-650x572.jpg', import.meta.url).href, caption: 'Aman' },
+    { src: new URL('../images/aman/chambre-02-aman-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_04-650x572.jpg', import.meta.url).href, caption: 'Aman' },
+    { src: new URL('../images/aman/chambre-02-aman-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_05-650x572.jpg', import.meta.url).href, caption: 'Aman' },
+    { src: new URL('../images/aman/chambre-02-aman-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_06-650x572.jpg', import.meta.url).href, caption: 'Aman' },
+    { src: new URL('../images/aman/chambre-02-aman-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_09-650x572.jpg', import.meta.url).href, caption: 'Aman' },
+    { src: new URL('../images/aman/chambre-02-aman-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_24-650x572.jpg', import.meta.url).href, caption: 'Aman' },
+    { src: new URL('../images/aman/chambre-02-aman-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_25-650x572.jpg', import.meta.url).href, caption: 'Aman' },
+    { src: new URL('../images/aman/chambre-02-aman-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_26-650x572.jpg', import.meta.url).href, caption: 'Aman' },
+    { src: new URL('../images/aman/chambre-02-aman-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_29-650x572.jpg', import.meta.url).href, caption: 'Aman' },
+  ],
+  amlal: [
+    { src: new URL('../images/appartement/chambre-11-amlal-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_01-650x572.jpg', import.meta.url).href, caption: 'Amlal' },
+    { src: new URL('../images/appartement/chambre-11-amlal-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_06-650x572.jpg', import.meta.url).href, caption: 'Amlal' },
+    { src: new URL('../images/appartement/chambre-11-amlal-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_07-650x572.jpg', import.meta.url).href, caption: 'Amlal' },
+    { src: new URL('../images/appartement/chambre-11-amlal-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_17-650x572.jpg', import.meta.url).href, caption: 'Amlal' },
+    { src: new URL('../images/appartement/chambre-11-amlal-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_21-650x572.jpg', import.meta.url).href, caption: 'Amlal' },
+    { src: new URL('../images/appartement/chambre-11-amlal-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_23-650x572.jpg', import.meta.url).href, caption: 'Amlal' },
+    { src: new URL('../images/appartement/chambre-11-amlal-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_36-650x572.jpg', import.meta.url).href, caption: 'Amlal' },
+    { src: new URL('../images/appartement/chambre-11-amlal-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_38-650x572.jpg', import.meta.url).href, caption: 'Amlal' },
+    { src: new URL('../images/appartement/chambre-11-amlal-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_42-650x572.jpg', import.meta.url).href, caption: 'Amlal' },
+    { src: new URL('../images/appartement/chambre-11-amlal-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_43-1-650x572.jpg', import.meta.url).href, caption: 'Amlal' },
+    { src: new URL('../images/appartement/chambre-11-amlal-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_53-650x572.jpg', import.meta.url).href, caption: 'Amlal' },
+    { src: new URL('../images/appartement/chambre-11-amlal-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_54-650x572.jpg', import.meta.url).href, caption: 'Amlal' },
+    { src: new URL('../images/appartement/chambre-11-amlal-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_55-650x572.jpg', import.meta.url).href, caption: 'Amlal' },
+    { src: new URL('../images/appartement/chambre-11-amlal-hotel-appart-auberge_residence-blue-wave-lodge-imi-ouaddar_58-650x572.jpg', import.meta.url).href, caption: 'Amlal' },
+  ],
+};

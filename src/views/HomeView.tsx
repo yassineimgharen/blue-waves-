@@ -234,7 +234,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {ACCOMMODATIONS.map(room => <RoomCard key={room.id} room={room} language={language} onBook={onBook} />)}
+          {ACCOMMODATIONS.map(room => <RoomCard key={room.id} room={room} language={language} onBook={onBook} hideDescription />)}
         </div>
       </section>
 

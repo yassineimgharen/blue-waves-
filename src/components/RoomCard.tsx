@@ -1,21 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Language, RoomItem } from '../types';
 import { getTranslator } from '../i18n/translations';
 import { roomPrice } from '../lib/booking';
-import { RoomDetailModal } from './RoomDetailModal';
 
 export const primaryButton = 'px-5 py-2.5 rounded-lg bg-[#006194] hover:bg-[#007bb9] text-white text-sm font-semibold transition-all shadow-sm';
 export const secondaryButton = 'px-5 py-2.5 rounded-lg bg-[#ebf5ff] dark:bg-white/10 text-[#006194] dark:text-[#93ccff] hover:bg-[#d8ebfc] dark:hover:bg-white/20 text-sm font-semibold transition-all';
 
-export function RoomCard({ room, language, onBook }: { room: RoomItem; language: Language; onBook: (room: RoomItem) => void }) {
+export function RoomCard({ room, language, onBook, hideDescription }: { room: RoomItem; language: Language; onBook: (room: RoomItem) => void; hideDescription?: boolean }) {
   const t = getTranslator(language);
-  const [showDetail, setShowDetail] = useState(false);
 
   return (
     <>
       <article className="group bg-white dark:bg-[#0b1d29] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-[#bfc7d2]/20 flex flex-col">
         {/* Image */}
-        <button onClick={() => setShowDetail(true)} className="relative block h-64 overflow-hidden bg-[#ebf5ff] dark:bg-white/5 w-full text-left">
+        <a href={`#rooms/${room.id}`} className="relative block h-64 overflow-hidden bg-[#ebf5ff] dark:bg-white/5 w-full text-left">
           {room.image
             ? <img src={room.image} alt={t(room.name)} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             : (
@@ -32,14 +30,14 @@ export function RoomCard({ room, language, onBook }: { room: RoomItem; language:
               {room.gallery.length}
             </span>
           )}
-        </button>
+        </a>
 
         {/* Body */}
         <div className="p-6 flex flex-col gap-3 flex-1">
           <h3 className="font-serif-display text-xl text-[#0b1d29] dark:text-white font-semibold leading-tight">
-            <button onClick={() => setShowDetail(true)} className="hover:text-[#006194] dark:hover:text-[#93ccff] transition-colors text-left">
+            <a href={`#rooms/${room.id}`} className="hover:text-[#006194] dark:hover:text-[#93ccff] transition-colors text-left">
               {t(room.name)}
-            </button>
+            </a>
           </h3>
 
           <p className="font-bold text-[#006194] dark:text-[#93ccff] text-base">
@@ -58,7 +56,7 @@ export function RoomCard({ room, language, onBook }: { room: RoomItem; language:
             </span>
           </div>
 
-          <p className="text-sm text-[#3f4850] dark:text-[#cadced] leading-relaxed line-clamp-2">{t(room.description)}</p>
+          {!hideDescription && <p className="text-sm text-[#3f4850] dark:text-[#cadced] leading-relaxed line-clamp-2">{t(room.description)}</p>}
 
           {/* Top 3 amenities preview */}
           <ul className="flex flex-wrap gap-1.5 text-xs">
@@ -66,22 +64,19 @@ export function RoomCard({ room, language, onBook }: { room: RoomItem; language:
               <li key={feature} className="bg-[#ebf5ff] dark:bg-white/5 px-2.5 py-1 rounded-full text-[#3f4850] dark:text-[#cadced]">{t(feature)}</li>
             ))}
             {room.features.length > 3 && (
-              <li className="bg-[#ebf5ff] dark:bg-white/5 px-2.5 py-1 rounded-full text-[#006194] dark:text-[#93ccff] font-semibold cursor-pointer" onClick={() => setShowDetail(true)}>
-                +{room.features.length - 3} {t('more')}
+              <li className="bg-[#ebf5ff] dark:bg-white/5 px-2.5 py-1 rounded-full text-[#006194] dark:text-[#93ccff] font-semibold">
+                <a href={`#rooms/${room.id}`}>+{room.features.length - 3} {t('more')}</a>
               </li>
             )}
           </ul>
 
           <div className="flex gap-2 mt-auto pt-3 border-t border-[#bfc7d2]/20">
-            <button className={`flex-1 ${secondaryButton}`} onClick={() => setShowDetail(true)}>{t('View Details')}</button>
+            <a className={`flex-1 text-center ${secondaryButton}`} href={`#rooms/${room.id}`}>{t('View Details')}</a>
             <button className={`flex-1 ${primaryButton}`} onClick={() => onBook(room)}>{t('Book Now')}</button>
           </div>
         </div>
       </article>
 
-      {showDetail && (
-        <RoomDetailModal room={room} language={language} onClose={() => setShowDetail(false)} onBook={onBook} />
-      )}
     </>
   );
 }

@@ -2,6 +2,7 @@
 // I18N_BASE_URL=http://127.0.0.1:3001 node --import tsx tests/i18n.browser.mjs
 // chromium --headless --remote-debugging-port=9222 --user-data-dir=/tmp/bluewave-browser
 import assert from 'node:assert/strict';
+import { writeFileSync } from 'node:fs';
 import { getTranslator, translations } from '../src/i18n/translations.ts';
 
 const baseUrl = process.env.I18N_BASE_URL || 'http://127.0.0.1:3000';
@@ -109,11 +110,16 @@ try {
   // Card -> unique room URL -> booking. Room selection survives navigation and language changes.
   await click('Rooms & Apartments');
   const roomLinks = await evaluate(`Array.from(document.querySelectorAll('main article h3 a'), link => link.getAttribute('href'))`);
+  assert.equal(roomLinks.length, 10);
   assert.equal(new Set(roomLinks).size, roomLinks.length);
   for (const href of roomLinks) {
     await evaluate(`location.hash = ${JSON.stringify(href)}`); await tick();
     assert.ok(await evaluate('!!document.querySelector("main h1")'));
     assert.ok(await evaluate(`document.querySelector('main').textContent.includes('Bed Configuration')`));
+    assert.ok(await evaluate(`Promise.all([...document.querySelectorAll('main img')].map(img => { img.loading = 'eager'; return img.decode(); })).then(() => true)`), 'Room photos must load');
+    await evaluate(`document.querySelector('main aside button').click()`); await tick();
+    assert.equal(await evaluate(`document.querySelector('input[name="roomId"]:checked').value`), href.split('/')[1]);
+    await evaluate(`location.hash = ${JSON.stringify(href)}`); await tick();
   }
   await evaluate(`document.querySelector('main aside button').click()`); await tick();
   const selectedRoom = await evaluate(`document.querySelector('input[name="roomId"]:checked').value`);
@@ -146,7 +152,21 @@ try {
   assert.ok(await evaluate(`document.body.scrollWidth <= innerWidth + 1`), 'Unexpected horizontal page overflow');
   console.log('PASS room details, room selection, stay-only default, offers, persistence and mobile navigation');
 
-  // Exercise actual multi-image gallery behavior without assigning unknown owner images to rooms.
+  await evaluate(`[...document.querySelectorAll('header button')].find(button => button.querySelector('.material-symbols-outlined')?.textContent.trim() === 'close')?.click()`); await tick();
+  // Room layouts stay within the viewport in both themes and directions.
+  await evaluate(`location.hash = '#rooms/amlal'`); await tick();
+  await evaluate(`window.scrollTo(0, 0)`); await tick();
+  await checkArabicText();
+  assert.ok(await evaluate(`document.body.scrollWidth <= innerWidth + 1`), 'Room page overflows on mobile');
+  writeFileSync('/tmp/bluewave-room-mobile.png', Buffer.from((await command('Page.captureScreenshot')).data, 'base64'));
+  await click('EN');
+  await command('Emulation.setDeviceMetricsOverride', { width: 1440, height: 1000, deviceScaleFactor: 1, mobile: false });
+  await evaluate(`document.documentElement.classList.add('dark'); window.scrollTo(0, 0)`); await tick();
+  assert.ok(await evaluate(`document.body.scrollWidth <= innerWidth + 1`));
+  writeFileSync('/tmp/bluewave-room-desktop.png', Buffer.from((await command('Page.captureScreenshot')).data, 'base64'));
+  await command('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+
+  // Exercise gallery interaction independently with predictable fixture photos.
   await command('Page.navigate', { url: `${baseUrl}/tests/room-gallery.html` });
   await new Promise(resolve => setTimeout(resolve, 500));
   for (let attempt = 0; attempt < 100; attempt++) {

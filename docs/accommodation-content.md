@@ -10,32 +10,15 @@ The existing design is retained. Live accommodation screens use `src/data/accomm
 - [Tafukt](https://www.bluewavelodge.com/en/studio-with-sea-view-balcony-tafukt/): sea-view balcony, published amenities and related Aman room.
 - [Amlal](https://www.bluewavelodge.com/en/appartement-2/): equipped apartment for 4–6 people, published amenities including sofa bed.
 
-Public indexed page content was accessible; direct page requests returned 403/timed out. No published room rates or complete bed configurations were available in the retrieved content. These fields are explicitly pending, rather than reusing unrelated demo rates. Pool View Room is a category entry pending the owner's individual room names and details; do not treat it as verified inventory.
+Public indexed page content was accessible; direct page requests returned 403/timed out. No published room rates or complete bed configurations were available in the retrieved content. These fields are explicitly pending, rather than reusing unrelated demo rates. The owner's catalog identifies the pool-view rooms as Islman and Ajdig.
 
-## Photos awaiting owner mapping
+## Room photo albums
 
-The 27 UUID-named JPEGs in `src/images/` have not been assigned to rooms. Do not infer room identity from appearance or filename order.
+All ten catalog entries use the owner-supplied room folders in `src/images/` through `src/data/roomImages.ts`. There are 78 distinct images across the albums; byte-identical copies are included only once. The first image is the card cover. All remaining photos appear in the thumbnail gallery and fullscreen viewer with keyboard and mobile swipe support.
 
-For each room, the owner needs to identify:
+Folder aliases preserve the owner's catalog names: `azemmur` → `azemmour`, `tafukt` → `tafoukt`, and `appartement` → `amlal`. Other folder names match the room IDs. The `azemmur` album retains the two bathroom images supplied inside that folder despite their older Ayour filenames. Unassigned root images and rooftop/restaurant photos are not added to room albums.
 
-- the room ID/name;
-- the main photo filename;
-- the remaining gallery filenames in order.
-
-Import confirmed photos into `src/data/roomImages.ts` and add an array under the matching room ID (`ayour`, `azemmur`, `adrar`, `tawja`, `titrit`, `tafukt`, `aman`, `pool-view-room`, `amlal`). The first photo becomes the card photo. All photos appear in the room's thumbnail gallery and fullscreen viewer, with keyboard and mobile swipe support.
-
-For example (replace filenames with confirmed assignments):
-
-```ts
-import mainPhoto from '../images/confirmed-main.jpeg';
-import secondPhoto from '../images/confirmed-second.jpeg';
-export const roomImages = {
-  tafukt: [
-    { src: mainPhoto, caption: 'Tafukt' },
-    { src: secondPhoto, caption: 'Tafukt' },
-  ],
-};
-```
+Cards link to `#rooms/<room-id>`; the dedicated page preserves the selected room when entering booking. Missing rates, capacities and bed details remain explicitly pending. Room size is shown only when supplied.
 
 ## Rates and offers
 
@@ -48,6 +31,7 @@ The existing EmailJS service/template integration is retained. Tests must mock e
 ## Verification
 
 - `npm run lint`
-- `node --import tsx tests/i18n.test.tsx`
+- `node --import tsx tests/room-details.test.tsx`
+- `node --import tsx --import ./tests/register-assets.mjs tests/i18n.test.tsx`
 - `node --import tsx tests/booking.test.ts`
 - With Vite and headless Chromium on debugging port 9222: `I18N_BASE_URL=http://127.0.0.1:3001 node --import tsx tests/i18n.browser.mjs`
