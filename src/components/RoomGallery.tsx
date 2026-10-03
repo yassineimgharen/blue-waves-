@@ -1,3 +1,4 @@
+import { ManagedImage } from '../cms/ManagedImage';
 import React, { useEffect, useRef, useState } from 'react';
 import type { Language, RoomItem } from '../types';
 import { getTranslator } from '../i18n/translations';
@@ -40,11 +41,11 @@ export function RoomGallery({ photos, language, name }: { photos: NonNullable<Ro
     <button type="button" className={secondaryButton} disabled={photos.length < 2} aria-label={t('Next photo')} onClick={() => move(1)}>›</button>
   </div>;
   const thumbnails = <div className="flex gap-3 overflow-x-auto py-2" aria-label={t('Room photos')}>
-    {photos.map((item, i) => <button type="button" key={item.src} aria-label={`${t('View photo')} ${i + 1}`} aria-pressed={index === i} onClick={() => setIndex(i)} className={`w-24 h-20 shrink-0 rounded-lg overflow-hidden ${index === i ? 'ring-2 ring-[#006194]' : 'opacity-70 hover:opacity-100'}`}><img src={item.src} alt={t(item.caption)} loading="lazy" className="w-full h-full object-cover" /></button>)}
+    {photos.map((item, i) => <button type="button" key={item.src} aria-label={`${t('View photo')} ${i + 1}`} aria-pressed={index === i} onClick={() => setIndex(i)} className={`w-24 h-20 shrink-0 rounded-lg overflow-hidden ${index === i ? 'ring-2 ring-[#006194]' : 'opacity-70 hover:opacity-100'}`}><ManagedImage src={item.src} alt={t(item.caption)} loading="lazy" className="w-full h-full object-cover" /></button>)}
   </div>;
   return <div>
     <div {...swipeHandlers} className="relative touch-pan-y rounded-2xl overflow-hidden bg-[#ebf5ff] dark:bg-white/5">
-      <img src={photo.src} alt={t(photo.caption)} draggable={false} className="w-full aspect-[4/3] object-cover" />
+      <ManagedImage src={photo.src} alt={t(photo.caption)} draggable={false} className="w-full aspect-[4/3] object-cover" />
       <button type="button" onClick={() => setFullscreen(true)} className="absolute bottom-4 end-4 rounded-lg px-4 py-2 bg-[#0b1d29]/90 text-white text-sm">{t('Fullscreen')}</button>
     </div>
     {controls}{thumbnails}
@@ -54,7 +55,7 @@ export function RoomGallery({ photos, language, name }: { photos: NonNullable<Ro
       if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
     }} className="m-auto w-[96vw] max-w-6xl max-h-[96dvh] overflow-y-auto p-4 rounded-2xl bg-[#0b1d29] text-white backdrop:bg-black/85">
       <div className="flex items-center justify-between gap-3 mb-3"><span>{t(name)}</span><button type="button" autoFocus onClick={() => setFullscreen(false)} className={secondaryButton}>{t('Close gallery')}</button></div>
-      <div {...swipeHandlers} className="touch-pan-y"><img src={photo.src} alt={t(photo.caption)} draggable={false} className="w-full max-h-[65dvh] object-contain" /></div>
+      <div {...swipeHandlers} className="touch-pan-y"><ManagedImage src={photo.src} alt={t(photo.caption)} draggable={false} className="w-full max-h-[65dvh] object-contain" /></div>
       {controls}{thumbnails}
     </dialog>
   </div>;

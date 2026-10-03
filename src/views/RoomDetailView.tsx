@@ -3,7 +3,7 @@ import { Bath, BedDouble, Check, Coffee, CookingPot, Expand, Eye, Refrigerator, 
 import { Language, RoomItem } from '../types';
 import { getTranslator } from '../i18n/translations';
 import { roomPrice } from '../lib/booking';
-import { ACCOMMODATIONS } from '../data/accommodations';
+import { useSite } from '../cms/store';
 import { RoomGallery } from '../components/RoomGallery';
 import { RoomCard, primaryButton } from '../components/RoomCard';
 
@@ -17,9 +17,11 @@ const amenityIcons: Record<string, LucideIcon> = {
 };
 
 export function RoomDetailView({ room, language, onBook }: { room: RoomItem; language: Language; onBook: (room: RoomItem) => void }) {
+  const { data: site } = useSite();
+  const ACCOMMODATIONS = site.rooms;
   const t = getTranslator(language);
-  const view = room.category.includes('sea-view') || room.id === 'amlal' ? 'Sea View' : room.category.includes('pool-view') ? 'Pool view' : 'Standard';
-  const bathroom = room.features.includes('Private bathroom') ? 'Private bathroom' : room.features.includes('Bathtub or shower') ? 'Bathtub or shower' : 'Details to be confirmed';
+  const view = room.view || (room.category.includes('sea-view') || room.id === 'amlal' ? 'Sea View' : room.category.includes('pool-view') ? 'Pool view' : 'Standard');
+  const bathroom = room.bathroom || (room.features.includes('Private bathroom') ? 'Private bathroom' : room.features.includes('Bathtub or shower') ? 'Bathtub or shower' : 'Details to be confirmed');
   const facts = [
     { label: 'Capacity', value: room.capacity, Icon: Users },
     { label: 'Bed Configuration', value: room.bedType, Icon: BedDouble },

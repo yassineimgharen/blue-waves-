@@ -1,7 +1,8 @@
+import { ManagedImage } from '../cms/ManagedImage';
 import { getTranslator } from '../i18n/translations';
 import React, { useState, useRef, useEffect } from 'react';
 import { ScreenType, Language } from '../types';
-import { ACCOMMODATIONS, ROOM_GROUPS } from '../data/accommodations';
+import { useSite } from '../cms/store';
 import logoWhite from '../bluewave-white.png';
 
 interface HeaderProps {
@@ -23,6 +24,9 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleDarkMode,
   onOpenConcierge
 }) => {
+  const { data: site } = useSite();
+  const ACCOMMODATIONS = site.rooms;
+  const ROOM_GROUPS = site.categories.map(category => ({ label: category.label, ids: site.rooms.filter(room => room.tag === category.label).map(room => room.id) }));
   const t = getTranslator(language);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -59,7 +63,7 @@ export const Header: React.FC<HeaderProps> = ({
     <>
       <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[#f6faff]/90 dark:bg-[#0b1d29]/95 backdrop-blur-xl border-b border-[#071a26]/5 dark:border-white/10 shadow-[0_1px_8px_rgba(7,26,38,0.04)]">
         {/* Screen Switcher Banner (for reviewer/user to seamlessly switch between all 4 screens) */}
-        <div className="bg-[#006194] text-white text-xs px-4 py-1.5 flex items-center justify-between border-b border-white/10">
+        <div className="bg-[#006194] text-white text-xs px-4 py-1.5 hidden lg:flex items-center justify-between border-b border-white/10">
           <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap scrollbar-none">
             <span className="font-semibold text-white/80 uppercase tracking-widest hidden sm:inline">
               {t("Screens:")}
@@ -119,7 +123,7 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => onNavigate('home')}
               className="flex items-center gap-3 group text-start"
             >
-              <img
+              <ManagedImage
                 src={logoWhite}
                 alt={t("Blue Wave Lodge Logo")}
                 className="h-8 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105 invert dark:invert-0"

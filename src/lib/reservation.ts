@@ -1,11 +1,12 @@
+import type { ManagedOffer } from '../cms/types';
 import type { BookingDraft, RoomItem } from '../types';
 import { SURF_ADDONS } from '../data/accommodations';
 import { bookingQuote } from './booking';
 
-export function reservationPayload(draft: BookingDraft, room: RoomItem) {
-  const quote = bookingQuote(draft, room);
-  const amount = (value: number | null) => value === null ? 'To be confirmed' : `${room.currency} ${value}`;
-  const offer = draft.offerNights ? `${draft.offerNights} nights + optional surf — price and inclusions to be confirmed` : 'None';
+export function reservationPayload(draft: BookingDraft, room: RoomItem, selectedOffer?: ManagedOffer) {
+  const quote = bookingQuote(draft, room, selectedOffer);
+  const amount = (value: number | null) => value === null ? 'To be confirmed' : `${selectedOffer?.currency ?? room.currency} ${value}`;
+  const offer = selectedOffer ? `${selectedOffer.title} — ${selectedOffer.nights} nights — ${selectedOffer.description} — ${selectedOffer.inclusions} — ${amount(selectedOffer.price)}` : draft.offerNights ? `${draft.offerNights} nights + optional surf — price and inclusions to be confirmed` : 'None';
   return {
     guest_name: `${draft.firstName} ${draft.lastName}`.trim(), guest_email: draft.email,
     guest_phone: draft.phone, country: draft.country, check_in: draft.checkIn, check_out: draft.checkOut,

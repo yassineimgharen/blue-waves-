@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
@@ -8,10 +9,13 @@ export default defineConfig(() => {
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': path.resolve(import.meta.dirname, '.'),
       },
     },
     server: {
+      // The dev server must never expose the CMS database or private storage.
+      fs: { deny: ['.env', '.env.*', '**/.git/**', '*.{crt,pem,key}', '**/*.sqlite*', '**/data/**', `${path.resolve(process.env.DATA_DIR || 'data')}/**`] },
+      proxy: { '/api': process.env.CMS_API_TARGET || 'http://127.0.0.1:3002', '/media': process.env.CMS_API_TARGET || 'http://127.0.0.1:3002' },
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
       // Do not modify—file watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',

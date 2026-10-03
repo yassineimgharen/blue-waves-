@@ -1,3 +1,4 @@
+import { ManagedImage } from '../cms/ManagedImage';
 import { getTranslator } from '../i18n/translations';
 import React, { useState } from 'react';
 import { ScreenType, PackageItem, Language } from '../types';
@@ -118,7 +119,7 @@ export const PackagesView: React.FC<PackagesViewProps> = ({
             {/* Hero Visual Showcase */}
             <div className="lg:col-span-6 relative">
               <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-xl bg-[#e0f0ff] border border-[#bfc7d2]/20">
-                <img
+                <ManagedImage
                   className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                   alt={t("Taghazout bay sunset with wooden surfboards")}
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwOxoTfjGIgXTL1yWMy9a2Na3rVxvS0mYFvJMdcz2_nq4u2AULlC0Jak4am7xwl3_hPyHIsZDogEnUCkVUg_0iqDCJIPiqtNdhbxhvxqeT9I5YOcwyuopx7B5l4y2m6tGrRJ-iJZAV2sU5MJo2ONBHBktPv3PY2B6YPzIgnTHrN1gIakwPXwV7oCpTImq7XUQqcJcErlmBXSPH3h674lQVoM2F2Fp1M_IatGrEIAmukWf8l97HZ9AY"
@@ -182,7 +183,7 @@ export const PackagesView: React.FC<PackagesViewProps> = ({
                 className="flex flex-col bg-white dark:bg-[#0b1d29] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group border border-[#bfc7d2]/20"
               >
                 <div className="relative aspect-[16/10] overflow-hidden bg-[#e0f0ff] dark:bg-white/5">
-                  <img
+                  <ManagedImage
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     alt={t(disc.title)}
                     src={disc.image}
@@ -335,7 +336,7 @@ export const PackagesView: React.FC<PackagesViewProps> = ({
                 }`}
               >
                 <div className="relative h-48 bg-[#e0f0ff] overflow-hidden">
-                  <img className="w-full h-full object-cover" alt={t(pkg.title)} src={pkg.image} />
+                  <ManagedImage className="w-full h-full object-cover" alt={t(pkg.title)} src={pkg.image} />
                   <div className="absolute top-3 left-3">
                     <span className="px-2.5 py-1 rounded-md bg-white/90 dark:bg-[#0b1d29]/90 backdrop-blur-sm text-[10px] font-bold uppercase text-[#0b1d29] dark:text-white">
                       {t(pkg.categoryTag)}
@@ -446,7 +447,7 @@ export const PackagesView: React.FC<PackagesViewProps> = ({
             {/* Static Location View Map Component */}
             <div className="lg:col-span-6">
               <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-xl bg-[#e0f0ff] border border-[#bfc7d2]/20">
-                <img
+                <ManagedImage
                   className="w-full h-full object-cover"
                   alt={t("Taghazout bay map")}
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuAc0lvHiO3OaW_jK7o14-y_o4bTYh8yz2inb9h8_uVtCff4ktVXU5rLhDZ6__pns1LhGH0XlE-mwXtdGMUXapir607ZnYVsEJTLIIPZqIS3sj7gh7THaMv00yazLtQ8hIAgdEL830Y15cXq9f9B1F7YhCpmfMCLCs5R1zjrPVlISW4-MT3zLF02vIlDN6w_gkyrRpzSqRRpqn-2Whz0Hl0UeqMn89Hq5aQLyhiYPwVfnAl33OYfQlpa"

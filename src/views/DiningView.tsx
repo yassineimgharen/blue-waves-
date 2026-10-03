@@ -1,3 +1,4 @@
+import { ManagedImage } from '../cms/ManagedImage';
 import React, { useState } from 'react';
 import type { Language } from '../types';
 import { getTranslator } from '../i18n/translations';
@@ -45,7 +46,7 @@ export const DiningView: React.FC<Props> = ({ language, onNavigate }) => {
       {/* HERO */}
       <section className="relative w-full min-h-[480px] md:min-h-[560px] flex items-end pb-16 bg-[#0b1d29] text-white overflow-hidden">
         <div className="absolute inset-0">
-          <img src={img1} alt="Rooftop & Restaurant" className="w-full h-full object-cover" />
+          <ManagedImage src={img1} alt="Rooftop & Restaurant" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0b1d29] via-[#0b1d29]/50 to-[#0b1d29]/20" />
         </div>
         <div className="relative z-10 max-w-[1360px] mx-auto px-4 md:px-12 w-full">
@@ -112,7 +113,7 @@ export const DiningView: React.FC<Props> = ({ language, onNavigate }) => {
               </div>
             </div>
             <div className="relative rounded-2xl overflow-hidden shadow-2xl h-[400px] cursor-pointer group" onClick={() => open(ROOFTOP_PHOTOS, 0)}>
-              <img src={ROOFTOP_PHOTOS[0]} alt="Rooftop" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <ManagedImage src={ROOFTOP_PHOTOS[0]} alt="Rooftop" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0b1d29]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <span className="material-symbols-outlined text-white text-[48px]">fullscreen</span>
               </div>
@@ -123,7 +124,7 @@ export const DiningView: React.FC<Props> = ({ language, onNavigate }) => {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {ROOFTOP_PHOTOS.map((photo, i) => (
               <div key={i} onClick={() => open(ROOFTOP_PHOTOS, i)} className={`relative rounded-2xl overflow-hidden cursor-pointer group shadow-sm border border-[#bfc7d2]/20 ${i === 0 ? 'col-span-2 row-span-2 h-80' : 'h-44'}`}>
-                <img src={photo} alt={`Rooftop ${i + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <ManagedImage src={photo} alt={`Rooftop ${i + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 <div className="absolute inset-0 bg-[#0b1d29]/0 group-hover:bg-[#0b1d29]/30 transition-colors flex items-center justify-center">
                   <span className="material-symbols-outlined text-white text-[32px] opacity-0 group-hover:opacity-100 transition-opacity">zoom_in</span>
                 </div>
@@ -138,7 +139,7 @@ export const DiningView: React.FC<Props> = ({ language, onNavigate }) => {
         <section className="w-full max-w-[1360px] mx-auto px-4 md:px-12 py-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl h-[400px] cursor-pointer group order-2 lg:order-1" onClick={() => open(RESTAURANT_PHOTOS, 0)}>
-              <img src={RESTAURANT_PHOTOS[0]} alt="Restaurant" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <ManagedImage src={RESTAURANT_PHOTOS[0]} alt="Restaurant" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0b1d29]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <span className="material-symbols-outlined text-white text-[48px]">fullscreen</span>
               </div>
@@ -174,7 +175,7 @@ export const DiningView: React.FC<Props> = ({ language, onNavigate }) => {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {RESTAURANT_PHOTOS.map((photo, i) => (
               <div key={i} onClick={() => open(RESTAURANT_PHOTOS, i)} className={`relative rounded-2xl overflow-hidden cursor-pointer group shadow-sm border border-[#bfc7d2]/20 ${i === 0 ? 'col-span-2 row-span-2 h-80' : 'h-44'}`}>
-                <img src={photo} alt={`Restaurant ${i + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <ManagedImage src={photo} alt={`Restaurant ${i + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 <div className="absolute inset-0 bg-[#0b1d29]/0 group-hover:bg-[#0b1d29]/30 transition-colors flex items-center justify-center">
                   <span className="material-symbols-outlined text-white text-[32px] opacity-0 group-hover:opacity-100 transition-opacity">zoom_in</span>
                 </div>
@@ -212,7 +213,7 @@ export const DiningView: React.FC<Props> = ({ language, onNavigate }) => {
           <button onClick={(e) => { e.stopPropagation(); next(); }} className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 z-10">
             <span className="material-symbols-outlined">chevron_right</span>
           </button>
-          <img
+          <ManagedImage
             src={lightbox.photos[lightbox.idx]}
             alt=""
             className="max-w-[90vw] max-h-[85vh] object-contain rounded-xl"

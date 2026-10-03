@@ -4,11 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port=3000 --host=0.0.0.0",
-    "build": "vite build",
+    "dev": "node scripts/dev.mjs",
+    "build": "node --import tsx scripts/create-cms-seed.ts && vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "start": "NODE_ENV=production node server/index.mjs",
+    "admin:owner": "node server/owner.mjs",
+    "test:cms": "node tests/cms.test.mjs"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
@@ -33,5 +36,8 @@
     "tailwindcss": "^4.3.3",
     "tsx": "^4.21.0",
     "typescript": "^7.0.2"
+  },
+  "engines": {
+    "node": ">=24.0.0"
   }
 }

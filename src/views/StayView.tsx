@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { Language, RoomItem } from '../types';
-import { ACCOMMODATIONS } from '../data/accommodations';
+import { useSite, siteImage } from '../cms/store';
 import { getTranslator } from '../i18n/translations';
 import { RoomCard } from '../components/RoomCard';
 import stayHero from '../images/8b778a3d-bf18-436b-985e-2af2c8bde503.jpeg';
@@ -12,13 +12,15 @@ const stayQuestions = [
 ];
 
 export function StayView({ language, onBook }: { language: Language; onBook: (room: RoomItem) => void }) {
+  const { data: site } = useSite();
+  const ACCOMMODATIONS = site.rooms;
   const t = getTranslator(language);
   const [activeCategory, setActiveCategory] = useState('all');
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
-  const rooms = ACCOMMODATIONS.filter(room => activeCategory === 'all' || room.category.some(category => category === activeCategory));
+  const rooms = ACCOMMODATIONS.filter(room => activeCategory === 'all' || room.category.some(category => category === activeCategory) || room.tag === activeCategory);
   return <div className="flex flex-col w-full">
     <section className="relative w-full overflow-hidden min-h-[620px] md:min-h-[700px] flex items-end pb-16 bg-[#0b1d29] text-white">
-      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${stayHero}')` }} />
+      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${siteImage(stayHero)}')` }} />
       <div className="absolute inset-0 bg-gradient-to-t from-[#0b1d29] via-[#0b1d29]/40 to-[#0b1d29]/70" />
       <div className="absolute inset-0 bg-gradient-to-r from-[#0b1d29]/80 via-transparent to-transparent" />
       <div className="relative z-10 max-w-[1360px] w-full mx-auto px-4 md:px-12 pt-32">
@@ -28,7 +30,7 @@ export function StayView({ language, onBook }: { language: Language; onBook: (ro
       </div>
     </section>
     <section className="max-w-[1360px] w-full mx-auto px-4 md:px-12 py-16">
-      <div className="flex flex-wrap gap-3 mb-10">{[['all', 'All Accommodations'], ['rooms', 'Rooms'], ['apartments', 'Apartments'], ['sea-view', 'Sea View'], ['pool-view', 'Pool View Rooms']].map(([id, label]) => <button key={id} onClick={() => setActiveCategory(id)} aria-pressed={activeCategory === id} className={`rounded-full px-5 py-2 text-sm ${activeCategory === id ? 'bg-[#006194] text-white' : 'bg-[#ebf5ff] dark:bg-white/10'}`}>{t(label)}</button>)}</div>
+      <div className="flex flex-wrap gap-3 mb-10">{[['all', 'All Accommodations'], ['rooms', 'Rooms'], ['apartments', 'Apartments'], ['sea-view', 'Sea View'], ['pool-view', 'Pool View Rooms'], ...site.categories.map(category => [category.label, category.label])].map(([id, label]) => <button key={id} onClick={() => setActiveCategory(id)} aria-pressed={activeCategory === id} className={`rounded-full px-5 py-2 text-sm ${activeCategory === id ? 'bg-[#006194] text-white' : 'bg-[#ebf5ff] dark:bg-white/10'}`}>{t(label)}</button>)}</div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">{rooms.map(room => <RoomCard key={room.id} room={room} language={language} onBook={onBook} />)}</div>
     </section>
       {/* FAQ Accordion Section */}

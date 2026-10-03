@@ -1,4 +1,5 @@
-import { ACCOMMODATIONS } from '../data/accommodations';
+import { ManagedImage } from '../cms/ManagedImage';
+import { useSite } from '../cms/store';
 import { RoomCard } from '../components/RoomCard';
 import { StayOffers } from '../components/StayOffers';
 import { todayISO, addNights } from '../lib/booking';
@@ -17,7 +18,7 @@ interface HomeViewProps {
   onNavigate: (screen: ScreenType) => void;
   onBook: (room: RoomItem) => void;
   onSearch: (draft: Partial<BookingDraft>) => void;
-  onOffer: (nights: number) => void;
+  onOffer: (nights: number, offerId?: string) => void;
   onOpenConcierge: () => void;
 }
 
@@ -29,6 +30,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
   onOffer,
   onOpenConcierge
 }) => {
+  const { data: site } = useSite();
+  const ACCOMMODATIONS = site.rooms;
   const t = getTranslator(language);
   const [galleryFilter, setGalleryFilter] = useState<'all' | 'surf' | 'rooms' | 'pool' | 'lifestyle'>('all');
 
@@ -54,7 +57,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
       {/* SECTION 1: HERO */}
       <section className="relative w-full overflow-hidden bg-[#0b1d29] text-white">
         <div className="absolute inset-0 z-0">
-          <img
+          <ManagedImage
             alt={t("Blue Wave Lodge oceanfront infinity pool and sunset over Imi Ouaddar Atlantic coast")}
             className="w-full h-full object-cover scale-105 transform motion-safe:transition-transform motion-safe:duration-1000 motion-safe:ease-out"
             src={heroBg}
@@ -99,26 +102,21 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </div>
 
           {/* Trust Line Strip */}
-          <div className="pt-8 mt-8 border-t border-white/10 flex flex-wrap items-center gap-x-8 gap-y-3 text-white/90 text-xs md:text-sm font-medium">
-            <span className="flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-[18px] text-[#89ceff]">king_bed</span> {t("Curated Rooms")}
-            </span>
-            <span className="hidden sm:inline text-white/40">•</span>
-            <span className="flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-[18px] text-[#89ceff]">surfing</span> {t("Equipped Apartments")}
-            </span>
-            <span className="hidden sm:inline text-white/40">•</span>
-            <span className="flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-[18px] text-[#89ceff]">pool</span> {t("Oceanfront Infinity Pool")}
-            </span>
-            <span className="hidden sm:inline text-white/40">•</span>
-            <span className="flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-[18px] text-[#89ceff]">deck</span> {t("Sunset Rooftop Lounge")}
-            </span>
-            <span className="hidden sm:inline text-white/40">•</span>
-            <span className="flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-[18px] text-[#89ceff]">restaurant</span> {t("Ocean Gastronomy")}
-            </span>
+          <div className="pt-8 mt-8 border-t border-white/10">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+              {[
+                { icon: 'king_bed', label: t('Curated Rooms') },
+                { icon: 'surfing', label: t('Equipped Apartments') },
+                { icon: 'pool', label: t('Oceanfront Infinity Pool') },
+                { icon: 'deck', label: t('Sunset Rooftop Lounge') },
+                { icon: 'restaurant', label: t('Ocean Gastronomy') },
+              ].map(item => (
+                <div key={item.label} className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10">
+                  <span className="material-symbols-outlined text-[20px] text-[#89ceff] shrink-0">{item.icon}</span>
+                  <span className="text-white/90 text-xs font-medium leading-tight">{item.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -130,11 +128,11 @@ export const HomeView: React.FC<HomeViewProps> = ({
       >
         <div className="bg-white dark:bg-[#0b1d29] rounded-2xl shadow-2xl p-4 md:p-6 backdrop-blur-xl border border-[#bfc7d2]/20">
           <form
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 md:gap-4 items-center"
+            className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-end"
             onSubmit={handleSearchRates}
           >
             {/* Check In */}
-            <div className="lg:col-span-3 flex flex-col gap-1 p-3 rounded-xl bg-[#f6faff] dark:bg-white/5 hover:bg-[#ebf5ff] dark:hover:bg-white/10 transition-colors">
+            <div className="flex-1 flex flex-col gap-1 p-3 rounded-xl bg-[#f6faff] dark:bg-white/5 hover:bg-[#ebf5ff] dark:hover:bg-white/10 transition-colors">
               <label className="text-[11px] uppercase tracking-wider text-[#675d4d] dark:text-[#d3c4b1] font-bold flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-[16px] text-[#006194] dark:text-[#93ccff]">
                   calendar_today
@@ -153,7 +151,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </div>
 
             {/* Check Out */}
-            <div className="lg:col-span-3 flex flex-col gap-1 p-3 rounded-xl bg-[#f6faff] dark:bg-white/5 hover:bg-[#ebf5ff] dark:hover:bg-white/10 transition-colors">
+            <div className="flex-1 flex flex-col gap-1 p-3 rounded-xl bg-[#f6faff] dark:bg-white/5 hover:bg-[#ebf5ff] dark:hover:bg-white/10 transition-colors">
               <label className="text-[11px] uppercase tracking-wider text-[#675d4d] dark:text-[#d3c4b1] font-bold flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-[16px] text-[#006194] dark:text-[#93ccff]">
                   event
@@ -172,7 +170,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </div>
 
             {/* Guests Selector */}
-            <div className="lg:col-span-2 flex flex-col gap-1 p-3 rounded-xl bg-[#f6faff] dark:bg-white/5 hover:bg-[#ebf5ff] dark:hover:bg-white/10 transition-colors">
+            <div className="flex-1 flex flex-col gap-1 p-3 rounded-xl bg-[#f6faff] dark:bg-white/5 hover:bg-[#ebf5ff] dark:hover:bg-white/10 transition-colors">
               <label className="text-[11px] uppercase tracking-wider text-[#675d4d] dark:text-[#d3c4b1] font-bold flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-[16px] text-[#006194] dark:text-[#93ccff]">
                   group
@@ -192,7 +190,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </select>
             </div>
 
-            <div className="lg:col-span-2 flex flex-col gap-1 p-3 rounded-xl bg-[#f6faff] dark:bg-white/5">
+            <div className="flex-1 flex flex-col gap-1 p-3 rounded-xl bg-[#f6faff] dark:bg-white/5">
               <label htmlFor="home-room" className="text-[11px] uppercase tracking-wider text-[#675d4d] dark:text-[#d3c4b1] font-bold">{t('Room / Apartment')}</label>
               <select id="home-room" className="bg-transparent text-sm font-semibold focus:outline-none w-full" value={roomId} onChange={event => setRoomId(event.target.value)}>
                 <option value="">{t('Choose on next step')}</option>
@@ -201,10 +199,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </div>
 
             {/* Action Button */}
-            <div className="lg:col-span-2 h-full flex items-end">
+            <div className="flex items-end shrink-0">
               <button
                 type="submit"
-                className="w-full h-14 rounded-xl bg-[#006194] hover:bg-[#007bb9] text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                className="h-14 px-6 rounded-xl bg-[#006194] hover:bg-[#007bb9] text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 whitespace-nowrap"
               >
                 <span>{t("Check Rates")}</span>
                 <span className="material-symbols-outlined text-[20px]">east</span>
@@ -340,7 +338,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               className="rounded-2xl overflow-hidden bg-white dark:bg-[#0b1d29] group shadow-sm border border-[#bfc7d2]/20"
             >
               <div className="relative h-60 overflow-hidden">
-                <img
+                <ManagedImage
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   alt={t(amenity.title)}
                   src={amenity.image}
@@ -362,7 +360,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
       {/* SECTION 7: EDITORIAL MASONRY GALLERY */}
       <section className="w-full bg-[#ebf5ff] dark:bg-[#071a26]/60 py-20" id="gallery">
         <div className="max-w-[1360px] mx-auto px-4 md:px-12">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+          <div className="flex flex-col gap-4 mb-10">
             <div>
               <span className="text-xs uppercase tracking-[0.2em] font-bold text-[#006194] dark:text-[#93ccff]">
                 {t("Visual Diary")}
@@ -372,13 +370,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </h2>
             </div>
 
-            {/* Gallery Filter Buttons */}
-            <div className="flex flex-wrap gap-2">
+            {/* Gallery Filter Buttons — horizontal scroll on mobile */}
+            <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1">
               {(['all', 'surf', 'rooms', 'pool', 'lifestyle'] as const).map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setGalleryFilter(cat)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-semibold capitalize transition-all ${
+                  className={`shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold capitalize transition-all ${
                     galleryFilter === cat
                       ? 'bg-[#006194] text-white shadow-sm'
                       : 'bg-white dark:bg-[#0b1d29] text-[#3f4850] dark:text-[#cadced] hover:text-[#006194]'
@@ -399,7 +397,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   item.span || 'h-64'
                 } border border-[#bfc7d2]/20 shadow-sm`}
               >
-                <img
+                <ManagedImage
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   alt={t(item.title)}
                   src={item.image}
@@ -433,46 +431,44 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <p className="text-sm sm:text-base text-[#3f4850] dark:text-[#cadced] leading-relaxed">
               {t("Wake to morning offshore breezes, recharge by our freshwater cliffside pool, share mint tea and freshly caught Atlantic sea bream, and catch sunset glow over the point from our panoramic rooftop shala.")}
             </p>
-            <div className="grid grid-cols-3 gap-4 pt-4">
-              <div className="p-4 rounded-xl bg-[#ebf5ff] dark:bg-white/5">
-                <span className="font-serif-display text-2xl sm:text-3xl text-[#006194] dark:text-[#93ccff] font-semibold">
+            <div className="grid grid-cols-3 gap-3 pt-4">
+              <div className="p-4 rounded-xl bg-[#ebf5ff] dark:bg-white/5 text-center">
+                <span className="font-serif-display text-2xl sm:text-3xl text-[#006194] dark:text-[#93ccff] font-semibold block">
                   300+
                 </span>
-                <p className="text-xs text-[#675d4d] dark:text-[#d3c4b1] mt-1">{t("Days of sunshine annually")}</p>
+                <p className="text-[11px] text-[#675d4d] dark:text-[#d3c4b1] mt-1 leading-tight">{t("Days of sunshine annually")}</p>
               </div>
-              <div className="p-4 rounded-xl bg-[#ebf5ff] dark:bg-white/5">
-                <span className="font-serif-display text-2xl sm:text-3xl text-[#006194] dark:text-[#93ccff] font-semibold">
+              <div className="p-4 rounded-xl bg-[#ebf5ff] dark:bg-white/5 text-center">
+                <span className="font-serif-display text-2xl sm:text-3xl text-[#006194] dark:text-[#93ccff] font-semibold block">
                   12
                 </span>
-                <p className="text-xs text-[#675d4d] dark:text-[#d3c4b1] mt-1">{t("World-class reef & beach breaks")}</p>
+                <p className="text-[11px] text-[#675d4d] dark:text-[#d3c4b1] mt-1 leading-tight">{t("World-class reef & beach breaks")}</p>
               </div>
-              <div className="p-4 rounded-xl bg-[#ebf5ff] dark:bg-white/5">
-                <span className="font-serif-display text-2xl sm:text-3xl text-[#006194] dark:text-[#93ccff] font-semibold">
+              <div className="p-4 rounded-xl bg-[#ebf5ff] dark:bg-white/5 text-center">
+                <span className="font-serif-display text-2xl sm:text-3xl text-[#006194] dark:text-[#93ccff] font-semibold block">
                   100%
                 </span>
-                <p className="text-xs text-[#675d4d] dark:text-[#d3c4b1] mt-1">{t("Ocean-facing lodge living")}</p>
+                <p className="text-[11px] text-[#675d4d] dark:text-[#d3c4b1] mt-1 leading-tight">{t("Ocean-facing lodge living")}</p>
               </div>
             </div>
           </div>
 
           <div className="lg:col-span-6 relative">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-              <img
+              <ManagedImage
                 className="w-full h-[460px] md:h-[520px] object-cover hover:scale-105 transition-transform duration-700"
                 alt={t("Warm sunlight illuminating the bohemian Moroccan tadelakt architecture of Blue Wave Lodge")}
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-2W5TuuT8jqI8E1UIR-rJw_UPbCBjA0eq3Kf1cPAe_bfEccH5ua4zG_S5wiwMDJ_dTdwg8xBYkvH4tgJ_xoPO9rgFFH8s8t9z8OtdHNlklQf7PhzPfOdrt_nRJIruTf89I261lN8KdUUQxVP_tTB5xsf2Stwy9fo5Xm-QU3o5sBAoDpak2oD3KEuJdIYCe6PxUQxwiIpJsWf9brY1Fd5XfMpR6Vdgqx26T1iCJ9t_dLknvfdIc3Zv"
               />
-              <div className="absolute bottom-6 left-6 right-6 p-5 rounded-xl bg-white/95 dark:bg-[#0b1d29]/95 backdrop-blur-md shadow-lg border border-[#bfc7d2]/20">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#675d4d] dark:text-[#d3c4b1]">
-                      {t("Location Marker")}
-                    </span>
-                    <h4 className="font-serif-display text-lg text-[#0b1d29] dark:text-white font-semibold">
-                      {t("Imi Ouaddar, Taghazout Bay")}
-                    </h4>
-                  </div>
-                  <span className="px-3 py-1 rounded-full bg-[#cce5ff] text-[#001d31] text-xs font-semibold">
+              <div className="absolute bottom-4 left-4 right-4 p-4 rounded-xl bg-white/95 dark:bg-[#0b1d29]/95 backdrop-blur-md shadow-lg border border-[#bfc7d2]/20">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-[#675d4d] dark:text-[#d3c4b1]">
+                  {t("Location Marker")}
+                </span>
+                <div className="flex items-center justify-between gap-2 mt-0.5">
+                  <h4 className="font-serif-display text-base text-[#0b1d29] dark:text-white font-semibold leading-tight">
+                    {t("Imi Ouaddar, Taghazout Bay")}
+                  </h4>
+                  <span className="shrink-0 px-2.5 py-1 rounded-full bg-[#cce5ff] text-[#001d31] text-[11px] font-semibold">
                     {t("25 min from Agadir")}
                   </span>
                 </div>
@@ -484,7 +480,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
       {/* SECTION 8: GUEST TESTIMONIALS */}
       <section className="w-full max-w-[1360px] mx-auto px-4 md:px-12 py-20">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-16">
           <div>
             <span className="text-xs uppercase tracking-[0.2em] font-bold text-[#006194] dark:text-[#93ccff]">
               {t("Guest Reflections")}
@@ -493,20 +489,14 @@ export const HomeView: React.FC<HomeViewProps> = ({
               {t("Memories From Our Travelers")}
             </h2>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="flex text-amber-500">
+          <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-[#ebf5ff] dark:bg-white/5 border border-[#bfc7d2]/20 self-start sm:self-auto shrink-0">
+            <div className="flex text-amber-400">
               {[...Array(5)].map((_, i) => (
-                <span
-                  key={i}
-                  className="material-symbols-outlined"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  star
-                </span>
+                <span key={i} className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
               ))}
             </div>
-            <span className="font-bold text-base text-[#0b1d29] dark:text-white">4.96 / 5.0</span>
-            <span className="text-xs text-[#675d4d] dark:text-[#d3c4b1]">{t("(280+ Verified Reviews)")}</span>
+            <span className="font-bold text-sm text-[#0b1d29] dark:text-white">4.96</span>
+            <span className="text-xs text-[#675d4d] dark:text-[#d3c4b1]">/ 5.0 · {t("280+ Reviews")}</span>
           </div>
         </div>
 
@@ -617,7 +607,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             {/* Interactive Map View */}
             <div className="lg:col-span-7">
               <div className="relative w-full h-[400px] md:h-[460px] rounded-2xl overflow-hidden shadow-xl border border-[#bfc7d2]/20">
-                <img
+                <ManagedImage
                   className="w-full h-full object-cover"
                   alt={t("Coastal map view of Imi Ouaddar and Taghazout Bay")}
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUzmuZV40xInbKX0WKWKhEuT039Rt-W3bRVWin-I7OQWtq-QAy0Xifn1VvNBvgK4jIII3H9R-m8jDdrsABzBaTKTo7zXewjd3cqazPgQqRiqI6T2PmW9AA0dMeT7M0OMQYohB1SuH5oS_2GxkRkM8MmgcMr4BI8_wUFfREPueFKCsNIDCDrri7HUg5HqJwyh2gMeZu89ZD9-z5jNU5ewQfRwxBCjYN67k5P0drpOW9VgR3zVv9JQFt"

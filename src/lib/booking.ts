@@ -1,3 +1,4 @@
+import type { ManagedOffer } from '../cms/types';
 import type { BookingDraft, RoomItem } from '../types';
 import { SURF_ADDONS } from '../data/accommodations';
 import { locales } from '../i18n/translations';
@@ -29,19 +30,20 @@ export function addNights(checkIn: string, nights: number) {
 }
 export function roomPrice(room: RoomItem, language: Language) {
   return room.pricePerNight === null ? null : new Intl.NumberFormat(locales[language], {
-    style: 'currency', currency: room.currency, maximumFractionDigits: 0,
+    style: 'currency', currency: room.currency, minimumFractionDigits: 0, maximumFractionDigits: 2,
   }).format(room.pricePerNight);
 }
-export function bookingQuote(draft: BookingDraft, room?: RoomItem) {
+export function bookingQuote(draft: BookingDraft, room?: RoomItem, offer?: ManagedOffer) {
   const nights = stayNights(draft.checkIn, draft.checkOut);
-  const accommodation = room && room.pricePerNight !== null && nights ? room.pricePerNight * nights : null;
+  const accommodation = draft.offerNights && offer ? offer.price : room && room.pricePerNight !== null && nights ? room.pricePerNight * nights : null;
   const surf = SURF_ADDONS.find(addon => addon.id === draft.surfAddon)?.price ?? null;
-  return { nights, accommodation, surf, total: !draft.offerNights && accommodation !== null && surf !== null ? accommodation + surf : null };
+  return { nights, accommodation, surf, total: (!draft.offerNights || !!offer) && accommodation !== null && surf !== null ? accommodation + surf : null };
 }
-export function bookingError(draft: BookingDraft, room?: RoomItem, today = todayISO()) {
+export function bookingError(draft: BookingDraft, room?: RoomItem, today = todayISO(), offer?: ManagedOffer) {
   if (!stayNights(draft.checkIn, draft.checkOut) || draft.checkIn < today) return 'Choose valid future arrival and departure dates.';
   if (!Number.isInteger(draft.adults) || draft.adults < 1 || !Number.isInteger(draft.children) || draft.children < 0) return 'Please check the guest count.';
   if (!room) return 'Choose a room or apartment.';
+  if (draft.offerId && (!offer || !offer.published || offer.nights !== draft.offerNights || (offer.roomIds.length > 0 && !offer.roomIds.includes(room.id)))) return 'This offer is no longer available for the selected room. Remove the offer or choose another room.';
   if (room.maxGuests && draft.adults + draft.children > room.maxGuests) return 'Your party exceeds this accommodation’s capacity. Please choose another room or contact us.';
   if (draft.offerNights && stayNights(draft.checkIn, draft.checkOut) !== draft.offerNights) return 'The dates must match the selected offer duration, or remove the offer.';
   return null;

@@ -45,3 +45,19 @@ test('reservation payload preserves selected room, guests, optional surf and unp
   assert.equal(payload.deposit, 'To be confirmed');
   assert.match(payload.special_requests, /3 nights/);
 });
+
+test('published CMS offers retain their actual prices, restrictions and identity', () => {
+  const offer = { id: 'winter-offer', title: 'Winter escape', nights: 3, price: 300, currency: 'MAD', published: true, roomIds: [room.id], description: 'Three nights', inclusions: 'Accommodation only', image: '' };
+  const selected = { ...draft, offerNights: 3, offerId: offer.id };
+  assert.equal(bookingQuote(selected, room, offer).total, 300);
+  assert.equal(bookingQuote({ ...selected, surfAddon: 'lesson' }, room, offer).total, null);
+  assert.equal(bookingError(selected, room, '2027-01-01', offer), null);
+  assert.ok(bookingError(selected, room, '2027-01-01'));
+  assert.ok(bookingError(selected, room, '2027-01-01', { ...offer, published: false }));
+  assert.ok(bookingError(selected, room, '2027-01-01', { ...offer, roomIds: ['other-room'] }));
+  assert.ok(bookingError(selected, room, '2027-01-01', { ...offer, nights: 4 }));
+  const payload = reservationPayload(selected, room, offer);
+  assert.equal(payload.grand_total, 'MAD 300');
+  assert.match(payload.offer, /Winter escape/);
+  assert.equal(roomPrice({ ...room, pricePerNight: 125.5 }, 'en'), '€125.5');
+});

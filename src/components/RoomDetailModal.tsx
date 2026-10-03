@@ -1,3 +1,4 @@
+import { ManagedImage } from '../cms/ManagedImage';
 import React, { useState, useEffect } from 'react';
 import { Language, RoomItem } from '../types';
 import { getTranslator } from '../i18n/translations';
@@ -93,7 +94,7 @@ export function RoomDetailModal({ room, language, onClose, onBook }: {
               {hasGallery ? (
                 <>
                   <div className="relative h-64 sm:h-80 overflow-hidden cursor-zoom-in" onClick={() => setLightbox(true)}>
-                    <img
+                    <ManagedImage
                       src={gallery[imgIdx].src}
                       alt={gallery[imgIdx].caption ?? t(room.name)}
                       className="w-full h-full object-cover transition-opacity duration-300"
@@ -120,7 +121,7 @@ export function RoomDetailModal({ room, language, onClose, onBook }: {
                     <div className="flex gap-2 px-4 py-3 overflow-x-auto scrollbar-none">
                       {gallery.map((img, i) => (
                         <button key={i} onClick={() => setImgIdx(i)} className={`shrink-0 w-16 h-12 rounded-lg overflow-hidden border-2 transition-all ${i === imgIdx ? 'border-[#006194]' : 'border-transparent opacity-60 hover:opacity-100'}`}>
-                          <img src={img.src} alt="" className="w-full h-full object-cover" />
+                          <ManagedImage src={img.src} alt="" className="w-full h-full object-cover" />
                         </button>
                       ))}
                     </div>
@@ -215,7 +216,7 @@ export function RoomDetailModal({ room, language, onClose, onBook }: {
               </button>
             </>
           )}
-          <img
+          <ManagedImage
             src={gallery[imgIdx].src}
             alt={gallery[imgIdx].caption ?? ''}
             className="max-w-[90vw] max-h-[85vh] object-contain rounded-xl"

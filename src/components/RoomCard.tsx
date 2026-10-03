@@ -1,3 +1,4 @@
+import { ManagedImage } from '../cms/ManagedImage';
 import React from 'react';
 import { Language, RoomItem } from '../types';
 import { getTranslator } from '../i18n/translations';
@@ -15,7 +16,7 @@ export function RoomCard({ room, language, onBook, hideDescription }: { room: Ro
         {/* Image */}
         <a href={`#rooms/${room.id}`} className="relative block h-64 overflow-hidden bg-[#ebf5ff] dark:bg-white/5 w-full text-left">
           {room.image
-            ? <img src={room.image} alt={t(room.name)} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            ? <ManagedImage src={room.image} alt={t(room.name)} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             : (
               <span className="h-full w-full flex flex-col items-center justify-center gap-2 text-[#675d4d] dark:text-[#d3c4b1]">
                 <span className="material-symbols-outlined text-[40px] opacity-30">photo_camera</span>

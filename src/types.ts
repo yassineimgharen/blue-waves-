@@ -19,6 +19,8 @@ export interface RoomItem {
   capacity: string;
   size: string;
   bedType: string;
+  bathroom?: string;
+  view?: string;
   gallery?: { src: string; caption: string }[];
 }
 
@@ -88,6 +90,7 @@ export interface BookingDraft {
   children: number;
   surfAddon: SurfAddon;
   offerNights: number | null;
+  offerId?: string;
   firstName: string;
   lastName: string;
   email: string;

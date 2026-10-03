@@ -1,5 +1,5 @@
 import { getTranslator } from './i18n/translations';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { ScreenType, Language, RoomItem, BookingDraft } from './types';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -8,7 +8,8 @@ import { HomeView } from './views/HomeView';
 import { StayView } from './views/StayView';
 import { OffersView } from './views/OffersView';
 import { RoomDetailView } from './views/RoomDetailView';
-import { ACCOMMODATIONS } from './data/accommodations';
+import { useSite, startSiteSync, refreshSite } from './cms/store';
+const AdminDashboard = lazy(() => import('./admin/AdminDashboard').then(module => ({ default: module.AdminDashboard })));
 import { emptyBooking, addNights } from './lib/booking';
 import { DiningView } from './views/DiningView';
 import { BookingView } from './views/BookingView';
@@ -21,6 +22,9 @@ function readRoute() {
 }
 
 export default function App() {
+  const cms = useSite();
+  useEffect(startSiteSync, []);
+  const ACCOMMODATIONS = cms.data.rooms;
   const [route, setRoute] = useState(readRoute);
   const currentScreen = route.screen;
   const [booking, setBooking] = useState<BookingDraft>({ ...emptyBooking });
@@ -68,11 +72,14 @@ export default function App() {
     setBooking(current => ({ ...current, roomId: room.id }));
     navigateTo('booking');
   };
-  const chooseOffer = (nights: number) => {
-    setBooking(current => ({ ...current, offerNights: nights, checkOut: addNights(current.checkIn, nights) }));
+  const chooseOffer = (nights: number, offerId?: string) => {
+    const offer = cms.data.offers.find(item => item.id === offerId);
+    setBooking(current => ({ ...current, roomId: offer?.roomIds.length && !offer.roomIds.includes(current.roomId) ? '' : current.roomId, offerNights: nights, offerId, checkOut: addNights(current.checkIn, nights) }));
     navigateTo('booking');
   };
 
+  if (window.location.pathname === '/admin' || window.location.pathname.startsWith('/admin/')) return <Suspense fallback={<div className="min-h-screen grid place-items-center">Opening owner dashboard…</div>}><AdminDashboard /></Suspense>;
+  if (!cms.loaded) return <div className="min-h-screen grid place-items-center bg-[#f6faff] text-[#006194] p-6"><div role="status">{cms.error || 'Loading Blue Wave Lodge…'}{cms.error && <button className="block mt-4 underline" onClick={() => void refreshSite()}>Try again</button>}</div></div>;
   return (
     <div className="min-h-screen flex flex-col bg-[#f6faff] dark:bg-[#071a26] text-[#071a26] dark:text-[#f6faff] font-sans antialiased transition-colors duration-200">
       {/* Primary Header & Top Navigation */}
@@ -134,7 +141,7 @@ export default function App() {
       </a>
 
       {/* Persistent Global Floating Quick Navigator Bar */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-[#071a26]/90 dark:bg-black/90 backdrop-blur-md px-3 py-2 rounded-full shadow-2xl border border-white/15 flex items-center gap-1.5 max-w-[95vw] overflow-x-auto">
+      <div className="hidden lg:flex fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-[#071a26]/90 dark:bg-black/90 backdrop-blur-md px-3 py-2 rounded-full shadow-2xl border border-white/15 items-center gap-1.5 max-w-[95vw] overflow-x-auto">
         <span className="text-[10px] uppercase font-bold tracking-widest text-[#93ccff] px-2 hidden sm:inline">
           {t("Screens:")}
         </span>
