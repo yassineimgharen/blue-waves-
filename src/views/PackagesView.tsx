@@ -1,5 +1,5 @@
 import { ManagedImage } from '../cms/ManagedImage';
-import { getTranslator } from '../i18n/translations';
+import { useTranslator } from '../cms/useTranslator';
 import React, { useState } from 'react';
 import { ScreenType, PackageItem, Language } from '../types';
 import { PACKAGES_DATA, DISCIPLINES_DATA, SURF_SPOTS_DATA, FAQ_DATA } from '../data/mockData';
@@ -17,7 +17,7 @@ export const PackagesView: React.FC<PackagesViewProps> = ({
   onOpenPackage,
   onOpenConcierge
 }) => {
-  const t = getTranslator(language);
+  const t = useTranslator(language);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
   return (

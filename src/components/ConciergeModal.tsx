@@ -1,5 +1,6 @@
+import { useSite } from '../cms/store';
 import { Language } from '../types';
-import { getTranslator } from '../i18n/translations';
+import { useTranslator } from '../cms/useTranslator';
 import React, { useState } from 'react';
 
 interface ConciergeModalProps {
@@ -9,7 +10,8 @@ interface ConciergeModalProps {
 }
 
 export const ConciergeModal: React.FC<ConciergeModalProps> = ({ language, isOpen, onClose }) => {
-  const t = getTranslator(language);
+  const t = useTranslator(language);
+  const { data: { contacts } } = useSite();
   const [messages, setMessages] = useState([
     {
       sender: 'concierge',
@@ -79,7 +81,7 @@ export const ConciergeModal: React.FC<ConciergeModalProps> = ({ language, isOpen
                     : 'bg-white dark:bg-[#0b1d29] border border-[#bfc7d2]/20 text-[#0b1d29] dark:text-white rounded-bl-none shadow-sm'
                 }`}
               >
-                {m.sender === 'concierge' ? t(m.text) : m.text}
+                {m.sender === 'concierge' ? t(m.text).replace('+212 696985757', contacts.phone) : m.text}
               </div>
             </div>
           ))}

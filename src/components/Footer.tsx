@@ -1,8 +1,8 @@
 import { useSite } from '../cms/store';
-import { getTranslator } from '../i18n/translations';
+import { useTranslator } from '../cms/useTranslator';
 import React, { useState } from 'react';
 import { ScreenType, Language } from '../types';
-import logoWhite from '../bluewave-white.png';
+const logoWhite = '/media/branding/bluewave-white.png';
 
 interface FooterProps {
   language: Language;
@@ -11,7 +11,7 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ language, onNavigate }) => {
   const { data: { contacts } } = useSite();
-  const t = getTranslator(language);
+  const t = useTranslator(language);
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -92,7 +92,7 @@ export const Footer: React.FC<FooterProps> = ({ language, onNavigate }) => {
 
               {/* WhatsApp */}
               <a
-                href="https://wa.me/212696985757"
+                href={`https://wa.me/${contacts.phone.replace(/\D/g, '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"

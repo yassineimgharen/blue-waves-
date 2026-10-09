@@ -4,17 +4,16 @@ import { spawn } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve, join } from 'node:path';
-import { createApp } from '../server/app.mjs';
+import { openStore } from '../server/store.mjs';
 const directory = mkdtempSync(join(tmpdir(), 'lodge-surf-browser-'));
 const origin = 'http://127.0.0.1:3011';
-const { app, db } = createApp({ dataDir: join(directory, 'data'), origin });
-const backend = app.listen(0, '127.0.0.1'); await new Promise(resolve => backend.once('listening', resolve));
+const db = openStore(join(directory, 'data'));
 const children = [];
 let socket;
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 async function until(fn, message) { for (let i = 0; i < 200; i++) { if (await fn()) return; await delay(100); } throw new Error(message); }
 try {
-  children.push(spawn(process.execPath, ['node_modules/vite/bin/vite.js', '--host', '127.0.0.1', '--port', '3011', '--strictPort'], { env: { ...process.env, CMS_API_TARGET: `http://127.0.0.1:${backend.address().port}` }, stdio: ['ignore', 'ignore', 'pipe'] }));
+  children.push(spawn(process.execPath, ['node_modules/next/dist/bin/next', 'dev', '--webpack', '--hostname', '127.0.0.1', '--port', '3011'], { env: { ...process.env, APP_ORIGIN: origin, DATA_DIR: join(directory, 'data'), DATABASE_URL: '', BLOB_READ_WRITE_TOKEN: '' }, stdio: ['ignore', 'ignore', 'pipe'] }));
   children.push(spawn('chromium', ['--headless', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage', '--remote-debugging-port=9223', `--user-data-dir=${join(directory, 'browser')}`, 'about:blank'], { stdio: ['ignore', 'ignore', 'pipe'] }));
   for (const child of children) child.stderr.on('data', chunk => process.stderr.write(chunk));
   await until(async () => { try { return (await fetch(origin)).ok && (await fetch('http://127.0.0.1:9223/json/version')).ok; } catch { return false; } }, 'Preview or browser did not start');
@@ -32,13 +31,15 @@ try {
     await command('Page.navigate', { url });
     return { command, evaluate };
   }
-  const archive = await page(`${origin}/#offers`);
+  const archive = await page(`${origin}/offers`);
   const evaluate = archive.evaluate;
   const command = archive.command;
-  await until(() => evaluate(`!!document.querySelector('#surf-archive button')`), 'Archive did not load');
+  await until(() => evaluate(`!!window.next?.router?.isReady && !!document.querySelector('#surf-archive button')`), 'Archive did not load');
+  await delay(500);
+  await until(() => evaluate(`!!document.querySelector('#surf-archive button')`), 'Archive hydration did not finish');
   assert.equal(await evaluate(`document.querySelector('#stay-offers').nextElementSibling.id`), 'surf-archive');
   assert.equal(await evaluate(`document.querySelectorAll('#surf-archive > div button img').length`), 12);
-  assert.equal(await evaluate(`performance.getEntriesByType('resource').filter(r => r.initiatorType === 'img' && r.name.includes('/images/surf/')).length`), 0, 'Originals must wait for the lightbox');
+  assert.equal(await evaluate(`performance.getEntriesByType('resource').filter(r => r.initiatorType === 'img' && decodeURIComponent(r.name).includes('/media/seed/surf/')).length`), 0, 'Originals must wait for the lightbox');
   await evaluate(`document.querySelector('#surf-archive').scrollIntoView({block:'start'});`); await delay(300);
   await evaluate(`Promise.all([...document.querySelectorAll('#surf-archive img')].map(img => { img.loading = 'eager'; return img.decode(); }))`);
   writeFileSync('/tmp/surf-archive-desktop.png', Buffer.from((await command('Page.captureScreenshot')).data, 'base64'));
@@ -90,6 +91,6 @@ try {
   socket?.close();
   for (const child of children) child.kill('SIGTERM');
   await Promise.all(children.map(child => new Promise(resolve => { if (child.exitCode !== null) resolve(); else child.once('exit', resolve); })));
-  await new Promise(resolve => backend.close(resolve)); db.close();
+  db.close();
   rmSync(directory, { recursive: true, force: true });
 }

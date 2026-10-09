@@ -1,9 +1,10 @@
+import { useRouter } from 'next/router';
 import { ManagedImage } from '../cms/ManagedImage';
-import { getTranslator } from '../i18n/translations';
+import { useTranslator } from '../cms/useTranslator';
 import React, { useState, useRef, useEffect } from 'react';
 import { ScreenType, Language } from '../types';
 import { useSite } from '../cms/store';
-import logoWhite from '../bluewave-white.png';
+const logoWhite = '/media/branding/bluewave-white.png';
 
 interface HeaderProps {
   currentScreen: ScreenType;
@@ -24,10 +25,11 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleDarkMode,
   onOpenConcierge
 }) => {
+  const router = useRouter();
   const { data: site } = useSite();
   const ACCOMMODATIONS = site.rooms;
   const ROOM_GROUPS = site.categories.map(category => ({ label: category.label, ids: site.rooms.filter(room => room.tag === category.label).map(room => room.id) }));
-  const t = getTranslator(language);
+  const t = useTranslator(language);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [roomsDropdownOpen, setRoomsDropdownOpen] = useState(false);
@@ -54,7 +56,7 @@ export const Header: React.FC<HeaderProps> = ({
   ];
 
   const navigateToRoom = (id: string) => {
-    window.location.hash = `#rooms/${id}`;
+    void router.push(`/rooms/${id}`);
     setRoomsDropdownOpen(false);
     setMobileMenuOpen(false);
   };

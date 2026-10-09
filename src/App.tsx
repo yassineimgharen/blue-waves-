@@ -1,5 +1,7 @@
-import { getTranslator } from './i18n/translations';
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import { useRouter } from 'next/router';
+import { createContext, useContext } from 'react';
+import { useTranslator } from './cms/useTranslator';
+import React, { useState, useEffect } from 'react';
 import { ScreenType, Language, RoomItem, BookingDraft } from './types';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -9,38 +11,78 @@ import { StayView } from './views/StayView';
 import { OffersView } from './views/OffersView';
 import { RoomDetailView } from './views/RoomDetailView';
 import { useSite, startSiteSync, refreshSite } from './cms/store';
-const AdminDashboard = lazy(() => import('./admin/AdminDashboard').then(module => ({ default: module.AdminDashboard })));
 import { emptyBooking, addNights } from './lib/booking';
 import { DiningView } from './views/DiningView';
 import { BookingView } from './views/BookingView';
 
-function readRoute() {
-  const [screen, detail] = window.location.hash.slice(1).split('/');
-  if (screen === 'rooms') return { screen: 'room' as ScreenType, detail };
-  if (['home', 'stay', 'offers', 'booking', 'dining'].includes(screen)) return { screen: screen as ScreenType, detail };
-  return { screen: 'home' as ScreenType, detail: undefined };
+interface SiteContextValue {
+  language: Language;
+  navigateTo: (screen: ScreenType, section?: string) => void;
+  bookRoom: (room: RoomItem) => void;
+  chooseOffer: (nights: number, offerId?: string) => void;
+  booking: BookingDraft;
+  setBooking: React.Dispatch<React.SetStateAction<BookingDraft>>;
+  setIsConciergeOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  cms: ReturnType<typeof useSite>;
+}
+const SiteContext = createContext<SiteContextValue | null>(null);
+export function SiteView({ screen, roomId }: { screen: ScreenType; roomId?: string }) {
+  const { language, navigateTo, bookRoom, chooseOffer, booking, setBooking, setIsConciergeOpen, cms } = useContext(SiteContext)!;
+  const t = useTranslator(language);
+  const activeRoom = cms.data.rooms.find((room: RoomItem) => room.id === roomId);
+  return <>        {screen === 'home' && (
+          <HomeView
+            onNavigate={navigateTo}
+            onBook={bookRoom}
+            onOffer={chooseOffer}
+            onSearch={draft => { setBooking(current => ({ ...current, ...draft })); navigateTo('booking'); }}
+            onOpenConcierge={() => setIsConciergeOpen(true)}
+            language={language}
+          />
+        )}
+
+        {screen === 'stay' && (
+          <StayView language={language} onBook={bookRoom} />
+        )}
+
+        {screen === 'offers' && <OffersView language={language} onChoose={chooseOffer} />}
+        {screen === 'dining' && <DiningView language={language} onNavigate={navigateTo} />}
+        {screen === 'room' && (activeRoom
+          ? <RoomDetailView key={activeRoom.id} room={activeRoom} language={language} onBook={bookRoom} />
+          : <div className="max-w-[1360px] mx-auto p-12"><h1>{t('Accommodation not found')}</h1><a href="/rooms">{t('Back to Rooms & Apartments')}</a></div>)}
+
+        {screen === 'booking' && (
+          <BookingView
+            draft={booking}
+            onChange={setBooking}
+            onNavigate={navigateTo}
+            onOpenConcierge={() => setIsConciergeOpen(true)}
+            language={language}
+          />
+        )}
+</>;
 }
 
-export default function App() {
+export default function App({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const currentScreen: ScreenType = router.pathname === "/rooms/[id]" ? "room" : router.pathname === "/rooms" ? "stay" : (["/offers", "/booking", "/dining"].includes(router.pathname) ? router.pathname.slice(1) as ScreenType : "home");
   const cms = useSite();
   useEffect(startSiteSync, []);
-  const ACCOMMODATIONS = cms.data.rooms;
-  const [route, setRoute] = useState(readRoute);
-  const currentScreen = route.screen;
   const [booking, setBooking] = useState<BookingDraft>({ ...emptyBooking });
-  const activeRoom = ACCOMMODATIONS.find(room => room.id === route.detail);
   useEffect(() => {
-    const onHashChange = () => setRoute(readRoute());
-    window.addEventListener('hashchange', onHashChange);
-    return () => window.removeEventListener('hashchange', onHashChange);
-  }, []);
-  useEffect(() => {
-    if (route.screen === 'home' && route.detail) document.getElementById(route.detail)?.scrollIntoView({ behavior: 'smooth' });
-    else window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [route]);
+    const legacy = () => {
+      const [screen, detail] = window.location.hash.slice(1).split('/');
+      if (['home', 'stay', 'offers', 'booking', 'dining', 'rooms'].includes(screen)) {
+        const path = screen === 'home' ? '/' : screen === 'stay' ? '/rooms' : `/${screen}`;
+        void router.replace(path + (detail ? (screen === 'rooms' ? `/${detail}` : `#${detail}`) : ''));
+      }
+    };
+    legacy(); window.addEventListener('hashchange', legacy);
+    return () => window.removeEventListener('hashchange', legacy);
+  }, [router]);
   const [isConciergeOpen, setIsConciergeOpen] = useState(false);
   const [language, setLanguage] = useState<Language>('en');
-  const t = getTranslator(language);
+  const t = useTranslator(language);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
   // Apply dark mode class to html element
@@ -64,9 +106,8 @@ export default function App() {
   }, [language]);
 
   const navigateTo = (screen: ScreenType, section?: string) => {
-    const hash = `#${screen}${section ? `/${section}` : ''}`;
-    if (window.location.hash === hash) setRoute(readRoute());
-    else window.location.hash = hash;
+    const path = screen === 'home' ? '/' : screen === 'stay' ? '/rooms' : `/${screen}`;
+    void router.push(path + (section ? `#${section}` : ''));
   };
   const bookRoom = (room: RoomItem) => {
     setBooking(current => ({ ...current, roomId: room.id }));
@@ -78,10 +119,10 @@ export default function App() {
     navigateTo('booking');
   };
 
-  if (window.location.pathname === '/admin' || window.location.pathname.startsWith('/admin/')) return <Suspense fallback={<div className="min-h-screen grid place-items-center">Opening owner dashboard…</div>}><AdminDashboard /></Suspense>;
+  if (["/admin", "/404", "/_error"].includes(router.pathname)) return <>{children}</>;
   if (!cms.loaded) return <div className="min-h-screen grid place-items-center bg-[#f6faff] text-[#006194] p-6"><div role="status">{cms.error || 'Loading Blue Wave Lodge…'}{cms.error && <button className="block mt-4 underline" onClick={() => void refreshSite()}>Try again</button>}</div></div>;
   return (
-    <div className="min-h-screen flex flex-col bg-[#f6faff] dark:bg-[#071a26] text-[#071a26] dark:text-[#f6faff] font-sans antialiased transition-colors duration-200">
+    <SiteContext.Provider value={{ language, navigateTo, bookRoom, chooseOffer, booking, setBooking, setIsConciergeOpen, cms }}><div className="min-h-screen flex flex-col bg-[#f6faff] dark:bg-[#071a26] text-[#071a26] dark:text-[#f6faff] font-sans antialiased transition-colors duration-200">
       {/* Primary Header & Top Navigation */}
       <Header
         currentScreen={currentScreen}
@@ -95,41 +136,12 @@ export default function App() {
 
       {/* Main View Area with Top Spacing for Fixed Header */}
       <main className="flex-1 pt-[104px] md:pt-[112px]">
-        {currentScreen === 'home' && (
-          <HomeView
-            onNavigate={navigateTo}
-            onBook={bookRoom}
-            onOffer={chooseOffer}
-            onSearch={draft => { setBooking(current => ({ ...current, ...draft })); navigateTo('booking'); }}
-            onOpenConcierge={() => setIsConciergeOpen(true)}
-            language={language}
-          />
-        )}
-
-        {currentScreen === 'stay' && (
-          <StayView language={language} onBook={bookRoom} />
-        )}
-
-        {currentScreen === 'offers' && <OffersView language={language} onChoose={chooseOffer} />}
-        {currentScreen === 'dining' && <DiningView language={language} onNavigate={navigateTo} />}
-        {currentScreen === 'room' && (activeRoom
-          ? <RoomDetailView key={activeRoom.id} room={activeRoom} language={language} onBook={bookRoom} />
-          : <div className="max-w-[1360px] mx-auto p-12"><h1>{t('Accommodation not found')}</h1><a href="#stay">{t('Back to Rooms & Apartments')}</a></div>)}
-
-        {currentScreen === 'booking' && (
-          <BookingView
-            draft={booking}
-            onChange={setBooking}
-            onNavigate={navigateTo}
-            onOpenConcierge={() => setIsConciergeOpen(true)}
-            language={language}
-          />
-        )}
+        {children}
       </main>
 
       {/* WhatsApp Floating Button */}
       <a
-        href="https://wa.me/212696985757"
+        href={`https://wa.me/${cms.data.contacts.phone.replace(/\D/g, '')}`}
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-20 right-5 z-50 w-14 h-14 rounded-full bg-[#25D366] hover:bg-[#1ebe5d] shadow-xl flex items-center justify-center transition-transform hover:scale-110"
@@ -204,6 +216,6 @@ export default function App() {
         isOpen={isConciergeOpen}
         onClose={() => setIsConciergeOpen(false)}
       />
-    </div>
+    </div></SiteContext.Provider>
   );
 }

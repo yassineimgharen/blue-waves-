@@ -18,13 +18,13 @@ for (const room of ACCOMMODATIONS) {
     assert.ok(photos.length > 1);
     assert.equal(room.image, photos[0].src);
     for (const photo of photos) {
-      assert.ok(photo.src.startsWith(folder.href));
-      assert.ok(existsSync(new URL(photo.src)));
+      assert.ok(photo.src.startsWith(`/media/seed/${folders[room.id] ?? room.id}/`));
+      assert.ok(existsSync(new URL('../public' + photo.src, import.meta.url)));
     }
-    assert.deepEqual(new Set(photos.map(photo => hash(new URL(photo.src)))), expected);
+    assert.deepEqual(new Set(photos.map(photo => hash(new URL('../public' + photo.src, import.meta.url)))), expected);
     assert.equal(photos.length, expected.size, 'Do not repeat byte-identical photos');
     const card = renderToStaticMarkup(<RoomCard room={room} language="en" onBook={() => {}} />);
-    assert.ok(card.includes(`href="#rooms/${room.id}"`));
+    assert.ok(card.includes(`href="/rooms/${room.id}"`));
     const detail = renderToStaticMarkup(<RoomDetailView room={room} language="en" onBook={() => {}} />);
     for (const label of ['Price per night', 'Capacity', 'Bed Configuration', 'Bathroom', 'View', 'Included Room Amenities', 'Book Now']) assert.ok(detail.includes(label));
     assert.ok(!detail.includes('Room size'), 'Unconfirmed size should not appear as a fact');

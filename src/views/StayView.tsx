@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import type { Language, RoomItem } from '../types';
-import { useSite, siteImage } from '../cms/store';
-import { getTranslator } from '../i18n/translations';
+import { useSite, imageKey } from '../cms/store';
+import { useTranslator } from '../cms/useTranslator';
 import { RoomCard } from '../components/RoomCard';
-import stayHero from '../images/8b778a3d-bf18-436b-985e-2af2c8bde503.jpeg';
+const stayHero = '/media/seed/8b778a3d-bf18-436b-985e-2af2c8bde503.jpeg';
 
 const stayQuestions = [
   { question: 'Can I book accommodation without surf?', answer: 'Yes. All rooms and apartments can be requested without any surf service.' },
@@ -14,13 +14,13 @@ const stayQuestions = [
 export function StayView({ language, onBook }: { language: Language; onBook: (room: RoomItem) => void }) {
   const { data: site } = useSite();
   const ACCOMMODATIONS = site.rooms;
-  const t = getTranslator(language);
+  const t = useTranslator(language);
   const [activeCategory, setActiveCategory] = useState('all');
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const rooms = ACCOMMODATIONS.filter(room => activeCategory === 'all' || room.category.some(category => category === activeCategory) || room.tag === activeCategory);
   return <div className="flex flex-col w-full">
     <section className="relative w-full overflow-hidden min-h-[620px] md:min-h-[700px] flex items-end pb-16 bg-[#0b1d29] text-white">
-      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${siteImage(stayHero)}')` }} />
+      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${(site.images[imageKey(stayHero)] || stayHero)}')` }} />
       <div className="absolute inset-0 bg-gradient-to-t from-[#0b1d29] via-[#0b1d29]/40 to-[#0b1d29]/70" />
       <div className="absolute inset-0 bg-gradient-to-r from-[#0b1d29]/80 via-transparent to-transparent" />
       <div className="relative z-10 max-w-[1360px] w-full mx-auto px-4 md:px-12 pt-32">

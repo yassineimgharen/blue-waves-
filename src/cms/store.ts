@@ -1,6 +1,5 @@
-import { useSyncExternalStore } from 'react';
+import { createContext, createElement, useContext, useEffect, useMemo, useSyncExternalStore, type ReactNode } from 'react';
 import { ACCOMMODATIONS, ROOM_GROUPS, STAY_SURF_OFFERS } from '../data/accommodations';
-import { setContentOverrides } from '../i18n/translations';
 import type { SiteData } from './types';
 const initial: SiteData = {
   revision: 0, rooms: ACCOMMODATIONS.map(r => ({ ...r, published: true })),
@@ -11,7 +10,22 @@ const initial: SiteData = {
 let snapshot = { data: initial, loaded: false, error: '' };
 const listeners = new Set<() => void>();
 let pending: Promise<void> | null = null;
-export const useSite = () => useSyncExternalStore(callback => { listeners.add(callback); return () => { listeners.delete(callback); }; }, () => snapshot, () => snapshot);
+const serverSnapshot = snapshot;
+const SiteContext = createContext<typeof snapshot | null>(null);
+export function SiteProvider({ initialSite, children }: { initialSite?: SiteData; children: ReactNode }) {
+  const current = useSyncExternalStore(callback => { listeners.add(callback); return () => { listeners.delete(callback); }; }, () => snapshot, () => serverSnapshot);
+  const value = useMemo(() => initialSite && (!current.loaded || initialSite.revision > current.data.revision) ? { data: initialSite, loaded: true, error: '' } : current, [initialSite, current]);
+
+  useEffect(() => {
+    if (value !== snapshot) { snapshot = value; listeners.forEach(listener => listener()); }
+  }, [value]);
+  return createElement(SiteContext.Provider, { value }, children);
+}
+export const useSite = () => {
+  const context = useContext(SiteContext);
+  const current = useSyncExternalStore(callback => { listeners.add(callback); return () => { listeners.delete(callback); }; }, () => snapshot, () => serverSnapshot);
+  return context ?? current;
+};
 export const getSite = () => snapshot.data;
 export function refreshSite() {
   if (pending) return pending;
@@ -21,7 +35,6 @@ export function refreshSite() {
       if (response.status === 304) return;
       if (!response.ok) throw new Error('Website content is temporarily unavailable. Please try again.');
       const data: SiteData = await response.json();
-      setContentOverrides(data.content);
       snapshot = { data, loaded: true, error: '' };
     } catch (error) {
       // Never fall back to the bundled inventory after a CMS failure: it could reveal unpublished rooms.

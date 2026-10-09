@@ -10,3 +10,7 @@ coverage/
 # Persistent CMS credentials, sessions and uploaded images
 /data/
 *.sqlite*
+
+.next/
+public/media/
+*.tsbuildinfo

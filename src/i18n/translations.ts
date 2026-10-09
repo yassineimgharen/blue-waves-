@@ -2837,13 +2837,10 @@ export const translations: Record<Language, Catalog> = {
   ar: Object.fromEntries(Object.entries(messages).map(([key, value]) => [key, value.ar])) as Catalog,
 };
 
-let contentOverrides: Record<string, Record<Language, string>> = {};
-export function setContentOverrides(content: typeof contentOverrides) { contentOverrides = content; }
-
 /** Unknown strings (for example proper names) retain their original spelling. */
-export function getTranslator(language: Language) {
+export function getTranslator(language: Language, overrides: Record<string, Record<Language, string>> = {}) {
   return (text: string): string => {
-    if (Object.hasOwn(contentOverrides, text)) return contentOverrides[text][language] || contentOverrides[text].en || text;
+    if (Object.hasOwn(overrides, text)) return overrides[text][language] || overrides[text].en || text;
     if (!Object.prototype.hasOwnProperty.call(messages, text)) return text;
     return translations[language][text as TranslationKey];
   };

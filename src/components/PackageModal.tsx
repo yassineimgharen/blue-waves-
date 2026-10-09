@@ -1,4 +1,4 @@
-import { getTranslator } from '../i18n/translations';
+import { useTranslator } from '../cms/useTranslator';
 import React from 'react';
 import { PackageItem, ScreenType, Language } from '../types';
 
@@ -10,7 +10,7 @@ interface PackageModalProps {
 }
 
 export const PackageModal: React.FC<PackageModalProps> = ({ language, pkg, onClose, onBook }) => {
-  const t = getTranslator(language);
+  const t = useTranslator(language);
   if (!pkg) return null;
 
   return (

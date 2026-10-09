@@ -3,6 +3,7 @@ import { mkdirSync, readFileSync, chmodSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { randomBytes, scrypt, timingSafeEqual, createHash } from 'node:crypto';
 import { promisify } from 'node:util';
+import { environmentContacts } from './environment.mjs';
 const derive = promisify(scrypt);
 export const digest = value => createHash('sha256').update(value).digest('hex');
 export async function hashPassword(password) {
@@ -28,7 +29,8 @@ export function openStore(dataDir) {
     CREATE TABLE IF NOT EXISTS attempts (key TEXT PRIMARY KEY, count INTEGER NOT NULL, expires INTEGER NOT NULL);
     CREATE TABLE IF NOT EXISTS uploads (id TEXT PRIMARY KEY, name TEXT NOT NULL, mime TEXT NOT NULL, created INTEGER NOT NULL);
     CREATE TABLE IF NOT EXISTS audit (id INTEGER PRIMARY KEY, email TEXT NOT NULL, action TEXT NOT NULL, created INTEGER NOT NULL);`);
-  const seed = JSON.parse(readFileSync(new URL('./seed.json', import.meta.url), 'utf8'));
+  const seed = JSON.parse(readFileSync(resolve('server/seed.json'), 'utf8'));
+  seed.contacts = environmentContacts(seed.contacts);
   db.prepare('INSERT OR IGNORE INTO site VALUES (1, ?, ?)').run(1, JSON.stringify(seed));
   return db;
 }

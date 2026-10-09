@@ -1,0 +1,15 @@
+import { cpSync, mkdirSync, readdirSync, writeFileSync, existsSync } from 'node:fs';
+import { resolve, relative } from 'node:path';
+const root = resolve('src/images');
+mkdirSync('public/media/branding', { recursive: true });
+cpSync(root, 'public/media/seed', { recursive: true });
+cpSync('src/bluewave-white.png', 'public/media/branding/bluewave-white.png');
+const walk = directory => readdirSync(directory, { withFileTypes: true }).flatMap(entry => entry.isDirectory() ? walk(resolve(directory, entry.name)) : [resolve(directory, entry.name)]);
+const url = path => '/media/seed/' + relative(root, path).split('/').map(encodeURIComponent).join('/');
+const originals = Object.fromEntries(walk(resolve(root, 'surf')).filter(path => /\.(jpe?g|png|webp|avif)$/i.test(path)).map(path => ['../images/' + relative(root, path), url(path)]));
+const previews = Object.fromEntries(walk(resolve(root, 'surf-previews')).filter(path => /\.webp$/i.test(path)).map(path => ['../images/' + relative(root, path), url(path)]));
+writeFileSync('src/data/surfArchiveAssets.json', JSON.stringify({ originals, previews }, null, 2) + '\n');
+console.log(`Prepared local images, including ${Object.keys(originals).length} surf photographs.`);
+const files = walk(root).filter(path => /\.(jpe?g|png|webp|avif)$/i.test(path));
+const catalog = files.filter(path => { const parts = relative(root, path).split('/'); return parts.length === 1 || parts.length === 2 && parts[0] === 'rooftop-restau'; }).map(path => ({ key: path.split('/').pop(), name: relative(root, path), src: url(path) }));
+writeFileSync('server/media.json', JSON.stringify({ paths: files.map(url), catalog }, null, 2) + '\n');

@@ -1,11 +1,11 @@
 import { ManagedImage } from '../cms/ManagedImage';
 import React, { useEffect, useRef, useState } from 'react';
 import type { Language, RoomItem } from '../types';
-import { getTranslator } from '../i18n/translations';
+import { useTranslator } from '../cms/useTranslator';
 import { secondaryButton } from './RoomCard';
 
 export function RoomGallery({ photos, language, name }: { photos: NonNullable<RoomItem['gallery']>; language: Language; name: string }) {
-  const t = getTranslator(language);
+  const t = useTranslator(language);
   const [index, setIndex] = useState(0);
   const [fullscreen, setFullscreen] = useState(false);
   const dialog = useRef<HTMLDialogElement>(null);

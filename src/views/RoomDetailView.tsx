@@ -1,7 +1,8 @@
+import Link from 'next/link';
 import React from 'react';
 import { Bath, BedDouble, Check, Coffee, CookingPot, Expand, Eye, Refrigerator, Sofa, Users, Utensils, WashingMachine, Waves, Wind, type LucideIcon } from 'lucide-react';
 import { Language, RoomItem } from '../types';
-import { getTranslator } from '../i18n/translations';
+import { useTranslator } from '../cms/useTranslator';
 import { roomPrice } from '../lib/booking';
 import { useSite } from '../cms/store';
 import { RoomGallery } from '../components/RoomGallery';
@@ -19,7 +20,7 @@ const amenityIcons: Record<string, LucideIcon> = {
 export function RoomDetailView({ room, language, onBook }: { room: RoomItem; language: Language; onBook: (room: RoomItem) => void }) {
   const { data: site } = useSite();
   const ACCOMMODATIONS = site.rooms;
-  const t = getTranslator(language);
+  const t = useTranslator(language);
   const view = room.view || (room.category.includes('sea-view') || room.id === 'amlal' ? 'Sea View' : room.category.includes('pool-view') ? 'Pool view' : 'Standard');
   const bathroom = room.bathroom || (room.features.includes('Private bathroom') ? 'Private bathroom' : room.features.includes('Bathtub or shower') ? 'Bathtub or shower' : 'Details to be confirmed');
   const facts = [
@@ -32,7 +33,7 @@ export function RoomDetailView({ room, language, onBook }: { room: RoomItem; lan
   const related = ACCOMMODATIONS.filter(item => item.id !== room.id)
     .sort((a, b) => Number(b.tag === room.tag) - Number(a.tag === room.tag)).slice(0, 3);
   return <section className="max-w-[1360px] mx-auto px-4 md:px-12 py-8 md:py-12">
-    <a href="#stay" className="text-[#006194] dark:text-[#93ccff] text-sm hover:underline">{t('Back to Rooms & Apartments')}</a>
+    <Link href="/rooms" className="text-[#006194] dark:text-[#93ccff] text-sm hover:underline">{t('Back to Rooms & Apartments')}</Link>
     <header className="mt-8 mb-8 md:mb-10">
       <p className="text-xs font-semibold tracking-wider text-[#006194] dark:text-[#93ccff] mb-3">{t(room.tag ?? 'Rooms & Apartments')} · {t('Imi Ouaddar, Morocco')}</p>
       <h1 className="font-serif-display text-4xl sm:text-6xl">{t(room.name)}</h1>
@@ -64,11 +65,11 @@ export function RoomDetailView({ room, language, onBook }: { room: RoomItem; lan
         <div className="border-y border-[#bfc7d2]/20 py-4 flex items-center gap-3 text-sm"><Users aria-hidden="true" size={20} className="shrink-0" />{t(room.capacity)}</div>
         <button className={`${primaryButton} w-full py-3.5`} onClick={() => onBook(room)}>{t('Book Now')}</button>
         <p className="text-xs leading-relaxed text-[#3f4850] dark:text-[#cadced]">{t('Choose your dates and guests in the next step. The lodge will confirm availability and your final rate.')}</p>
-        <div className="pt-4 border-t border-[#bfc7d2]/20"><p className="text-sm font-semibold mb-2">{t('Add Surf to Your Stay')}</p><p className="text-xs leading-relaxed text-[#675d4d] dark:text-[#d3c4b1]">{t('Accommodation comes first. Surf is always optional.')}</p><a href="#offers" className="inline-block mt-3 text-sm text-[#006194] dark:text-[#93ccff] hover:underline">{t('Room + Surf Offers')}</a></div>
+        <div className="pt-4 border-t border-[#bfc7d2]/20"><p className="text-sm font-semibold mb-2">{t('Add Surf to Your Stay')}</p><p className="text-xs leading-relaxed text-[#675d4d] dark:text-[#d3c4b1]">{t('Accommodation comes first. Surf is always optional.')}</p><Link href="/offers" className="inline-block mt-3 text-sm text-[#006194] dark:text-[#93ccff] hover:underline">{t('Room + Surf Offers')}</Link></div>
       </aside>
     </div>
     <section className="mt-16 md:mt-24 border-t border-[#bfc7d2]/30 pt-10" aria-labelledby="related-rooms-title">
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-7"><h2 id="related-rooms-title" className="font-serif-display text-3xl">{t('Explore other rooms')}</h2><a href="#stay" className="text-sm text-[#006194] dark:text-[#93ccff] hover:underline">{t('Rooms & Apartments')}</a></div>
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-7"><h2 id="related-rooms-title" className="font-serif-display text-3xl">{t('Explore other rooms')}</h2><Link href="/rooms" className="text-sm text-[#006194] dark:text-[#93ccff] hover:underline">{t('Rooms & Apartments')}</Link></div>
       <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">{related.map(item => <RoomCard key={item.id} room={item} language={language} onBook={onBook} />)}</div>
     </section>
   </section>;

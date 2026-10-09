@@ -1,7 +1,9 @@
+import Link from 'next/link';
 import { ManagedImage } from '../cms/ManagedImage';
 import React, { useEffect, useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
-import { getTranslator, formatDate, locales } from '../i18n/translations';
+import { formatDate, locales } from '../i18n/translations';
+import { useTranslator } from '../cms/useTranslator';
 import type { BookingDraft, Language, ScreenType, SurfAddon } from '../types';
 import { SURF_ADDONS } from '../data/accommodations';
 import { useSite, refreshSite, getSite } from '../cms/store';
@@ -23,7 +25,7 @@ export function BookingView({ language, draft, onChange, onOpenConcierge }: Book
   const { data: site } = useSite();
   const selectedOffer = site.offers.find(offer => offer.id === draft.offerId);
   const ACCOMMODATIONS = site.rooms.filter(room => !selectedOffer?.roomIds.length || selectedOffer.roomIds.includes(room.id));
-  const t = getTranslator(language);
+  const t = useTranslator(language);
   const room = ACCOMMODATIONS.find(item => item.id === draft.roomId);
   const quote = bookingQuote(draft, room, selectedOffer);
   const [error, setError] = useState<string | null>(null);
@@ -52,7 +54,11 @@ export function BookingView({ language, draft, onChange, onOpenConcierge }: Book
     try {
       for (const recipient of [...new Set([latest.contacts.reservationEmail, latest.contacts.contactEmail])]) {
         if (delivered.current.recipients.has(recipient)) continue;
-        await emailjs.send('service_ah6rbtp', 'template_4e7gprj', { ...payload, to_email: recipient }, 'yplWBRaPT0ZimeCpR');
+        const service = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+        const template = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+        const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+        if (!service || !template || !publicKey) throw new Error('Booking email is not configured.');
+        await emailjs.send(service, template, { ...payload, to_email: recipient }, publicKey);
         delivered.current.recipients.add(recipient);
       }
       setSuccess(true);
@@ -87,7 +93,7 @@ export function BookingView({ language, draft, onChange, onOpenConcierge }: Book
               {ACCOMMODATIONS.map(item => <label key={item.id} className={`flex gap-4 items-start rounded-xl p-4 border cursor-pointer ${draft.roomId === item.id ? 'border-[#006194] bg-[#ebf5ff] dark:bg-white/10 ring-1 ring-[#006194]' : 'border-[#bfc7d2]/30'}`}>
                 <input type="radio" name="roomId" value={item.id} required checked={draft.roomId === item.id} onChange={() => update('roomId', item.id)} className="mt-2 accent-[#006194]" />
                 {item.image && <ManagedImage src={item.image} alt={t(item.name)} className="w-20 h-20 rounded-lg object-cover hidden sm:block" />}
-                <span className="flex-1 min-w-0"><span className="block font-serif-display text-xl">{t(item.name)}</span><span className="block text-xs mt-1">{t(item.capacity)} • {t(item.bedType)}</span><span className="block text-sm font-bold text-[#006194] dark:text-[#93ccff] mt-2">{roomPrice(item, language) ?? t('Price on request')}{item.pricePerNight !== null && ` ${t('/ night')}`}</span><a href={`#rooms/${item.id}`} className="inline-block text-xs underline mt-2">{t('View Details')}</a></span>
+                <span className="flex-1 min-w-0"><span className="block font-serif-display text-xl">{t(item.name)}</span><span className="block text-xs mt-1">{t(item.capacity)} • {t(item.bedType)}</span><span className="block text-sm font-bold text-[#006194] dark:text-[#93ccff] mt-2">{roomPrice(item, language) ?? t('Price on request')}{item.pricePerNight !== null && ` ${t('/ night')}`}</span><Link href={`/rooms/${item.id}`} className="inline-block text-xs underline mt-2">{t('View Details')}</Link></span>
               </label>)}
             </div></section>
             <section id="booking-step-3" className={panelClass}><h2 className="font-serif-display text-2xl mb-3">{t('Add Surf to Your Stay')}</h2><p className="text-sm text-[#3f4850] dark:text-[#cadced] mb-5">{t('Accommodation comes first. Surf is always optional.')}</p>

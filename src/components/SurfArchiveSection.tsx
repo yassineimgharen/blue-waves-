@@ -1,6 +1,6 @@
-import React, { lazy, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import type { Language } from '../types';
-const SurfArchive = lazy(() => import('./SurfArchive'));
+const SurfArchive = dynamic(() => import('./SurfArchive'));
 export function SurfArchiveSection({ language }: { language: Language }) {
-  return <Suspense fallback={null}><SurfArchive language={language} /></Suspense>;
+  return <SurfArchive language={language} />;
 }

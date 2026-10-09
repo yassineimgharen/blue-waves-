@@ -44,15 +44,22 @@ async function evaluate(expression) {
   return result.result.value;
 }
 const tick = () => evaluate('new Promise(resolve => setTimeout(resolve, 100))');
-async function click(label) {
-  await evaluate(`(() => {
-    const button = [...document.querySelectorAll('button')].find(element => {
+async function click(label, scope = 'body') {
+  await evaluate(`(async () => {
+    const button = [...document.querySelector(${JSON.stringify(scope)}).querySelectorAll('button')].find(element => {
       const copy = element.cloneNode(true);
       copy.querySelectorAll('.material-symbols-outlined').forEach(icon => icon.remove());
       return copy.textContent.trim() === ${JSON.stringify(label)};
     });
     if (!button) throw new Error('Missing button: ' + ${JSON.stringify(label)});
-    button.click();
+    const router = window.next.router;
+    await new Promise(resolve => {
+      let timer;
+      const done = () => { clearTimeout(timer); router.events.off('routeChangeStart', start); router.events.off('routeChangeComplete', done); router.events.off('routeChangeError', done); resolve(); };
+      const start = () => { clearTimeout(timer); timer = setTimeout(done, 20000); };
+      router.events.on('routeChangeStart', start); router.events.on('routeChangeComplete', done); router.events.on('routeChangeError', done);
+      timer = setTimeout(done, 150); button.click();
+    });
   })()`);
   await tick();
 }
@@ -113,15 +120,15 @@ try {
   assert.equal(roomLinks.length, 10);
   assert.equal(new Set(roomLinks).size, roomLinks.length);
   for (const href of roomLinks) {
-    await evaluate(`location.hash = ${JSON.stringify(href)}`); await tick();
+    await evaluate(`window.next.router.push(${JSON.stringify(href)})`); await tick();
     assert.ok(await evaluate('!!document.querySelector("main h1")'));
     assert.ok(await evaluate(`document.querySelector('main').textContent.includes('Bed Configuration')`));
     assert.ok(await evaluate(`Promise.all([...document.querySelectorAll('main img')].map(img => { img.loading = 'eager'; return img.decode(); })).then(() => true)`), 'Room photos must load');
-    await evaluate(`document.querySelector('main aside button').click()`); await tick();
-    assert.equal(await evaluate(`document.querySelector('input[name="roomId"]:checked').value`), href.split('/')[1]);
-    await evaluate(`location.hash = ${JSON.stringify(href)}`); await tick();
+    await click('Book Now', 'main aside');
+    assert.equal(await evaluate(`document.querySelector('input[name="roomId"]:checked').value`), href.split('/').pop());
+    await evaluate(`window.next.router.push(${JSON.stringify(href)})`); await tick();
   }
-  await evaluate(`document.querySelector('main aside button').click()`); await tick();
+  await click('Book Now', 'main aside');
   const selectedRoom = await evaluate(`document.querySelector('input[name="roomId"]:checked').value`);
   assert.equal(selectedRoom, 'amlal');
   assert.equal(await evaluate(`document.querySelector('select[name="surfAddon"]').value`), 'none');
@@ -154,7 +161,7 @@ try {
 
   await evaluate(`[...document.querySelectorAll('header button')].find(button => button.querySelector('.material-symbols-outlined')?.textContent.trim() === 'close')?.click()`); await tick();
   // Room layouts stay within the viewport in both themes and directions.
-  await evaluate(`location.hash = '#rooms/amlal'`); await tick();
+  await evaluate(`window.next.router.push('/rooms/amlal')`); await tick();
   await evaluate(`window.scrollTo(0, 0)`); await tick();
   await checkArabicText();
   assert.ok(await evaluate(`document.body.scrollWidth <= innerWidth + 1`), 'Room page overflows on mobile');
@@ -166,20 +173,16 @@ try {
   writeFileSync('/tmp/bluewave-room-desktop.png', Buffer.from((await command('Page.captureScreenshot')).data, 'base64'));
   await command('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
 
-  // Exercise gallery interaction independently with predictable fixture photos.
-  await command('Page.navigate', { url: `${baseUrl}/tests/room-gallery.html` });
-  await new Promise(resolve => setTimeout(resolve, 500));
-  for (let attempt = 0; attempt < 100; attempt++) {
-    if (await evaluate(`!!document.querySelector('button[aria-label="Next photo"]')`)) break;
-    await tick();
-  }
+  // Exercise the real room gallery on the Next.js detail page.
+  const album = await evaluate(`Array.from(document.querySelectorAll('button[aria-label^="View photo "] img'), img => img.src)`);
+  await evaluate(`window.scrollTo(0, 0)`); await tick();
   await evaluate(`document.querySelector('button[aria-label="View photo 2"]').click()`); await tick();
-  assert.equal(await evaluate(`document.querySelector('main img').alt`), 'Fixture photo 2');
+  assert.equal(await evaluate(`document.querySelector('main img').src`), album[1]);
   await click('Fullscreen');
   assert.equal(await evaluate('document.querySelector("dialog").open'), true);
   assert.equal(await evaluate('document.body.style.overflow'), 'hidden');
   await command('Input.dispatchKeyEvent', { type: 'keyDown', key: 'ArrowRight', code: 'ArrowRight' }); await tick();
-  assert.equal(await evaluate(`document.querySelector('dialog img').alt`), 'Fixture photo 3');
+  assert.equal(await evaluate(`document.querySelector('dialog img').src`), album[2]);
   await command('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape' }); await tick();
   assert.equal(await evaluate('document.querySelector("dialog").open'), false);
   assert.notEqual(await evaluate('document.body.style.overflow'), 'hidden');
@@ -187,7 +190,7 @@ try {
   await command('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: point.x, y: point.y }] });
   await command('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: point.x - 120, y: point.y }] });
   await command('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await tick();
-  assert.equal(await evaluate(`document.querySelector('main img').alt`), 'Fixture photo 1');
+  assert.equal(await evaluate(`document.querySelector('main img').src`), album[3]);
   console.log('PASS gallery thumbnails, fullscreen, keyboard, Escape and mobile swipe');
 } finally {
   await send('Target.closeTarget', { targetId });

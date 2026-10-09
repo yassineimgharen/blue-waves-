@@ -18,7 +18,7 @@ All ten catalog entries use the owner-supplied room folders in `src/images/` thr
 
 Folder aliases preserve the owner's catalog names: `azemmur` → `azemmour`, `tafukt` → `tafoukt`, and `appartement` → `amlal`. Other folder names match the room IDs. The `azemmur` album retains the two bathroom images supplied inside that folder despite their older Ayour filenames. Unassigned root images and rooftop/restaurant photos are not added to room albums.
 
-Cards link to `#rooms/<room-id>`; the dedicated page preserves the selected room when entering booking. Missing rates, capacities and bed details remain explicitly pending. Room size is shown only when supplied.
+Cards link to `/rooms/<room-id>`; the dedicated page preserves the selected room when entering booking. Missing rates, capacities and bed details remain explicitly pending. Room size is shown only when supplied.
 
 ## Rates and offers
 
@@ -34,4 +34,4 @@ The existing EmailJS service/template integration is retained. Tests must mock e
 - `node --import tsx tests/room-details.test.tsx`
 - `node --import tsx --import ./tests/register-assets.mjs tests/i18n.test.tsx`
 - `node --import tsx tests/booking.test.ts`
-- With Vite and headless Chromium on debugging port 9222: `I18N_BASE_URL=http://127.0.0.1:3001 node --import tsx tests/i18n.browser.mjs`
+- With Next.js and headless Chromium on debugging port 9222: `I18N_BASE_URL=http://127.0.0.1:3001 node --import tsx tests/i18n.browser.mjs`

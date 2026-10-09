@@ -12,6 +12,13 @@ export async function uploadImage(file: File): Promise<{ id: string; src: string
   const bitmap = await createImageBitmap(file);
   if (bitmap.width > 12000 || bitmap.height > 12000) { bitmap.close(); throw new Error('Please resize this image to at most 12,000 pixels per side.'); }
   bitmap.close();
+  const mode = await api<{ direct: boolean }>('/upload-mode');
+  if (mode.direct) {
+    const ticket = await api<{ id: string; pathname: string; token: string }>('/upload-token', { method: 'POST', body: JSON.stringify({ name: file.name, mime: file.type }) });
+    const { put } = await import('@vercel/blob/client');
+    await put(ticket.pathname, file, { access: 'public', token: ticket.token, contentType: file.type });
+    return api('/upload-complete', { method: 'POST', body: JSON.stringify({ id: ticket.id }) });
+  }
   const data = await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result).split(',')[1]); reader.onerror = reject; reader.readAsDataURL(file); });
   return api('/uploads', { method: 'POST', body: JSON.stringify({ name: file.name, data }) });
 }

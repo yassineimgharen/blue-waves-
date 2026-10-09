@@ -1,26 +1,26 @@
 import { ManagedImage } from '../cms/ManagedImage';
 import React, { useState } from 'react';
 import type { Language } from '../types';
-import { getTranslator } from '../i18n/translations';
+import { useTranslator } from '../cms/useTranslator';
 
-import img1 from '../images/rooftop-restau/18307f9d-30e6-4e68-9689-f7f8d75fb128.jpeg';
-import img2 from '../images/rooftop-restau/1f266451-d0e2-49c6-a827-ade18abe81f3.jpeg';
-import img3 from '../images/rooftop-restau/3a2ab73b-a4b9-49de-b7c2-d45f144cb59f.jpeg';
-import img4 from '../images/rooftop-restau/49465fe7-5a5d-44d2-b65f-d325b33833d1.jpeg';
-import img5 from '../images/rooftop-restau/5df0eaff-edb2-4d42-a8e1-8c4c2be9fc26.jpeg';
-import img6 from '../images/rooftop-restau/6ce0ce79-9543-44a4-abbc-7f3706c85b03.jpeg';
-import img7 from '../images/rooftop-restau/7efbbe20-615d-478b-bd44-1e15957f94fa.jpeg';
-import img8 from '../images/rooftop-restau/7fa1e9c0-3eed-4469-a977-48c50d46dce9.jpeg';
-import img9 from '../images/rooftop-restau/90dfa9bf-5a79-4789-8dc3-504b8e23eb9a.jpeg';
-import img10 from '../images/rooftop-restau/99338eb5-4990-4649-ad6d-765e737b3535.jpeg';
-import img11 from '../images/rooftop-restau/a0a35b8c-cbd9-4cb3-aa28-b1bc0d232bff.jpeg';
-import img12 from '../images/rooftop-restau/a3d2ca1f-6f0a-4ca3-b264-81e4c04ebf12.jpeg';
-import img13 from '../images/rooftop-restau/bac2b65c-72cd-4f31-abee-d38f8ec07493.jpeg';
-import img14 from '../images/rooftop-restau/bfcd4adc-2e66-478a-ab8b-73074f3fb61e.jpeg';
-import img15 from '../images/rooftop-restau/c7e4db71-83de-4e4f-ab07-7c1ea9ff2016.jpeg';
-import img16 from '../images/rooftop-restau/e7334eda-ee3c-475d-9729-48b65b64a85d.jpeg';
-import img17 from '../images/rooftop-restau/ebd6429a-4c2c-45d6-a14e-fe11fd6d6eaa.jpeg';
-import img18 from '../images/rooftop-restau/ee5a9d81-1484-43e3-82ad-3f5f70709628.jpeg';
+const img1 = '/media/seed/rooftop-restau/18307f9d-30e6-4e68-9689-f7f8d75fb128.jpeg';
+const img2 = '/media/seed/rooftop-restau/1f266451-d0e2-49c6-a827-ade18abe81f3.jpeg';
+const img3 = '/media/seed/rooftop-restau/3a2ab73b-a4b9-49de-b7c2-d45f144cb59f.jpeg';
+const img4 = '/media/seed/rooftop-restau/49465fe7-5a5d-44d2-b65f-d325b33833d1.jpeg';
+const img5 = '/media/seed/rooftop-restau/5df0eaff-edb2-4d42-a8e1-8c4c2be9fc26.jpeg';
+const img6 = '/media/seed/rooftop-restau/6ce0ce79-9543-44a4-abbc-7f3706c85b03.jpeg';
+const img7 = '/media/seed/rooftop-restau/7efbbe20-615d-478b-bd44-1e15957f94fa.jpeg';
+const img8 = '/media/seed/rooftop-restau/7fa1e9c0-3eed-4469-a977-48c50d46dce9.jpeg';
+const img9 = '/media/seed/rooftop-restau/90dfa9bf-5a79-4789-8dc3-504b8e23eb9a.jpeg';
+const img10 = '/media/seed/rooftop-restau/99338eb5-4990-4649-ad6d-765e737b3535.jpeg';
+const img11 = '/media/seed/rooftop-restau/a0a35b8c-cbd9-4cb3-aa28-b1bc0d232bff.jpeg';
+const img12 = '/media/seed/rooftop-restau/a3d2ca1f-6f0a-4ca3-b264-81e4c04ebf12.jpeg';
+const img13 = '/media/seed/rooftop-restau/bac2b65c-72cd-4f31-abee-d38f8ec07493.jpeg';
+const img14 = '/media/seed/rooftop-restau/bfcd4adc-2e66-478a-ab8b-73074f3fb61e.jpeg';
+const img15 = '/media/seed/rooftop-restau/c7e4db71-83de-4e4f-ab07-7c1ea9ff2016.jpeg';
+const img16 = '/media/seed/rooftop-restau/e7334eda-ee3c-475d-9729-48b65b64a85d.jpeg';
+const img17 = '/media/seed/rooftop-restau/ebd6429a-4c2c-45d6-a14e-fe11fd6d6eaa.jpeg';
+const img18 = '/media/seed/rooftop-restau/ee5a9d81-1484-43e3-82ad-3f5f70709628.jpeg';
 
 const ALL_PHOTOS = [img1,img2,img3,img4,img5,img6,img7,img8,img9,img10,img11,img12,img13,img14,img15,img16,img17,img18];
 const ROOFTOP_PHOTOS = ALL_PHOTOS.slice(0, 9);
@@ -29,7 +29,7 @@ const RESTAURANT_PHOTOS = ALL_PHOTOS.slice(9);
 interface Props { language: Language; onNavigate: (screen: any) => void; }
 
 export const DiningView: React.FC<Props> = ({ language, onNavigate }) => {
-  const t = getTranslator(language);
+  const t = useTranslator(language);
   const [lightbox, setLightbox] = useState<{ photos: string[]; idx: number } | null>(null);
   const [activeTab, setActiveTab] = useState<'rooftop' | 'restaurant'>('rooftop');
 

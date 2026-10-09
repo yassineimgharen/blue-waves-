@@ -1,7 +1,7 @@
 import { ManagedImage } from '../cms/ManagedImage';
 import React, { useState, useEffect } from 'react';
 import { Language, RoomItem } from '../types';
-import { getTranslator } from '../i18n/translations';
+import { useTranslator } from '../cms/useTranslator';
 import { roomPrice } from '../lib/booking';
 import { primaryButton } from './RoomCard';
 
@@ -40,7 +40,7 @@ export function RoomDetailModal({ room, language, onClose, onBook }: {
   onClose: () => void;
   onBook: (room: RoomItem) => void;
 }) {
-  const t = getTranslator(language);
+  const t = useTranslator(language);
   const [imgIdx, setImgIdx] = useState(0);
   const [lightbox, setLightbox] = useState(false);
   const gallery = room.gallery ?? [];

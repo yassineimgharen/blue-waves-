@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Expand, X } from 'lucide-react';
 import type { Language } from '../types';
-import { getTranslator } from '../i18n/translations';
+import { useTranslator } from '../cms/useTranslator';
 import { secondaryButton } from './RoomCard';
 import metadata from '../data/surfArchiveMetadata.json';
 
-// Vite discovers new local photos automatically; importing URLs does not download image bytes.
-const originals = import.meta.glob('../images/surf/**/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG,WEBP}', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
-const previews = import.meta.glob('../images/surf-previews/*.webp', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
+import Image from 'next/image';
+import assets from '../data/surfArchiveAssets.json';
+const { originals, previews } = assets;
 const descriptions = metadata as Record<string, { alt: string; width: number; height: number; duplicateOf?: string }>;
 const priority = ['coversurf.jpg', '33K7457-768x512.jpg', 'surf-lesson-lineup.jpg', 'IMG_2720-768x1024 (1).jpg', 'SP1_0072-768x510.jpg'];
 const photos = Object.entries(originals).sort(([a], [b]) => {
@@ -19,7 +19,7 @@ const photos = Object.entries(originals).sort(([a], [b]) => {
 });
 
 export default function SurfArchive({ language }: { language: Language }) {
-  const t = getTranslator(language);
+  const t = useTranslator(language);
   const [visible, setVisible] = useState(12);
   const [selected, setSelected] = useState<number | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -39,7 +39,7 @@ export default function SurfArchive({ language }: { language: Language }) {
   const tile = (index: number, featured = false, fillDesktop = false) => {
     const item = photos[index];
     return <button key={item.src} type="button" onClick={event => { trigger.current = event.currentTarget; setSelected(index); }} aria-label={`${t('View photo')} ${index + 1}: ${t(item.alt || 'Surf archive photograph')}`} className={`group relative block w-full overflow-hidden rounded-2xl bg-[#ebf5ff] dark:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#006194] ${featured ? 'h-full' : fillDesktop ? 'lg:h-full' : ''}`}>
-      <img src={item.preview} srcSet={item.small ? `${item.small} 384w, ${item.preview} ${Math.min(item.width, 768)}w` : undefined} sizes={featured ? '(min-width: 1024px) 65vw, 100vw' : '(min-width: 1024px) 33vw, (min-width: 480px) 50vw, 100vw'} width={item.width} height={item.height} alt={t(item.alt || 'Surf archive photograph')} loading="lazy" decoding="async" className={`w-full ${featured ? 'h-full object-cover' : fillDesktop ? 'h-auto lg:h-full lg:object-cover' : 'h-auto'} motion-safe:transition-transform motion-safe:duration-500 motion-safe:group-hover:scale-[1.025]`} />
+      <Image src={item.preview} sizes={featured ? '(min-width: 1024px) 65vw, 100vw' : '(min-width: 1024px) 33vw, (min-width: 480px) 50vw, 100vw'} width={item.width || 768} height={item.height || 512} alt={t(item.alt || 'Surf archive photograph')} loading="lazy" decoding="async" className={`w-full ${featured ? 'h-full object-cover' : fillDesktop ? 'h-auto lg:h-full lg:object-cover' : 'h-auto'} motion-safe:transition-transform motion-safe:duration-500 motion-safe:group-hover:scale-[1.025]`} />
       <span className="absolute inset-0 bg-gradient-to-t from-[#071a26]/45 via-transparent to-transparent opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity" />
       <span aria-hidden="true" className="absolute bottom-3 start-3 rounded-full bg-[#071a26]/60 px-3 py-1 text-xs text-white tabular-nums">{String(index + 1).padStart(2, '0')}</span>
       <Expand aria-hidden="true" size={18} className="absolute bottom-4 end-4 text-white opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity" />
@@ -60,7 +60,7 @@ export default function SurfArchive({ language }: { language: Language }) {
       {photo && <div className="flex h-full min-h-0 flex-col gap-4">
         <div className="flex items-center justify-between gap-4"><span className="font-serif-display text-xl">{t('Surf Archive')}</span><button type="button" autoFocus onClick={() => setSelected(null)} aria-label={t('Close gallery')} className="rounded-full p-3 bg-white/10 hover:bg-white/20"><X aria-hidden="true" size={22} /></button></div>
         <div className="flex-1 min-h-0 flex items-center justify-center touch-pan-y" onPointerDown={event => { touch.current = { x: event.clientX, y: event.clientY }; event.currentTarget.setPointerCapture(event.pointerId); }} onPointerCancel={() => { touch.current = null; }} onPointerUp={event => { if (!touch.current) return; const dx = event.clientX - touch.current.x, dy = event.clientY - touch.current.y; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) move(dx < 0 ? 1 : -1); touch.current = null; }}>
-          <img key={photo.src} src={photo.src} alt={t(photo.alt || 'Surf archive photograph')} draggable={false} className="max-w-full max-h-full object-contain select-none" />
+          <Image unoptimized width={photo.width || 1600} height={photo.height || 1067} key={photo.src} src={photo.src} alt={t(photo.alt || 'Surf archive photograph')} draggable={false} className="max-w-full max-h-full object-contain select-none" />
         </div>
         <div className="flex items-center justify-between gap-3 pb-[env(safe-area-inset-bottom)]"><button type="button" aria-label={t('Previous photo')} onClick={() => move(-1)} className="shrink-0 rounded-full p-3 bg-white/10 hover:bg-white/20"><ArrowLeft aria-hidden="true" size={22} /></button><div className="text-center min-w-0"><p className="text-xs sm:text-sm text-white/80" aria-live="polite">{caption(selected!)}</p><p className="text-xs mt-1 text-white/60 tabular-nums">{selected! + 1} / {photos.length}</p></div><button type="button" aria-label={t('Next photo')} onClick={() => move(1)} className="shrink-0 rounded-full p-3 bg-white/10 hover:bg-white/20"><ArrowRight aria-hidden="true" size={22} /></button></div>
       </div>}

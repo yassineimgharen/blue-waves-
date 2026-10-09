@@ -2,12 +2,12 @@ import React from 'react';
 import type { Language } from '../types';
 import { useSite } from '../cms/store';
 import { ManagedImage } from '../cms/ManagedImage';
-import { getTranslator } from '../i18n/translations';
+import { useTranslator } from '../cms/useTranslator';
 import { primaryButton } from './RoomCard';
 
 export function StayOffers({ language, onChoose }: { language: Language; onChoose: (nights: number, offerId?: string) => void }) {
   const { data: { offers: STAY_SURF_OFFERS } } = useSite();
-  const t = getTranslator(language);
+  const t = useTranslator(language);
   if (!STAY_SURF_OFFERS.length) return null;
   return <section id="stay-offers" className="w-full bg-[#ebf5ff] dark:bg-[#071a26]/60 py-20 scroll-mt-32">
     <div className="max-w-[1360px] mx-auto px-4 md:px-12">

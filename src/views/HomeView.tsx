@@ -4,10 +4,10 @@ import { useSite } from '../cms/store';
 import { RoomCard } from '../components/RoomCard';
 import { StayOffers } from '../components/StayOffers';
 import { todayISO, addNights } from '../lib/booking';
-import { getTranslator } from '../i18n/translations';
+import { useTranslator } from '../cms/useTranslator';
 import React, { useState } from 'react';
-import heroBg from '../images/68c49e7e-6fd8-4fe8-a539-23852e4c8983.jpeg';
-import aboutImg from '../images/rooftop-restau/6ce0ce79-9543-44a4-abbc-7f3706c85b03.jpeg';
+const heroBg = '/media/seed/68c49e7e-6fd8-4fe8-a539-23852e4c8983.jpeg';
+const aboutImg = '/media/seed/rooftop-restau/6ce0ce79-9543-44a4-abbc-7f3706c85b03.jpeg';
 import { ScreenType, RoomItem, Language, BookingDraft } from '../types';
 import {
   GALLERY_ITEMS,
@@ -34,7 +34,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
 }) => {
   const { data: site } = useSite();
   const ACCOMMODATIONS = site.rooms;
-  const t = getTranslator(language);
+  const t = useTranslator(language);
   const [galleryFilter, setGalleryFilter] = useState<'all' | 'surf' | 'rooms' | 'pool' | 'lifestyle'>('all');
 
   // Booking widget form state
