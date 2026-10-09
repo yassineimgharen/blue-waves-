@@ -8,5 +8,5 @@ coverage/
 !.env.example
 
 # Persistent CMS credentials, sessions and uploaded images
-data/
+/data/
 *.sqlite*

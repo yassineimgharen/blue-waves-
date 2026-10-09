@@ -1,3 +1,4 @@
+import { SurfArchiveSection } from '../components/SurfArchiveSection';
 import { ManagedImage } from '../cms/ManagedImage';
 import { useSite } from '../cms/store';
 import { RoomCard } from '../components/RoomCard';
@@ -6,6 +7,7 @@ import { todayISO, addNights } from '../lib/booking';
 import { getTranslator } from '../i18n/translations';
 import React, { useState } from 'react';
 import heroBg from '../images/68c49e7e-6fd8-4fe8-a539-23852e4c8983.jpeg';
+import aboutImg from '../images/rooftop-restau/6ce0ce79-9543-44a4-abbc-7f3706c85b03.jpeg';
 import { ScreenType, RoomItem, Language, BookingDraft } from '../types';
 import {
   GALLERY_ITEMS,
@@ -316,6 +318,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
       </section>
 
       <StayOffers language={language} onChoose={onOffer} />
+      <SurfArchiveSection language={language} />
 
       {/* SECTION 6: LODGE EXPERIENCES & AMENITIES */}
       <section className="w-full max-w-[1360px] mx-auto px-4 md:px-12 py-20" id="experiences">
@@ -456,9 +459,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
           <div className="lg:col-span-6 relative">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl">
               <ManagedImage
-                className="w-full h-[460px] md:h-[520px] object-cover hover:scale-105 transition-transform duration-700"
+                className="w-full h-[460px] md:h-[520px] object-cover object-center scale-100"
                 alt={t("Warm sunlight illuminating the bohemian Moroccan tadelakt architecture of Blue Wave Lodge")}
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-2W5TuuT8jqI8E1UIR-rJw_UPbCBjA0eq3Kf1cPAe_bfEccH5ua4zG_S5wiwMDJ_dTdwg8xBYkvH4tgJ_xoPO9rgFFH8s8t9z8OtdHNlklQf7PhzPfOdrt_nRJIruTf89I261lN8KdUUQxVP_tTB5xsf2Stwy9fo5Xm-QU3o5sBAoDpak2oD3KEuJdIYCe6PxUQxwiIpJsWf9brY1Fd5XfMpR6Vdgqx26T1iCJ9t_dLknvfdIc3Zv"
+                src={aboutImg}
               />
               <div className="absolute bottom-4 left-4 right-4 p-4 rounded-xl bg-white/95 dark:bg-[#0b1d29]/95 backdrop-blur-md shadow-lg border border-[#bfc7d2]/20">
                 <span className="text-[10px] uppercase font-bold tracking-wider text-[#675d4d] dark:text-[#d3c4b1]">
