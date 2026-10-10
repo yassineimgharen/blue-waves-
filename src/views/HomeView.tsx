@@ -590,13 +590,15 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </div>
 
               <div className="flex flex-wrap gap-4 pt-4">
-                <button
-                  onClick={() => alert(t("Opening navigation coordinates: 30.6032° N, 9.8241° W (Plage Imi Ouaddar)"))}
+                <a
+                  href="https://maps.app.goo.gl/sdZ3XSm7Hcyjb9pF7"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="px-6 py-3 rounded-lg bg-white dark:bg-[#0b1d29] text-[#0b1d29] dark:text-white hover:bg-[#d8ebfc] text-xs md:text-sm font-semibold transition-colors inline-flex items-center gap-2 border border-[#bfc7d2]/20"
                 >
                   <span className="material-symbols-outlined text-[18px]">directions</span>
                   {t("Open in Google Maps")}
-                </button>
+                </a>
                 <button
                   onClick={onOpenConcierge}
                   className="px-6 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-semibold transition-colors inline-flex items-center gap-2 shadow-sm"
@@ -610,20 +612,17 @@ export const HomeView: React.FC<HomeViewProps> = ({
             {/* Interactive Map View */}
             <div className="lg:col-span-7">
               <div className="relative w-full h-[400px] md:h-[460px] rounded-2xl overflow-hidden shadow-xl border border-[#bfc7d2]/20">
-                <ManagedImage
-                  className="w-full h-full object-cover"
-                  alt={t("Coastal map view of Imi Ouaddar and Taghazout Bay")}
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUzmuZV40xInbKX0WKWKhEuT039Rt-W3bRVWin-I7OQWtq-QAy0Xifn1VvNBvgK4jIII3H9R-m8jDdrsABzBaTKTo7zXewjd3cqazPgQqRiqI6T2PmW9AA0dMeT7M0OMQYohB1SuH5oS_2GxkRkM8MmgcMr4BI8_wUFfREPueFKCsNIDCDrri7HUg5HqJwyh2gMeZu89ZD9-z5jNU5ewQfRwxBCjYN67k5P0drpOW9VgR3zVv9JQFt"
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3434.602277333458!2d-9.760462423757739!3d30.588771092574873!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xdb253b8d148b4df%3A0xbe2b29fe4e2207b4!2sR%C3%A9sidence%20Blue%20Wave%20Lodge%20imi%20ouaddar!5e0!3m2!1sen!2sma!4v1791631951072!5m2!1sen!2sma"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  title="Résidence Blue Wave Lodge Imi Ouaddar"
+                  className="w-full h-full"
                 />
-                <div className="absolute top-6 left-6 p-4 rounded-xl bg-white/95 dark:bg-[#0b1d29]/95 backdrop-blur-md shadow-md border border-[#bfc7d2]/20">
-                  <p className="font-serif-display text-base text-[#0b1d29] dark:text-white font-bold flex items-center gap-1.5">
-                    <span className="w-3 h-3 rounded-full bg-[#006194] animate-ping"></span>
-                    {t("Blue Wave Lodge Location")}
-                  </p>
-                  <p className="text-xs text-[#675d4d] dark:text-[#d3c4b1] mt-0.5">
-                    {t("30.6032° N, 9.8241° W • Taghazout Bay")}
-                  </p>
-                </div>
               </div>
             </div>
           </div>
