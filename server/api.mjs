@@ -6,12 +6,13 @@ import { getStore, connectStore, loadSite, publicSite, recordAudit } from './dat
 import { HttpError, validateSite } from './validation.mjs';
 import { del, head } from '@vercel/blob';
 import { generateClientTokenFromReadWriteToken } from '@vercel/blob/client';
+import { trustedOrigins } from './origins.mjs';
 const project = process.cwd();
 const header = (req, name) => req.headers[name.toLowerCase()];
 
-export async function createHandler({ dataDir = resolve(process.env.DATA_DIR || 'data'), origin = process.env.APP_ORIGIN, production = process.env.NODE_ENV === 'production', database } = {}) {
-  if (production && (!origin || new URL(origin).protocol !== 'https:')) throw new Error('Production APP_ORIGIN must use HTTPS.');
-  const allowedOrigin = new URL(origin || 'http://127.0.0.1:3000').origin;
+export async function createHandler({ dataDir = resolve(process.env.DATA_DIR || 'data'), origin = process.env.APP_ORIGIN, production = process.env.NODE_ENV === 'production', database, env = process.env } = {}) {
+  const allowedOrigins = trustedOrigins({ origin, production, env });
+  const allowedOrigin = allowedOrigins.values().next().value;
   const db = database || await connectStore({ dataDir });
   const uploadDir = resolve(dataDir, 'uploads');
   const cookieName = production ? '__Host-lodge_session' : 'lodge_session';
@@ -172,7 +173,7 @@ export async function createHandler({ dataDir = resolve(process.env.DATA_DIR || 
     try {
       const path = new URL(req.url, allowedOrigin).pathname;
       if (!['GET', 'HEAD'].includes(req.method)) {
-        if (header(req, 'origin') !== allowedOrigin || header(req, 'sec-fetch-site') === 'cross-site') throw new HttpError(403, 'Request origin is not allowed.');
+        if (!allowedOrigins.has(header(req, 'origin')) || header(req, 'sec-fetch-site') === 'cross-site') throw new HttpError(403, 'Request origin is not allowed.');
         if (!/^application\/json(?:;|$)/i.test(header(req, 'content-type') || '')) throw new HttpError(415, 'JSON requests are required.');
       }
       if (path.startsWith('/api/admin/') && path !== '/api/admin/login') {

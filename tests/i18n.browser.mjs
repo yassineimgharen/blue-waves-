@@ -75,7 +75,7 @@ async function checkIcons() {
     assert.equal(icon.direction, 'ltr', `${icon.name} must keep its ligature direction`);
   }
 }
-async function checkArabicText() {
+async function checkLocalizedText(language = 'ar') {
   const texts = await evaluate(`(() => {
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     const texts = [];
@@ -87,9 +87,9 @@ async function checkArabicText() {
     }
     return texts;
   })()`);
-  const localizedValues = new Set(Object.values(translations.ar));
+  const localizedValues = new Set(Object.values(translations[language]));
   const untranslated = texts.filter(text => Object.hasOwn(translations.en, text) && !localizedValues.has(text));
-  assert.deepEqual([...new Set(untranslated)], [], 'English catalog text remains in the Arabic page');
+  assert.deepEqual([...new Set(untranslated)], [], `English catalog text remains in the ${language} page`);
 }
 try {
   await command('Emulation.setDeviceMetricsOverride', { width: 1440, height: 1000, deviceScaleFactor: 1, mobile: false });
@@ -107,10 +107,17 @@ try {
     await click(language.toUpperCase());
     assert.equal(await evaluate('document.documentElement.lang'), language);
     assert.equal(await evaluate('document.documentElement.dir'), language === 'ar' ? 'rtl' : 'ltr');
-    for (const page of ['Home', 'Rooms & Apartments', 'Offers', 'Book Now']) {
+    for (const page of ['Home', 'Rooms & Apartments', 'Offers', 'Rooftop & Restaurant', 'Book Now']) {
       await click(t(page));
       await checkIcons();
-      if (language === 'ar') await checkArabicText();
+      if (language !== 'en') await checkLocalizedText(language);
+      if (page === 'Rooftop & Restaurant') {
+        await click(t('Rooftop Terrace'), 'main');
+        assert.ok(await evaluate(`document.querySelector('main').textContent.includes(${JSON.stringify(t('Panoramic Views'))})`));
+        await click(t('Restaurant'), 'main');
+        assert.ok(await evaluate(`document.querySelector('main').textContent.includes(${JSON.stringify(t('Fresh & Local'))})`));
+        if (language !== 'en') await checkLocalizedText(language);
+      }
       console.log(`PASS ${language}: ${page}`);
     }
   }
@@ -134,7 +141,7 @@ try {
   assert.equal(await evaluate(`document.querySelector('select[name="surfAddon"]').value`), 'none');
   await click('AR');
   assert.equal(await evaluate(`document.querySelector('input[name="roomId"]:checked').value`), selectedRoom);
-  await checkArabicText();
+  await checkLocalizedText();
   await click('EN');
   // An offer requests its duration without selecting a paid surf service.
   await click('Offers');
@@ -155,7 +162,7 @@ try {
   await command('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
   await click('AR');
   await evaluate(`[...document.querySelectorAll('button')].find(button => button.querySelector('.material-symbols-outlined')?.textContent.trim() === 'menu').click()`); await tick();
-  await checkIcons(); await checkArabicText();
+  await checkIcons(); await checkLocalizedText();
   assert.ok(await evaluate(`document.body.scrollWidth <= innerWidth + 1`), 'Unexpected horizontal page overflow');
   console.log('PASS room details, room selection, stay-only default, offers, persistence and mobile navigation');
 
@@ -163,7 +170,7 @@ try {
   // Room layouts stay within the viewport in both themes and directions.
   await evaluate(`window.next.router.push('/rooms/amlal')`); await tick();
   await evaluate(`window.scrollTo(0, 0)`); await tick();
-  await checkArabicText();
+  await checkLocalizedText();
   assert.ok(await evaluate(`document.body.scrollWidth <= innerWidth + 1`), 'Room page overflows on mobile');
   writeFileSync('/tmp/bluewave-room-mobile.png', Buffer.from((await command('Page.captureScreenshot')).data, 'base64'));
   await click('EN');

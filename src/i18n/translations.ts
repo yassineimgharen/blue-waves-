@@ -4,6 +4,39 @@ import { Language } from '../types';
 // English source phrases are stable catalog keys. IDs and form values stay language-neutral.
 const messages = {
   ...stayMessages,
+  "Blue Wave Lodge": {"fr": "Blue Wave Lodge", "ar": "Blue Wave Lodge"},
+  "Rooftop & Restaurant": {"fr": "Terrasse panoramique et restaurant", "ar": "تراس السطح والمطعم"},
+  "Savour fresh Moroccan cuisine with panoramic Atlantic views from our rooftop terrace and restaurant.": {"fr": "Savourez une cuisine marocaine fraîche avec une vue panoramique sur l’Atlantique depuis notre terrasse et notre restaurant.", "ar": "استمتع بمأكولات مغربية طازجة وإطلالات بانورامية على المحيط الأطلسي من تراس السطح والمطعم."},
+  "Rooftop Terrace": {"fr": "Terrasse panoramique", "ar": "تراس السطح"},
+  "Restaurant": {"fr": "Restaurant", "ar": "المطعم"},
+  "Panoramic Views": {"fr": "Vues panoramiques", "ar": "إطلالات بانورامية"},
+  "Unwind on our panoramic rooftop terrace with 360° views over the Atlantic Ocean and the Imi Ouaddar coastline. The perfect spot for sunrise yoga, sunset cocktails, and starlit evenings.": {"fr": "Détendez-vous sur notre terrasse panoramique offrant une vue à 360° sur l’Atlantique et la côte d’Imi Ouaddar. Un cadre idéal pour le yoga au lever du soleil, un cocktail au coucher du soleil et des soirées sous les étoiles.", "ar": "استرخِ على تراس السطح مع إطلالة بزاوية 360 درجة على المحيط الأطلسي وساحل إيمي وادار. المكان المثالي لليوغا عند الشروق والمشروبات وقت الغروب والأمسيات تحت النجوم."},
+  "Ocean Views": {"fr": "Vue sur l’océan", "ar": "إطلالة على المحيط"},
+  "Sunrise Yoga": {"fr": "Yoga au lever du soleil", "ar": "يوغا عند الشروق"},
+  "Sunset Drinks": {"fr": "Verres au coucher du soleil", "ar": "مشروبات عند الغروب"},
+  "Starlit Evenings": {"fr": "Soirées sous les étoiles", "ar": "أمسيات تحت النجوم"},
+  "Fresh & Local": {"fr": "Frais et local", "ar": "طازج ومحلي"},
+  "Our restaurant serves fresh Moroccan cuisine prepared daily with local ingredients. From hearty surfer breakfasts to traditional tagines and freshly caught Atlantic fish.": {"fr": "Notre restaurant propose une cuisine marocaine fraîche, préparée chaque jour avec des ingrédients locaux : petits-déjeuners copieux, tajines traditionnels et poissons de l’Atlantique fraîchement pêchés.", "ar": "يقدم مطعمنا مأكولات مغربية طازجة تُحضّر يومياً بمكونات محلية، من وجبات الفطور الغنية إلى الطواجن التقليدية وأسماك الأطلسي الطازجة."},
+  "Berber Breakfast": {"fr": "Petit-déjeuner berbère", "ar": "فطور أمازيغي"},
+  "Fresh Atlantic Fish": {"fr": "Poisson frais de l’Atlantique", "ar": "أسماك أطلسية طازجة"},
+  "Moroccan Tagines": {"fr": "Tajines marocains", "ar": "طواجن مغربية"},
+  "Mint Tea": {"fr": "Thé à la menthe", "ar": "شاي بالنعناع"},
+  "Ready to Stay with Us?": {"fr": "Prêt à séjourner chez nous ?", "ar": "هل أنت مستعد للإقامة معنا؟"},
+  "Book your room and enjoy our rooftop terrace and restaurant during your stay.": {"fr": "Réservez votre chambre et profitez de notre terrasse panoramique et de notre restaurant pendant votre séjour.", "ar": "احجز غرفتك واستمتع بتراس السطح والمطعم خلال إقامتك."},
+  "280+ Reviews": {"fr": "Plus de 280 avis", "ar": "أكثر من 280 تقييماً"},
+  "Lot 150 Imi Ouaddar Commune Tamri, Imi Ouaddar 80502, Morocco": {"fr": "Lot 150, Imi Ouaddar, commune de Tamri, Imi Ouaddar 80502, Maroc", "ar": "القطعة 150، إيمي وادار، جماعة تامري، إيمي وادار 80502، المغرب"},
+  "All Rooms & Apartments": {"fr": "Toutes les chambres et tous les appartements", "ar": "جميع الغرف والشقق"},
+  "more": {"fr": "de plus", "ar": "إضافية"},
+  "Price": {"fr": "Prix", "ar": "السعر"},
+  "night": {"fr": "nuit", "ar": "ليلة"},
+  "About this room": {"fr": "À propos de cette chambre", "ar": "عن هذه الغرفة"},
+  "Amenities": {"fr": "Équipements", "ar": "المرافق"},
+  "Close": {"fr": "Fermer", "ar": "إغلاق"},
+  "Loading Blue Wave Lodge…": {"fr": "Chargement de Blue Wave Lodge…", "ar": "جارٍ تحميل بلو ويف لودج…"},
+  "Try again": {"fr": "Réessayer", "ar": "حاول مجدداً"},
+  "Website content is temporarily unavailable. Please try again.": {"fr": "Le contenu du site est temporairement indisponible. Veuillez réessayer.", "ar": "محتوى الموقع غير متاح مؤقتاً. يرجى المحاولة مجدداً."},
+  "Unable to load the website.": {"fr": "Impossible de charger le site.", "ar": "تعذر تحميل الموقع."},
+
   "Anchor Pt": { "fr": "Anchor Point", "ar": "أنكور بوينت" },
   "Anchor Point": { "fr": "Anchor Point", "ar": "أنكور بوينت" },
   "Killers": { "fr": "Killers", "ar": "كيلرز" },
@@ -2840,7 +2873,14 @@ export const translations: Record<Language, Catalog> = {
 /** Unknown strings (for example proper names) retain their original spelling. */
 export function getTranslator(language: Language, overrides: Record<string, Record<Language, string>> = {}) {
   return (text: string): string => {
-    if (Object.hasOwn(overrides, text)) return overrides[text][language] || overrides[text].en || text;
+    if (Object.hasOwn(overrides, text)) {
+      const entry = overrides[text];
+      const localized = entry[language]?.trim();
+      // Older CMS seeds copied English into missing locales. Do not let those
+      // placeholders hide a translation added to the built-in catalog later.
+      if (localized && (language === 'en' || (localized !== text && localized !== entry.en?.trim()))) return entry[language];
+      if (!Object.hasOwn(messages, text)) return localized || entry.en || text;
+    }
     if (!Object.prototype.hasOwnProperty.call(messages, text)) return text;
     return translations[language][text as TranslationKey];
   };

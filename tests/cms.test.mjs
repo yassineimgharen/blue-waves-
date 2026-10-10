@@ -99,7 +99,7 @@ test('CMS authentication, authorization, publishing, media and persistence', asy
 
 test('production API uses HTTPS cookie and security headers', async () => {
   const directory = mkdtempSync(join(tmpdir(), 'lodge-production-test-'));
-  const { app, db } = await createApp({ dataDir: directory, origin: 'https://lodge.example', production: true });
+  const { app, db } = await createApp({ dataDir: directory, origin: 'https://lodge.example', production: true, env: { VERCEL: '1', VERCEL_URL: 'lodge-deploy.vercel.app', VERCEL_PROJECT_PRODUCTION_URL: 'lodge.example', VERCEL_BRANCH_URL: 'lodge-main.vercel.app' } });
   db.prepare('INSERT INTO owners VALUES (?,?)').run(email, await hashPassword(password));
   const server = app.listen(0, '127.0.0.1'); await new Promise(resolve => server.once('listening', resolve));
   const base = `http://127.0.0.1:${server.address().port}`;
@@ -112,5 +112,11 @@ test('production API uses HTTPS cookie and security headers', async () => {
     assert.match(response.headers.get('set-cookie'), /SameSite=Strict/);
     assert.equal(response.headers.get('x-frame-options'), 'DENY');
     assert.match(response.headers.get('strict-transport-security'), /max-age=/);
+    const login = (origin, extra = {}) => fetch(`${base}/api/admin/login`, { method: 'POST', headers: { ...(origin ? { origin } : {}), 'content-type': 'application/json', ...extra }, body: JSON.stringify({ email, password }) });
+    for (const host of ['lodge-deploy.vercel.app', 'lodge-main.vercel.app']) assert.equal((await login(`https://${host}`)).status, 200);
+    for (const origin of [undefined, 'null', 'https://evil.vercel.app', 'https://lodge.example.evil.test']) {
+      assert.equal((await login(origin, { 'x-forwarded-host': 'lodge.example', host: 'lodge.example' })).status, 403);
+    }
+    assert.equal((await login('https://lodge-deploy.vercel.app', { 'sec-fetch-site': 'cross-site' })).status, 403);
   } finally { await new Promise(resolve => server.close(resolve)); db.close(); rmSync(directory, { recursive: true, force: true }); }
 });

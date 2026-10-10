@@ -6,7 +6,7 @@ The website now uses Next.js 16 (Pages Router) for server-rendered public pages,
 
 Use Node.js 24. Run `npm install`, then `npm run dev`. Open the URL printed in the terminal. If port 3000 is occupied, the launcher chooses another free port and adjusts the admin origin automatically. The existing `data/lodge.sqlite`, owner password and uploaded photos remain in use. `npm run admin:owner` creates or resets an owner account in the configured database.
 
-`npm run build` prepares the local image assets and CMS seed, then creates a Next.js production build. `npm start` serves that build. Production admin authentication requires HTTPS and an exact `APP_ORIGIN`.
+`npm run build` prepares the local image assets and CMS seed, then creates a Next.js production build. `npm start` serves that build. Production admin authentication requires HTTPS and a trusted origin. Set `APP_ORIGIN` to your canonical website URL.
 
 Photos remain in `src/images/`. The prepare script copies them into generated `public/media/` and generates the surf archive manifest. Run the prepare script or restart development after adding photos. Never add the generated copies, database, uploads, or `.env` files to Git. Existing hash bookmarks redirect to normal page URLs.
 
@@ -14,7 +14,7 @@ Photos remain in `src/images/`. The prepare script copies them into generated `p
 
 1. Import this repository and choose **Next.js** as the framework preset. Use the repository root, `npm run build`, and the default Next.js output setting. Remove any old `dist` output override or Vite configuration.
 2. Connect a Neon Postgres database and a **public** Vercel Blob store to the project. Set server-only `DATABASE_URL` and `BLOB_READ_WRITE_TOKEN` for the intended environment.
-3. Set `APP_ORIGIN` to the exact public HTTPS origin, for example `https://your-project.vercel.app` (no path). Update this value and redeploy when switching to a custom domain. Admin mutations from other origins are rejected. A preview that needs editing requires its own correct origin and preferably separate storage.
+3. Set `APP_ORIGIN` to the exact public HTTPS origin, for example `https://your-project.vercel.app` (no path). Update this value and redeploy when switching to a custom domain. On Vercel, the exact HTTPS domains supplied by `VERCEL_URL`, `VERCEL_PROJECT_PRODUCTION_URL` and `VERCEL_BRANCH_URL` are also accepted. No wildcard Vercel domains or request Host headers are trusted. Keep Vercel’s system environment variables exposed and redeploy after configuration changes. Preview deployments should use separate storage.
 4. Use Node.js 24 in Vercel project settings. Redeploy after changing variables.
 
 SQLite and local uploaded files are used only for local development or a persistent Node host. On Vercel the application requires Postgres; it never silently falls back to a temporary SQLite database. Browser photo uploads go directly to Blob using short-lived, authenticated tokens, so a 5 MB photo does not pass through Vercel's function request-size limit. Only verified JPEG/PNG/WebP uploads are published to the CMS.

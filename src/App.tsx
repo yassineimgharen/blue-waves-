@@ -120,7 +120,7 @@ export default function App({ children }: { children: React.ReactNode }) {
   };
 
   if (["/admin", "/404", "/_error"].includes(router.pathname)) return <>{children}</>;
-  if (!cms.loaded) return <div className="min-h-screen grid place-items-center bg-[#f6faff] text-[#006194] p-6"><div role="status">{cms.error || 'Loading Blue Wave Lodge…'}{cms.error && <button className="block mt-4 underline" onClick={() => void refreshSite()}>Try again</button>}</div></div>;
+  if (!cms.loaded) return <div className="min-h-screen grid place-items-center bg-[#f6faff] text-[#006194] p-6"><div role="status">{t(cms.error || 'Loading Blue Wave Lodge…')}{cms.error && <button className="block mt-4 underline" onClick={() => void refreshSite()}>{t('Try again')}</button>}</div></div>;
   return (
     <SiteContext.Provider value={{ language, navigateTo, bookRoom, chooseOffer, booking, setBooking, setIsConciergeOpen, cms }}><div className="min-h-screen flex flex-col bg-[#f6faff] dark:bg-[#071a26] text-[#071a26] dark:text-[#f6faff] font-sans antialiased transition-colors duration-200">
       {/* Primary Header & Top Navigation */}
